@@ -1,0 +1,8 @@
+﻿  Stdafx.cpp
+  AdvancedScript.cpp
+  AssemblyInfo.cpp
+  Generating Code...
+  .NETFramework,Version=v4.5.2.AssemblyAttributes.cpp
+  AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
+  AdvancedScript.vcxproj -> c:\users\user\documents\visual studio 2015\Projects\AdvancedScript\Debug\AdvancedScript.dll
+  AdvancedScript.vcxproj -> c:\users\user\documents\visual studio 2015\Projects\AdvancedScript\Debug\AdvancedScript.pdb (Partial PDB)
