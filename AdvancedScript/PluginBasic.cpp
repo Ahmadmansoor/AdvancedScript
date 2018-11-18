@@ -9,14 +9,26 @@ int hMenu;
 int hMenuDisasm;
 int hMenuDump;
 int hMenuStack;
-
+extern bool LogOff_;
 
 PROCESS_INFORMATION* fdProcessInfo_x;
+
 
 PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 {
 	//dprintf("hit breakpoint on address %p\n", info->breakpoint->addr);	
+	if (LogOff_) { /// we will Enable Log on BP just so we make EnableLog
+		GuiEnableLog();		
+	}	
 }
+
+PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
+{
+	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
+		GuiDisableLog();
+	}
+}
+
 
 PLUG_EXPORT void CBCREATEPROCESS(CBTYPE cbType, PLUG_CB_CREATEPROCESS* info)
 {

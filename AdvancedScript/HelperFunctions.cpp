@@ -78,3 +78,23 @@ String^ duint2Hex(duint input_) {
 		return "";
 	}
 }
+
+
+bool Str2bool(String^ input_) {
+	try
+	{
+		if (input_->Trim()->ToLower() == "true") {
+			return true;
+		}
+		if(input_->Trim()->ToLower() == "false")
+		{
+			return false;
+		}
+		Script::Gui::Message("The arrgaments can't convert to bool, the default value will be false");
+		return false;
+	}
+	catch (const std::exception&)
+	{
+		Script::Gui::Message("error in arrgaments can't convert to bool");
+	}
+}

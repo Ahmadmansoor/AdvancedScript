@@ -1,23 +1,12 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  AdvancedScript.cpp
-  AssemblyInfo.cpp
-  HelperFunctions.cpp
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-  MainForm.cpp
-  PluginBasic.cpp
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-PluginBasic.cpp(34): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
   Register_UnRegister_Commands.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-Register_UnRegister_Commands.cpp(9): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(9): warning C4129: ' ': unrecognized character escape sequence
-  Generating Code...
-c:\users\user\documents\visual studio 2015\projects\advancedscript\advancedscript\helperfunctions.cpp(20): warning C4700: uninitialized local variable 'segment' used
-  .NETFramework,Version=v4.5.2.AssemblyAttributes.cpp
+Register_UnRegister_Commands.cpp(13): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(13): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(16): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(16): warning C4129: ' ': unrecognized character escape sequence
+c:\users\user\documents\visual studio 2015\projects\advancedscript\advancedscript\register_unregister_commands.cpp(57): warning C4715: '`anonymous namespace'::cbLogAtBP': not all control paths return a value
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library D:\Code\x64dbg\release\x64\plugins\AdvancedScript.lib and object D:\Code\x64dbg\release\x64\plugins\AdvancedScript.exp
   AdvancedScript.vcxproj -> D:\Code\x64dbg\release\x64\plugins\AdvancedScript.dll
