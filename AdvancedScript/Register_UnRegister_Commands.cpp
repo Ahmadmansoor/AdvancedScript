@@ -53,5 +53,5 @@ static bool cbLogAtBP(int argc, char* argv[]) {
 		GuiEnableLog();
 	}
 
-
+	return true;
 }
