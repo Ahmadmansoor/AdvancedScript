@@ -169,6 +169,7 @@
     <ClInclude Include="pluginsdk\_scriptapi_register.h" />
     <ClInclude Include="pluginsdk\_scriptapi_stack.h" />
     <ClInclude Include="pluginsdk\_scriptapi_symbol.h" />
+    <ClInclude Include="Parser.h" />
     <ClInclude Include="Register_UnRegister_Commands.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -178,6 +179,7 @@
     <ClCompile Include="HelperFunctions.cpp" />
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="PluginBasic.cpp" />
+    <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Register_UnRegister_Commands.cpp" />
   </ItemGroup>
   <ItemGroup>
