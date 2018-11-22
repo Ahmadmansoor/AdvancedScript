@@ -46,6 +46,7 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 	strcpy(initStruct->pluginName, plugin_name);
 	pluginHandle = initStruct->pluginHandle;	
 	RegisterCommands(initStruct);
+
 	return true; //Return false to cancel loading the plugin.
 }
 

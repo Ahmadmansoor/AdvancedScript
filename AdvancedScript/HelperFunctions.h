@@ -17,3 +17,9 @@ duint Hex2duint(String^ input_);
 
 const char* Str2ConstChar(System::String^ string_);
 bool Str2bool(String^ input_);
+bool OnlyHexInString(String^ test);
+
+
+
+///////////////////////////////////////////////////////////////////Helper Functions
+ref class MyException : public System::Exception {};

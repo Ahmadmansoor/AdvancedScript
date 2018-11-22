@@ -28,6 +28,24 @@ const char* Str2ConstChar(System::String^ string_) {
 }
 
 
+bool OnlyHexInString(String^ test)
+{
+
+	try
+	{
+		int x = Convert::ToInt64(test);
+		return true;
+	}
+	catch (MyException^ e)
+	{
+		return false;
+	}
+	
+}
+
+
+
+
 
 String^ CharArr2Str(char input_[]) {
 	return gcnew String(input_);

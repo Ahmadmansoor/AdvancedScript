@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>D:\Code\x64dbg\release\x64\plugins</OutDir>
+    <OutDir>..\..\x64\plugins</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -103,6 +103,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -139,6 +140,9 @@
   <ItemGroup>
     <ClInclude Include="AdvancedScript.h" />
     <ClInclude Include="HelperFunctions.h" />
+    <ClInclude Include="LogTemplate.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -177,6 +181,7 @@
     <ClCompile Include="AdvancedScript.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="HelperFunctions.cpp" />
+    <ClCompile Include="LogTemplate.cpp" />
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="PluginBasic.cpp" />
     <ClCompile Include="Parser.cpp" />
@@ -197,6 +202,11 @@
     <Library Include="pluginsdk\x64bridge.lib" />
     <Library Include="pluginsdk\x64dbg.lib" />
     <Library Include="pluginsdk\XEDParse\XEDParse_x64.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LogTemplate.resx">
+      <DependentUpon>LogTemplate.h</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

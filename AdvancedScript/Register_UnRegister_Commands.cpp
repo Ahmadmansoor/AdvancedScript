@@ -1,5 +1,6 @@
 #include "Register_UnRegister_Commands.h"
 #include "MainForm.h"
+#include "LogTemplate.h"
 #include "HelperFunctions.h"
 
 bool LogOff_ = false;
@@ -15,9 +16,23 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	if (!_plugin_registercommand(pluginHandle, "LogAtBP", cbLogAtBP, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
+	if (!_plugin_registercommand(pluginHandle, "test_", test, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+
+	if (!_plugin_registercommand(pluginHandle, "LogTemplateManager", LogTemplateManager, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+
 }
 
-
+static bool test(int argc, char* argv[]) {
+	if (argc != 2) { _plugin_logprintf("worng arguments"); return false; }
+	String^ temp = charPTR2String(argv[0]);
+	temp = temp->Substring(temp->IndexOf(" ") + 1, temp->Length - (temp->IndexOf(" ") + 1));
+	String^ xc = "Rax = 0 " + Environment::NewLine + "test work ";
+	xc->Replace("0", temp);
+	_plugin_logprintf(Str2ConstChar(xc));
+	
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static void ShowDialog_IATFixer()
 {
@@ -53,5 +68,18 @@ static bool cbLogAtBP(int argc, char* argv[]) {
 		GuiEnableLog();
 	}
 
+	return true;
+}
+
+static void ShowDialog_TemplateManager()
+{
+	AdvancedScript::LogTemplate LogTemplate;
+	LogTemplate.ShowDialog();
+}
+static bool LogTemplateManager(int argc, char* argv[]) {
+	if (argc > 1) { _plugin_logprintf("worng arguments"); return false; }
+	String^ temp = charPTR2String(argv[0]);
+	Threading::Thread^ thread_ = gcnew Threading::Thread(gcnew Threading::ThreadStart(&ShowDialog_TemplateManager));
+	thread_->Start();
 	return true;
 }
