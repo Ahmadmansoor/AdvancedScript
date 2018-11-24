@@ -1,5 +1,5 @@
 #pragma once
-
+#include "HelperFunctions.h"
 namespace AdvancedScript {
 
 	using namespace System;
@@ -54,10 +54,7 @@ namespace AdvancedScript {
 
 
 
-
-
-
-	private:
+	public:
 		ref class TemplateClass
 		{
 		public:
@@ -72,8 +69,8 @@ namespace AdvancedScript {
 		};
 
 	public:
-		Generic::List<TemplateClass^>^ TemplateClassList = gcnew Generic::List<TemplateClass^>();
-
+		static Generic::List<TemplateClass^>^ TemplateClassList = gcnew Generic::List<TemplateClass^>();
+	
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -157,6 +154,9 @@ namespace AdvancedScript {
 			// 
 			// TB_TemplateData
 			// 
+			this->TB_TemplateData->BackColor = System::Drawing::Color::PeachPuff;
+			this->TB_TemplateData->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->TB_TemplateData->Location = System::Drawing::Point(322, 19);
 			this->TB_TemplateData->Multiline = true;
 			this->TB_TemplateData->Name = L"TB_TemplateData";
@@ -229,7 +229,7 @@ namespace AdvancedScript {
 			}
 		}
 		else { Microsoft::VisualBasic::Interaction::MsgBox("LogTemplate not exist", Microsoft::VisualBasic::MsgBoxStyle::DefaultButton1, "Error"); }
-		
+
 	}
 	private: System::Void PB_Remove_Click(System::Object^  sender, System::EventArgs^  e) {
 		TemplateListRemoveAt(LB_TemplateName->GetItemText(LB_TemplateName->SelectedItem), TB_TemplateData->Text);
@@ -271,7 +271,7 @@ namespace AdvancedScript {
 				IO::File::Delete(Application::StartupPath + "\\LogTemplate\\" + TemplateName);
 				LB_TemplateName->Items->RemoveAt(LB_TemplateName->SelectedIndex);
 			}
-		}		
+		}
 	}
 	private: System::Void TemplateListUpdatebyName(String^ TemplateName, String^ TemplateNameNew, String^ templatedata) {
 		for each (TemplateClass^ var in TemplateClassList)
@@ -287,7 +287,7 @@ namespace AdvancedScript {
 			}
 		}
 	}
-
+	
 
 	};
 }

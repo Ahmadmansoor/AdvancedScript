@@ -4,6 +4,7 @@
 using namespace System;
 using namespace Microsoft::VisualBasic;
 using namespace Runtime::InteropServices;
+using namespace System::Collections;
 
 ///////////////////////////////////////////////////////////////////Helper Functions
 String^ reMoveSpaces(String^ input_);
@@ -19,7 +20,9 @@ const char* Str2ConstChar(System::String^ string_);
 bool Str2bool(String^ input_);
 bool OnlyHexInString(String^ test);
 
-
+System::Void GetArg(String^ input, Generic::List<String^>^% arguments);
 
 ///////////////////////////////////////////////////////////////////Helper Functions
 ref class MyException : public System::Exception {};
+
+

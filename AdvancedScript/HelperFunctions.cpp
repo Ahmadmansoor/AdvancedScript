@@ -1,16 +1,31 @@
 #include "HelperFunctions.h"
 #include <msclr/marshal.h>
+#include "LogTemplate.h"
 
-String^ reMoveSpaces(String^ input_) {
+
+System::Void GetArg(String^ input,Generic::List<String^>^% arguments) {
+	arguments = gcnew Generic::List<String^>;
+	arguments->Clear(); /// we have to clear the arry just in case it have elements form previose process
+	input = input->Substring(input->IndexOf(" "), input->Length - input->IndexOf(" "))->Trim(); // remove first agument which is the Function call
+	//Firstargu = Firstargu->Substring(Firstargu->IndexOf(","), Firstargu->Length - Firstargu->IndexOf(","))->Trim();
+	//Array::Resize(arguments, arguments->Length + 1);	
 	String^ temp;
-	for (int i = 0; i < input_->Length; ++i) {
-		if (input_->Substring(i, 1) != " ") {
-			temp = temp + input_->Substring(i, 1);
+	bool notfound = false;
+	for (size_t i = 0; i <= input->Length; i++)
+	{
+		if (i == input->Length) {
+			arguments->Add(temp->Trim());
+			temp = "";
+			break;
 		}
+		if (input->Substring(i,1) != ",") {
+			temp = temp + input->Substring(i, 1);
+		}else {
+			arguments->Add(temp->Trim());			
+			temp = "";
+		}		
 	}
-	return temp;
 }
-
 
 String^ GetAPIName_LableWay(duint Addr_) {
 	SEGMENTREG segment;
@@ -42,9 +57,6 @@ bool OnlyHexInString(String^ test)
 	}
 	
 }
-
-
-
 
 
 String^ CharArr2Str(char input_[]) {
@@ -115,4 +127,14 @@ bool Str2bool(String^ input_) {
 	{
 		Script::Gui::Message("error in arrgaments can't convert to bool");
 	}
+}
+
+String^ reMoveSpaces(String^ input_) {
+	String^ temp;
+	for (int i = 0; i < input_->Length; ++i) {
+		if (input_->Substring(i, 1) != " ") {
+			temp = temp + input_->Substring(i, 1);
+		}
+	}
+	return temp;
 }

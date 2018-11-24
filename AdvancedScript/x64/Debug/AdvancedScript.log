@@ -1,23 +1,21 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  LogTemplate.cpp
-e:\code\x64dbg\advancedscript\advancedscript\LogTemplate.h(75): warning C4677: 'TemplateClassList': signature of non-private member contains assembly private type 'AdvancedScript::LogTemplate::TemplateClass'
-  e:\code\x64dbg\advancedscript\advancedscript\LogTemplate.h(62): note: see declaration of 'AdvancedScript::LogTemplate::TemplateClass'
   Register_UnRegister_Commands.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\LogTemplate.h(75): warning C4677: 'TemplateClassList': signature of non-private member contains assembly private type 'AdvancedScript::LogTemplate::TemplateClass'
-  e:\code\x64dbg\advancedscript\advancedscript\LogTemplate.h(62): note: see declaration of 'AdvancedScript::LogTemplate::TemplateClass'
-Register_UnRegister_Commands.cpp(14): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(14): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(17): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(17): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(20): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(20): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(23): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(23): warning C4129: ' ': unrecognized character escape sequence
-  Generating Code...
-e:\code\x64dbg\advancedscript\advancedscript\register_unregister_commands.cpp(35): warning C4715: '`anonymous namespace'::test': not all control paths return a value
+Register_UnRegister_Commands.cpp(41): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Register_UnRegister_Commands.cpp(42): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Register_UnRegister_Commands.cpp(55): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(55): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(58): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(58): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(61): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(61): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(64): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(64): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(67): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(67): warning C4129: ' ': unrecognized character escape sequence
+d:\code\advancedscript\advancedscript\register_unregister_commands.cpp(82): warning C4715: '`anonymous namespace'::test': not all control paths return a value
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
-     Creating library ..\..\x64\plugins\AdvancedScript.lib and object ..\..\x64\plugins\AdvancedScript.exp
-  AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
-  AdvancedScript.vcxproj -> ..\..\x64\plugins\AdvancedScript.pdb (Partial PDB)
+     Creating library ..\..\x64dbg\release\x64\plugins\AdvancedScript.lib and object ..\..\x64dbg\release\x64\plugins\AdvancedScript.exp
+  AdvancedScript.vcxproj -> D:\Code\AdvancedScript\AdvancedScript\..\..\x64dbg\release\x64\plugins\AdvancedScript.dll
+  AdvancedScript.vcxproj -> ..\..\x64dbg\release\x64\plugins\AdvancedScript.pdb (Partial PDB)

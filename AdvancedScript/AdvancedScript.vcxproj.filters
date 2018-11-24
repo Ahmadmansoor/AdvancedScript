@@ -167,4 +167,9 @@
     <Library Include="pluginsdk\XEDParse\XEDParse_x64.lib" />
     <Library Include="pluginsdk\dbghelp\dbghelp_x64.lib" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LogTemplate.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
