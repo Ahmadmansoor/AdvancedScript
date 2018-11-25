@@ -136,12 +136,20 @@ static bool LogTemplateManager(int argc, char* argv[]) {
 static bool logx(int argc, char* argv[]) {
 	Generic::List<String^>^ arguments;
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
-
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct
+	
 	if (arguments->Count < 1) { _plugin_logprintf("worng arguments"); return false; }
 	if (GetTemplate(arguments[0], TemplateClassFound)) {
-		_plugin_logprintf(Str2ConstChar(TemplateClassFound->TemplateData));
-	}
-	
+	//DbgCmdExecDirect(Str2ConstChar( "log + ""\"" + TemplateClassFound->TemplateData + "\""));
+	const char* format; size_t resultSize; char* result =new char[255];
+	format=(Str2ConstChar(TemplateClassFound->TemplateData));
+	DbgFunctions()->StringFormatInline(format, MAX_STRING_SIZE,result);
+	_plugin_logprintf(result);
+	}	
 	return true;
+}
+
+static bool logTrace(int argc, char* argv[]) {
+
+
 }

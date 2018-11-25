@@ -22,6 +22,14 @@ PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 	}	
 }
 
+PLUG_EXPORT void CBSTOPDEBUG(CBTYPE cbType, PLUG_CB_STOPDEBUG* info)
+{
+	//dprintf("hit breakpoint on address %p\n", info->breakpoint->addr);	
+	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
+		GuiDisableLog();
+	}
+}
+
 PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
 {
 	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
@@ -35,7 +43,10 @@ PLUG_EXPORT void CBCREATEPROCESS(CBTYPE cbType, PLUG_CB_CREATEPROCESS* info)
 	//here I could't recive the PLUG_CB_CREATEPROCESS I don't know why but could recive part of the strcture
 	//fdProcessInfo_x = new (PROCESS_INFORMATION);
 	//fdProcessInfo_x = info->fdProcessInfo;
-
+	//LoadTemplateFiles();
+	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
+		GuiDisableLog();
+	}
 }
 
 //Initialize your plugin data here.

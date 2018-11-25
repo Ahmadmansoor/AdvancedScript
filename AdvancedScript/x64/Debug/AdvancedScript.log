@@ -14,8 +14,9 @@ Register_UnRegister_Commands.cpp(64): warning C4129: 'A': unrecognized character
 Register_UnRegister_Commands.cpp(64): warning C4129: ' ': unrecognized character escape sequence
 Register_UnRegister_Commands.cpp(67): warning C4129: 'A': unrecognized character escape sequence
 Register_UnRegister_Commands.cpp(67): warning C4129: ' ': unrecognized character escape sequence
-d:\code\advancedscript\advancedscript\register_unregister_commands.cpp(82): warning C4715: '`anonymous namespace'::test': not all control paths return a value
+Register_UnRegister_Commands.cpp(144): warning C4101: 'resultSize': unreferenced local variable
+e:\code\x64dbg\advancedscript\advancedscript\register_unregister_commands.cpp(82): warning C4715: '`anonymous namespace'::test': not all control paths return a value
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
-     Creating library ..\..\x64dbg\release\x64\plugins\AdvancedScript.lib and object ..\..\x64dbg\release\x64\plugins\AdvancedScript.exp
-  AdvancedScript.vcxproj -> D:\Code\AdvancedScript\AdvancedScript\..\..\x64dbg\release\x64\plugins\AdvancedScript.dll
-  AdvancedScript.vcxproj -> ..\..\x64dbg\release\x64\plugins\AdvancedScript.pdb (Partial PDB)
+     Creating library ..\..\x64\plugins\AdvancedScript.lib and object ..\..\x64\plugins\AdvancedScript.exp
+  AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
+  AdvancedScript.vcxproj -> ..\..\x64\plugins\AdvancedScript.pdb (Partial PDB)
