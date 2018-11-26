@@ -3,12 +3,10 @@
 #include "LogTemplate.h"
 
 
-System::Void GetArg(String^ input,Generic::List<String^>^% arguments) {
+System::Void GetArg(String^ input,Generic::List<String^>^% arguments) { // this function use by refrence so the list will fill direct
 	arguments = gcnew Generic::List<String^>;
 	arguments->Clear(); /// we have to clear the arry just in case it have elements form previose process
 	input = input->Substring(input->IndexOf(" "), input->Length - input->IndexOf(" "))->Trim(); // remove first agument which is the Function call
-	//Firstargu = Firstargu->Substring(Firstargu->IndexOf(","), Firstargu->Length - Firstargu->IndexOf(","))->Trim();
-	//Array::Resize(arguments, arguments->Length + 1);	
 	String^ temp;
 	bool notfound = false;
 	for (size_t i = 0; i <= input->Length; i++)
@@ -25,6 +23,14 @@ System::Void GetArg(String^ input,Generic::List<String^>^% arguments) {
 			temp = "";
 		}		
 	}
+}
+
+char* StringFormatInline_(String^ format) {
+	char* result = new char[MAX_STRING_SIZE];
+	size_t resultSize = MAX_STRING_SIZE;
+	const char* format_ = Str2ConstChar(format);
+	DbgFunctions()->StringFormatInline(format_, MAX_STRING_SIZE, result);
+	return result;
 }
 
 String^ GetAPIName_LableWay(duint Addr_) {

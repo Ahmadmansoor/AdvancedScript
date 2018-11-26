@@ -18,7 +18,7 @@ bool LogOff_ = false;
 //https://stackoverflow.com/questions/11419459/c-declaring-a-managed-variable-in-a-native-code
 ref class ManagedGlobals {
 public:
-	static Generic::List<AdvancedScript::LogTemplate::TemplateClass^>^ TemplateClassList_ =gcnew Generic::List<AdvancedScript::LogTemplate::TemplateClass^>;
+	static Generic::List<AdvancedScript::LogTemplate::TemplateClass^>^ TemplateClassList_ = gcnew Generic::List<AdvancedScript::LogTemplate::TemplateClass^>;
 };
 
 System::Void TemplateListAdd(String^ TemplateName, String^ templatedata) {
@@ -39,7 +39,7 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 	for (size_t i = 0; i < ManagedGlobals::TemplateClassList_->Count; i++)
 	{
 		if (ManagedGlobals::TemplateClassList_[i]->TemplateName == TemplateName) {
-			TemplateClassFound= ManagedGlobals::TemplateClassList_[i];
+			TemplateClassFound = ManagedGlobals::TemplateClassList_[i];
 			return true;
 		}
 	}
@@ -137,15 +137,18 @@ static bool logx(int argc, char* argv[]) {
 	Generic::List<String^>^ arguments;
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct
-	
+
 	if (arguments->Count < 1) { _plugin_logprintf("worng arguments"); return false; }
 	if (GetTemplate(arguments[0], TemplateClassFound)) {
-	//DbgCmdExecDirect(Str2ConstChar( "log + ""\"" + TemplateClassFound->TemplateData + "\""));
-	const char* format; size_t resultSize; char* result =new char[255];
-	format=(Str2ConstChar(TemplateClassFound->TemplateData));
-	DbgFunctions()->StringFormatInline(format, MAX_STRING_SIZE,result);
-	_plugin_logprintf(result);
-	}	
+		////////////////////////////////
+		//const char* format; size_t resultSize; char* result = new char[MAX_STRING_SIZE];
+		//format = (Str2ConstChar(TemplateClassFound->TemplateData));
+		//DbgFunctions is a way to get any Functions vaule in the enum of it 
+		// here we get the String Format In a line
+		//DbgFunctions()->StringFormatInline(format, MAX_STRING_SIZE, result);
+		//_plugin_logprintf(result);
+		_plugin_logprintf(StringFormatInline_(TemplateClassFound->TemplateData));
+	}
 	return true;
 }
 

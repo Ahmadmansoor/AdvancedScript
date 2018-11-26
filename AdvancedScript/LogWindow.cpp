@@ -1,0 +1,2 @@
+#include "LogWindow.h"
+

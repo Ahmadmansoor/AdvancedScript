@@ -143,6 +143,9 @@
     <ClInclude Include="LogTemplate.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="LogWindow.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -182,6 +185,7 @@
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="HelperFunctions.cpp" />
     <ClCompile Include="LogTemplate.cpp" />
+    <ClCompile Include="LogWindow.cpp" />
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="PluginBasic.cpp" />
     <ClCompile Include="Parser.cpp" />
