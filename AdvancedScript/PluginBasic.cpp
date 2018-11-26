@@ -47,6 +47,7 @@ PLUG_EXPORT void CBCREATEPROCESS(CBTYPE cbType, PLUG_CB_CREATEPROCESS* info)
 	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
 		GuiDisableLog();
 	}
+	//LoadTemplateFiles();
 }
 
 //Initialize your plugin data here.

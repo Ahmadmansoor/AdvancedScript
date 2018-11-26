@@ -1,5 +1,6 @@
 #pragma once
 #include "HelperFunctions.h"
+#include "Register_UnRegister_Commands.h"
 namespace AdvancedScript {
 
 	using namespace System;
@@ -100,6 +101,7 @@ namespace AdvancedScript {
 			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(LogTemplate::typeid));
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->TB_info = (gcnew System::Windows::Forms::TextBox());
 			this->PB_save = (gcnew System::Windows::Forms::PictureBox());
 			this->PB_Rename = (gcnew System::Windows::Forms::PictureBox());
 			this->PB_Remove = (gcnew System::Windows::Forms::PictureBox());
@@ -116,7 +118,6 @@ namespace AdvancedScript {
 			this->hex3C28AToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->addressInfo00401010moduleEntryPointToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->LB_TemplateName = (gcnew System::Windows::Forms::ListBox());
-			this->TB_info = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->PB_save))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->PB_Rename))->BeginInit();
@@ -139,6 +140,15 @@ namespace AdvancedScript {
 			this->groupBox1->Size = System::Drawing::Size(751, 392);
 			this->groupBox1->TabIndex = 0;
 			this->groupBox1->TabStop = false;
+			// 
+			// TB_info
+			// 
+			this->TB_info->Location = System::Drawing::Point(6, 200);
+			this->TB_info->Multiline = true;
+			this->TB_info->Name = L"TB_info";
+			this->TB_info->ReadOnly = true;
+			this->TB_info->Size = System::Drawing::Size(237, 178);
+			this->TB_info->TabIndex = 6;
 			// 
 			// PB_save
 			// 
@@ -206,68 +216,69 @@ namespace AdvancedScript {
 					this->hex3C28AToolStripMenuItem, this->addressInfo00401010moduleEntryPointToolStripMenuItem
 			});
 			this->CMS1->Name = L"contextMenuStrip1";
-			this->CMS1->Size = System::Drawing::Size(316, 202);
+			this->CMS1->Size = System::Drawing::Size(299, 224);
 			// 
 			// headerToolStripMenuItem
 			// 
+			this->headerToolStripMenuItem->Enabled = false;
 			this->headerToolStripMenuItem->Name = L"headerToolStripMenuItem";
-			this->headerToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->headerToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->headerToolStripMenuItem->Text = L"Header";
 			this->headerToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::headerToolStripMenuItem_Click);
 			// 
 			// addressOfInstructionToolStripMenuItem
 			// 
 			this->addressOfInstructionToolStripMenuItem->Name = L"addressOfInstructionToolStripMenuItem";
-			this->addressOfInstructionToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->addressOfInstructionToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->addressOfInstructionToolStripMenuItem->Text = L"Address of Instruction";
 			this->addressOfInstructionToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::addressOfInstructionToolStripMenuItem_Click);
 			// 
 			// disassemblyOfInstructionToolStripMenuItem
 			// 
 			this->disassemblyOfInstructionToolStripMenuItem->Name = L"disassemblyOfInstructionToolStripMenuItem";
-			this->disassemblyOfInstructionToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->disassemblyOfInstructionToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->disassemblyOfInstructionToolStripMenuItem->Text = L"Disassembly of Instruction";
 			this->disassemblyOfInstructionToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::disassemblyOfInstructionToolStripMenuItem_Click);
 			// 
 			// signedDecimal3ToolStripMenuItem
 			// 
 			this->signedDecimal3ToolStripMenuItem->Name = L"signedDecimal3ToolStripMenuItem";
-			this->signedDecimal3ToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->signedDecimal3ToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->signedDecimal3ToolStripMenuItem->Text = L"signed decimal / -3";
 			this->signedDecimal3ToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::signedDecimal3ToolStripMenuItem_Click);
 			// 
 			// unsignedDecimal57329171ToolStripMenuItem
 			// 
 			this->unsignedDecimal57329171ToolStripMenuItem->Name = L"unsignedDecimal57329171ToolStripMenuItem";
-			this->unsignedDecimal57329171ToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->unsignedDecimal57329171ToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->unsignedDecimal57329171ToolStripMenuItem->Text = L"unsigned decimal / 57329171";
 			this->unsignedDecimal57329171ToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::unsignedDecimal57329171ToolStripMenuItem_Click);
 			// 
 			// zeroPrefixedPointer0000000410007683ToolStripMenuItem
 			// 
 			this->zeroPrefixedPointer0000000410007683ToolStripMenuItem->Name = L"zeroPrefixedPointer0000000410007683ToolStripMenuItem";
-			this->zeroPrefixedPointer0000000410007683ToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->zeroPrefixedPointer0000000410007683ToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->zeroPrefixedPointer0000000410007683ToolStripMenuItem->Text = L"zero prefixed pointer / 0000000410007683";
 			this->zeroPrefixedPointer0000000410007683ToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::zeroPrefixedPointer0000000410007683ToolStripMenuItem_Click);
 			// 
 			// stringPointerThisIsAStringToolStripMenuItem
 			// 
 			this->stringPointerThisIsAStringToolStripMenuItem->Name = L"stringPointerThisIsAStringToolStripMenuItem";
-			this->stringPointerThisIsAStringToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->stringPointerThisIsAStringToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->stringPointerThisIsAStringToolStripMenuItem->Text = L"string pointer /  this is a string";
 			this->stringPointerThisIsAStringToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::stringPointerThisIsAStringToolStripMenuItem_Click);
 			// 
 			// hex3C28AToolStripMenuItem
 			// 
 			this->hex3C28AToolStripMenuItem->Name = L"hex3C28AToolStripMenuItem";
-			this->hex3C28AToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->hex3C28AToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->hex3C28AToolStripMenuItem->Text = L"hex / 3C28A";
 			this->hex3C28AToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::hex3C28AToolStripMenuItem_Click);
 			// 
 			// addressInfo00401010moduleEntryPointToolStripMenuItem
 			// 
 			this->addressInfo00401010moduleEntryPointToolStripMenuItem->Name = L"addressInfo00401010moduleEntryPointToolStripMenuItem";
-			this->addressInfo00401010moduleEntryPointToolStripMenuItem->Size = System::Drawing::Size(315, 22);
+			this->addressInfo00401010moduleEntryPointToolStripMenuItem->Size = System::Drawing::Size(298, 22);
 			this->addressInfo00401010moduleEntryPointToolStripMenuItem->Text = L"address info / 00401010 <module.EntryPoint>";
 			this->addressInfo00401010moduleEntryPointToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogTemplate::addressInfo00401010moduleEntryPointToolStripMenuItem_Click);
 			// 
@@ -283,15 +294,6 @@ namespace AdvancedScript {
 			this->LB_TemplateName->TabIndex = 0;
 			this->LB_TemplateName->SelectedIndexChanged += gcnew System::EventHandler(this, &LogTemplate::LB_TemplateName_SelectedIndexChanged);
 			// 
-			// TB_info
-			// 
-			this->TB_info->Location = System::Drawing::Point(6, 200);
-			this->TB_info->Multiline = true;
-			this->TB_info->Name = L"TB_info";
-			this->TB_info->ReadOnly = true;
-			this->TB_info->Size = System::Drawing::Size(237, 178);
-			this->TB_info->TabIndex = 6;
-			// 
 			// LogTemplate
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -302,6 +304,7 @@ namespace AdvancedScript {
 			this->MaximizeBox = false;
 			this->Name = L"LogTemplate";
 			this->Text = L"LogTemplate";
+			this->FormClosed += gcnew System::Windows::Forms::FormClosedEventHandler(this, &LogTemplate::LogTemplate_FormClosed);
 			this->Load += gcnew System::EventHandler(this, &LogTemplate::LogTemplate_Load);
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox1->PerformLayout();
@@ -324,6 +327,7 @@ namespace AdvancedScript {
 		}
 	}
 	private: System::Void LoadTemplateFiles() {
+		TemplateClassList->Clear();
 		if (IO::Directory::Exists(Application::StartupPath + "\\LogTemplate")) {
 			for each (String^ file_ in IO::Directory::GetFiles(Application::StartupPath + "\\LogTemplate"))
 			{
@@ -446,5 +450,8 @@ namespace AdvancedScript {
 		TB_TemplateData->Paste("{a:cip}");
 		TB_info->Text = "cip mean RIP now , you can replace cip with an address if you want, address info: 00401010 <module.EntryPoint>" + Environment::NewLine + "{a:0x32635241}";
 	}
-	};
+	private: System::Void LogTemplate_FormClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e) {
+		 LoadTemplateFiles_();
+	}
+};
 }

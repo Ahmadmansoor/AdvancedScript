@@ -18,4 +18,8 @@ int GetRegisterIndex(String^ input_) {
 	return RegisterEnum_->IndexOf(RegisterEnum_,input_); // if -1 then not found 
 }
 
+//System::String^ LogxParaser(String^ input) {
+//
+//}
+
 

@@ -2,7 +2,8 @@
 #include "MainForm.h"
 #include "LogTemplate.h"
 #include "HelperFunctions.h"
-
+#include "Parser.h"
+#include "LogWindow.h"
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
@@ -19,13 +20,15 @@ bool LogOff_ = false;
 ref class ManagedGlobals {
 public:
 	static Generic::List<AdvancedScript::LogTemplate::TemplateClass^>^ TemplateClassList_ = gcnew Generic::List<AdvancedScript::LogTemplate::TemplateClass^>;
+
 };
 
 System::Void TemplateListAdd(String^ TemplateName, String^ templatedata) {
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClass_ = gcnew AdvancedScript::LogTemplate::TemplateClass(TemplateName, templatedata);
 	ManagedGlobals::TemplateClassList_->Add(TemplateClass_);
 }
-System::Void LoadTemplateFiles() {
+System::Void LoadTemplateFiles_() {
+	ManagedGlobals::TemplateClassList_->Clear();
 	if (IO::Directory::Exists(Application::StartupPath + "\\LogTemplate")) {
 		for each (String^ file_ in IO::Directory::GetFiles(Application::StartupPath + "\\LogTemplate"))
 		{
@@ -66,8 +69,11 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	if (!_plugin_registercommand(pluginHandle, "logx", logx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
-	LoadTemplateFiles();
+	if (!_plugin_registercommand(pluginHandle, "logx_window", logx_window, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
+	//LoadTemplateFiles();
+		
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
@@ -132,6 +138,18 @@ static bool LogTemplateManager(int argc, char* argv[]) {
 	return true;
 }
 
+static void ShowDialog_LogWindow()
+{
+	AdvancedScript::LogWindow LogWindow;
+	LogWindow.ShowDialog();
+}
+static bool logx_window(int argc, char* argv[]) {
+	if (argc > 1) { _plugin_logprintf("worng arguments"); return false; }
+	String^ temp = charPTR2String(argv[0]);
+	Threading::Thread^ thread_ = gcnew Threading::Thread(gcnew Threading::ThreadStart(&ShowDialog_LogWindow));
+	thread_->Start();
+	return true;
+}
 
 static bool logx(int argc, char* argv[]) {
 	Generic::List<String^>^ arguments;
@@ -147,6 +165,8 @@ static bool logx(int argc, char* argv[]) {
 		// here we get the String Format In a line
 		//DbgFunctions()->StringFormatInline(format, MAX_STRING_SIZE, result);
 		//_plugin_logprintf(result);
+		////////////////////////////////
+		AdvancedScript::LogWindow::TheInstance->RTB1_Log(TemplateClassFound->TemplateData);
 		_plugin_logprintf(StringFormatInline_(TemplateClassFound->TemplateData));
 	}
 	return true;
