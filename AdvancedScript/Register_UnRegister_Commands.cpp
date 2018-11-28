@@ -11,7 +11,7 @@ using namespace System::Windows::Forms;
 
 
 bool LogOff_ = false;
-
+bool LogTraceOn = false;
 
 
 //Managed types cannot be declared in an unmanaged context.
@@ -24,7 +24,9 @@ bool LogOff_ = false;
 ref class ManagedGlobals {
 public:
 	static Generic::List<AdvancedScript::LogTemplate::TemplateClass^>^ TemplateClassList_ = gcnew Generic::List<AdvancedScript::LogTemplate::TemplateClass^>;
-
+	static String^ TraceFilePath = "";
+	static String^ TraceTemplate = "";
+	
 };
 
 
@@ -78,8 +80,10 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	if (!_plugin_registercommand(pluginHandle, "logx", logx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
-	if (!_plugin_registercommand(pluginHandle, "logx_window", logx_window, false))
+	if (!_plugin_registercommand(pluginHandle, "logxTrace", logxTrace, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+
+
 
 	//LoadTemplateFiles();
 
@@ -168,7 +172,7 @@ static bool logx(int argc, char* argv[]) {
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct
 
-	if (arguments->Count < 1) { _plugin_logprintf("worng arguments"); return false; }
+	if (arguments->Count != 1) { _plugin_logprintf("worng arguments"); return false; }
 	if (GetTemplate(arguments[0], TemplateClassFound)) {
 		////////////////////////////////
 		//const char* format; size_t resultSize; char* result = new char[MAX_STRING_SIZE];
@@ -187,7 +191,46 @@ static bool logx(int argc, char* argv[]) {
 	return true;
 }
 
-static bool logxTrace(int argc, char* argv[]) {
+static void Show_DialogSave() {
+	//AdvancedScript::LogWindow::LogWindow_->saveFileDialog1->ShowDialog();
+	//ManagedGlobals::TraceFilePath = AdvancedScript::LogWindow::LogWindow_->saveFileDialog1->FileName;
+	FolderBrowserDialog^ t = gcnew FolderBrowserDialog();
+	t->ShowDialog();
+	ManagedGlobals::TraceFilePath = t->SelectedPath;
+	if (ManagedGlobals::TraceFilePath == "") {
+		Script::Gui::Message("worng file,Trcer is off now");
+		LogTraceOn = false;
+		_plugin_logprintf("Trcer is off now");
+	}
+}
 
+static bool logxTrace(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct
+	if (arguments->Count != 1) { _plugin_logprintf("worng arguments"); return false; }
+	if (arguments[0] == "on") {
+		LogTraceOn = true;
+		_plugin_logprintf("Trcer is on now");
+		Threading::Thread^ thread = gcnew Threading::Thread(gcnew Threading::ThreadStart(&Show_DialogSave));
+		thread->SetApartmentState(Threading::ApartmentState::STA);
+		thread->Start();		
+	}
+	else if (arguments[0] == "off") {
+		LogTraceOn = false;
+		_plugin_logprintf("Trcer is off now");
+		ManagedGlobals::TraceFilePath = "";
+	}
+	if (!GetTemplate(arguments[1], TemplateClassFound)) {
+		Script::Gui::Message("No Template with this name");
+		LogTraceOn = false;
+		_plugin_logprintf("Trcer is off now");
+		ManagedGlobals::TraceFilePath = "";
+	}
+	else {
+		ManagedGlobals::TraceTemplate = TemplateClassFound->TemplateName;
+	}
+	
+	return true;
 
 }

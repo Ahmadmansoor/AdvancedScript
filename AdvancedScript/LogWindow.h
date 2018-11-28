@@ -47,6 +47,8 @@ namespace AdvancedScript {
 			}
 		}
 	public: System::Windows::Forms::RichTextBox^  RTB1;
+	public: System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
+	public:
 	protected:
 
 	protected:
@@ -78,6 +80,7 @@ namespace AdvancedScript {
 		void InitializeComponent(void)
 		{
 			this->RTB1 = (gcnew System::Windows::Forms::RichTextBox());
+			this->saveFileDialog1 = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->SuspendLayout();
 			// 
 			// RTB1
@@ -112,11 +115,14 @@ namespace AdvancedScript {
 		FormLoaded = true;
 		AdvancedScript::LogWindow::LogWindow_->RTB1->Text = Log_Str;
 	}
+	private: System::Void LogWindow_FormClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e) {
+		FormLoaded = false;
+	}
 			 //////////////////////////////////
 			 //we add some more line down to access the RichTextBox from out side of the Thread
 	public:
 		static String^ Log_Str = "";  /// this will hold all Log messages
-		delegate void SetTextCallback(String^ text);
+		delegate void SetTextCallback(String^ text); // delegate Function to Invoke RichTextBox for the first time
 	public:
 		static void RTBAppendText(String^ text) {
 			if (AdvancedScript::LogWindow::LogWindow_->RTB1->InvokeRequired)
@@ -131,10 +137,8 @@ namespace AdvancedScript {
 			}
 		}
 		//////////////////////////////////
+		
 
 
-	private: System::Void LogWindow_FormClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e) {
-		FormLoaded = false;
-	}
 	};
 }
