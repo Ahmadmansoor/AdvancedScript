@@ -9,25 +9,30 @@ namespace AdvancedScript {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	
 
-	
+
+
 	/// <summary>
 	/// Summary for LogWindow
 	/// </summary>
 	public ref class LogWindow : public System::Windows::Forms::Form
 	{
+
 	public:
+		////////////////////////////
 		// we add this line to anable to call RTB1 from out side 
 		//https://social.msdn.microsoft.com/Forums/en-US/dcc8228d-6937-450d-b4e2-e833fb1f388b/access-a-forms-public-functions-from-a-global-function-in-a-different-file?forum=Vsexpressvc
-		static LogWindow^ TheInstance; 
+		// here we define Initialized form so we can can access it directly 
+		static LogWindow^ LogWindow_ = gcnew LogWindow();
+		//////////////////////////// we add some more line down to access the RichTextBox from out side of the Thread
+	public:
 		LogWindow(void)
 		{
 			InitializeComponent();
 			//
 			//TODO: Add the constructor code here
 			//
-			TheInstance = this;
+			//TheInstance = this;
 		}
 
 	protected:
@@ -41,7 +46,20 @@ namespace AdvancedScript {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::RichTextBox^  RTB1;
+	public: System::Windows::Forms::RichTextBox^  RTB1;
+	protected:
+
+	protected:
+
+	private: System::ComponentModel::IContainer^  components;
+	public:
+	protected:
+
+	protected:
+
+
+	protected:
+
 	protected:
 
 	protected:
@@ -50,7 +68,7 @@ namespace AdvancedScript {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -65,8 +83,11 @@ namespace AdvancedScript {
 			// RTB1
 			// 
 			this->RTB1->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->RTB1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->RTB1->Location = System::Drawing::Point(0, 0);
 			this->RTB1->Name = L"RTB1";
+			this->RTB1->ReadOnly = true;
 			this->RTB1->Size = System::Drawing::Size(678, 404);
 			this->RTB1->TabIndex = 0;
 			this->RTB1->Text = L"";
@@ -79,16 +100,41 @@ namespace AdvancedScript {
 			this->Controls->Add(this->RTB1);
 			this->Name = L"LogWindow";
 			this->Text = L"LogWindow";
+			this->FormClosed += gcnew System::Windows::Forms::FormClosedEventHandler(this, &LogWindow::LogWindow_FormClosed);
 			this->Load += gcnew System::EventHandler(this, &LogWindow::LogWindow_Load);
 			this->ResumeLayout(false);
 
 		}
 #pragma endregion
+	public:
+		static bool FormLoaded = false;  // we difine it to check if the form is loaded or not so they are no clashing to show the form 
 	private: System::Void LogWindow_Load(System::Object^  sender, System::EventArgs^  e) {
+		FormLoaded = true;
+		AdvancedScript::LogWindow::LogWindow_->RTB1->Text = Log_Str;
 	}
-	public:	System::Void RTB1_Log(String^ Input) {
-			AdvancedScript::LogWindow::RTB1->AppendText(Input);
+			 //////////////////////////////////
+			 //we add some more line down to access the RichTextBox from out side of the Thread
+	public:
+		static String^ Log_Str = "";  /// this will hold all Log messages
+		delegate void SetTextCallback(String^ text);
+	public:
+		static void RTBAppendText(String^ text) {
+			if (AdvancedScript::LogWindow::LogWindow_->RTB1->InvokeRequired)
+			{
+				SetTextCallback^ d = gcnew SetTextCallback(RTBAppendText);
+				AdvancedScript::LogWindow::LogWindow_->Invoke(d, gcnew array<System::Object^>{text});
+			}
+			else
+			{
+				AdvancedScript::LogWindow::LogWindow_->RTB1->AppendText(Environment::NewLine);
+				AdvancedScript::LogWindow::LogWindow_->RTB1->AppendText(text);
+			}
 		}
-	
+		//////////////////////////////////
+
+
+	private: System::Void LogWindow_FormClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e) {
+		FormLoaded = false;
+	}
 	};
 }

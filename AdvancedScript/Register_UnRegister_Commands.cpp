@@ -8,7 +8,11 @@ using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
 using namespace System::Windows::Forms;
+
+
 bool LogOff_ = false;
+
+
 
 //Managed types cannot be declared in an unmanaged context.
 //Since.NET does not support global variables, attempting to declare a global variable
@@ -22,6 +26,8 @@ public:
 	static Generic::List<AdvancedScript::LogTemplate::TemplateClass^>^ TemplateClassList_ = gcnew Generic::List<AdvancedScript::LogTemplate::TemplateClass^>;
 
 };
+
+
 
 System::Void TemplateListAdd(String^ TemplateName, String^ templatedata) {
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClass_ = gcnew AdvancedScript::LogTemplate::TemplateClass(TemplateName, templatedata);
@@ -39,6 +45,9 @@ System::Void LoadTemplateFiles_() {
 	}
 }
 bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateClass^% TemplateClassFound) {
+	if (ManagedGlobals::TemplateClassList_->Count == 0) {
+		LoadTemplateFiles_();
+	}
 	for (size_t i = 0; i < ManagedGlobals::TemplateClassList_->Count; i++)
 	{
 		if (ManagedGlobals::TemplateClassList_[i]->TemplateName == TemplateName) {
@@ -63,7 +72,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	if (!_plugin_registercommand(pluginHandle, "test_", test, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
-	if (!_plugin_registercommand(pluginHandle, "LogTemplateManager", LogTemplateManager, false))
+	if (!_plugin_registercommand(pluginHandle, "LogxTemplateManager", LogxTemplateManager, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 	if (!_plugin_registercommand(pluginHandle, "logx", logx, false))
@@ -73,7 +82,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 	//LoadTemplateFiles();
-		
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
@@ -130,7 +139,7 @@ static void ShowDialog_TemplateManager()
 	AdvancedScript::LogTemplate LogTemplate;
 	LogTemplate.ShowDialog();
 }
-static bool LogTemplateManager(int argc, char* argv[]) {
+static bool LogxTemplateManager(int argc, char* argv[]) {
 	if (argc > 1) { _plugin_logprintf("worng arguments"); return false; }
 	String^ temp = charPTR2String(argv[0]);
 	Threading::Thread^ thread_ = gcnew Threading::Thread(gcnew Threading::ThreadStart(&ShowDialog_TemplateManager));
@@ -138,10 +147,11 @@ static bool LogTemplateManager(int argc, char* argv[]) {
 	return true;
 }
 
+
+
 static void ShowDialog_LogWindow()
-{
-	AdvancedScript::LogWindow LogWindow;
-	LogWindow.ShowDialog();
+{	
+	AdvancedScript::LogWindow::LogWindow_->ShowDialog();
 }
 static bool logx_window(int argc, char* argv[]) {
 	if (argc > 1) { _plugin_logprintf("worng arguments"); return false; }
@@ -150,6 +160,8 @@ static bool logx_window(int argc, char* argv[]) {
 	thread_->Start();
 	return true;
 }
+
+
 
 static bool logx(int argc, char* argv[]) {
 	Generic::List<String^>^ arguments;
@@ -165,14 +177,17 @@ static bool logx(int argc, char* argv[]) {
 		// here we get the String Format In a line
 		//DbgFunctions()->StringFormatInline(format, MAX_STRING_SIZE, result);
 		//_plugin_logprintf(result);
-		////////////////////////////////
-		AdvancedScript::LogWindow::TheInstance->RTB1_Log(TemplateClassFound->TemplateData);
+		////////////////////////////////	
+		AdvancedScript::LogWindow::LogWindow_->Log_Str = AdvancedScript::LogWindow::Log_Str + Environment::NewLine + charPTR2String(StringFormatInline_(TemplateClassFound->TemplateData));
+		if (AdvancedScript::LogWindow::LogWindow_->FormLoaded) {
+			AdvancedScript::LogWindow::LogWindow_->RTBAppendText(charPTR2String(StringFormatInline_((TemplateClassFound->TemplateData))));
+		}
 		_plugin_logprintf(StringFormatInline_(TemplateClassFound->TemplateData));
 	}
 	return true;
 }
 
-static bool logTrace(int argc, char* argv[]) {
+static bool logxTrace(int argc, char* argv[]) {
 
 
 }
