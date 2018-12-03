@@ -6,6 +6,7 @@
 System::Void GetArg(String^ input,Generic::List<String^>^% arguments) { // this function use by refrence so the list will fill direct
 	arguments = gcnew Generic::List<String^>;
 	arguments->Clear(); /// we have to clear the arry just in case it have elements form previose process
+	if (!input->Contains(" ")) { return; }
 	input = input->Substring(input->IndexOf(" "), input->Length - input->IndexOf(" "))->Trim(); // remove first agument which is the Function call
 	String^ temp;
 	bool notfound = false;

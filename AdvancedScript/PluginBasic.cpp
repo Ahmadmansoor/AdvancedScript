@@ -1,5 +1,7 @@
 #include "pluginBasic.h"
 #include "Register_UnRegister_Commands.h"
+#include "HelperFunctions.h"
+#include "LogTemplate.h"
 #define plugin_name "AdvancedScript"
 #define plugin_version 1
 
@@ -28,10 +30,28 @@ PLUG_EXPORT void CBSTOPDEBUG(CBTYPE cbType, PLUG_CB_STOPDEBUG* info)
 	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
 		GuiDisableLog();
 	}
+	////////////////////
+	//here we will check if Tracer is Enable so we'll log to the file 
+	if (LogTraceOn) {
+		AdvancedScript::LogTemplate::LogTemplate::TemplateClass^ TemplateClassFound;
+		ManagedGlobals::
+		StringFormatInline_(TemplateClassFound->TemplateData);
+		if (GetTemplate("", TemplateClassFound)) {
+		}
+	}
+
 }
 
 PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
 {
+	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
+		GuiDisableLog();
+	}
+}
+
+PLUG_EXPORT void CBSTEPPED(CBTYPE cbType, PLUG_CB_STEPPED* info)
+{
+	duint x=Script::Register::Get(Script::Register::RIP);
 	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
 		GuiDisableLog();
 	}
