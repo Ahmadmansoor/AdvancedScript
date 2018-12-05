@@ -66,7 +66,7 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
-	_plugin_logprintf("[AdvancedScript] || Coded By AhmadMansoor /exetools ");
+	_plugin_logprintf("[AdvancedScript 1.2] || Coded By AhmadMansoor /exetools ");
 	_plugin_logprint(Str2ConstChar(Environment::NewLine));
 
 	/*if (!_plugin_registercommand(pluginHandle, "AdvancedScript", cbMainForm, false))
@@ -79,6 +79,9 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");*/
 
 	if (!_plugin_registercommand(pluginHandle, "LogxTemplateManager", LogxTemplateManager, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+
+	if (!_plugin_registercommand(pluginHandle, "logxwindow", logx_window, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 	if (!_plugin_registercommand(pluginHandle, "logx", logx, false))
@@ -225,7 +228,7 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct
 
 	//if ((arguments->Count != 2) && (arguments->Count != 1) && (arguments->Count != 3)) { _plugin_logprintf("worng arguments"); return false; }
-	if (arguments->Count != 3) { _plugin_logprintf("worng arguments"); return false; }
+	if ((arguments->Count != 3) && (arguments->Count != 1)) { _plugin_logprintf("worng arguments"); return false; }
 	if (arguments[0] != "on" && arguments[0] != "off")
 	{	_plugin_logprintf("worng arguments on/off"); return false;	}
 	if (arguments[0] == "on") {		
@@ -245,7 +248,8 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 		TraceFile_ = Str2ConstChar(Application::StartupPath + "\\LogTrace\\" + arguments[2] + ".txt");
 	}else if (arguments[0] == "off") {
 		LogTraceOn = false;
-		_plugin_logprintf("Trcer is off now");		
+		_plugin_logprintf("Trcer is off now");	
+		return false;
 	}	
 	
 	

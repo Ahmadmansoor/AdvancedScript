@@ -33,6 +33,8 @@ Register_UnRegister_Commands.cpp(85): warning C4129: 'A': unrecognized character
 Register_UnRegister_Commands.cpp(85): warning C4129: ' ': unrecognized character escape sequence
 Register_UnRegister_Commands.cpp(88): warning C4129: 'A': unrecognized character escape sequence
 Register_UnRegister_Commands.cpp(88): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(91): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(91): warning C4129: ' ': unrecognized character escape sequence
   Generating Code...
 e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(145): warning C4715: 'Str2bool': not all control paths return a value
 e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(50): warning C4700: uninitialized local variable 'segment' used
