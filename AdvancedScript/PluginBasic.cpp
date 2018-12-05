@@ -12,9 +12,12 @@ int hMenuDisasm;
 int hMenuDump;
 int hMenuStack;
 extern bool LogOff_;
+extern bool LogTraceOn;
+extern const char* TraceFile_;
+extern const char* TemplateData_;
+
 
 PROCESS_INFORMATION* fdProcessInfo_x;
-
 
 PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 {
@@ -30,16 +33,6 @@ PLUG_EXPORT void CBSTOPDEBUG(CBTYPE cbType, PLUG_CB_STOPDEBUG* info)
 	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
 		GuiDisableLog();
 	}
-	////////////////////
-	//here we will check if Tracer is Enable so we'll log to the file 
-	if (LogTraceOn) {
-		AdvancedScript::LogTemplate::LogTemplate::TemplateClass^ TemplateClassFound;
-		ManagedGlobals::
-		StringFormatInline_(TemplateClassFound->TemplateData);
-		if (GetTemplate("", TemplateClassFound)) {
-		}
-	}
-
 }
 
 PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
@@ -51,9 +44,19 @@ PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
 
 PLUG_EXPORT void CBSTEPPED(CBTYPE cbType, PLUG_CB_STEPPED* info)
 {
-	duint x=Script::Register::Get(Script::Register::RIP);
+	//duint x=Script::Register::Get(Script::Register::RIP);
 	if (LogOff_) { /// we will Enable Log on BP just so we make DisableLog
 		GuiDisableLog();
+	}
+	////////////////////
+	//here we will check if Tracer is Enable so we'll log to the file 
+	if (LogTraceOn) {
+		String^ templateRet = StringFormatInline_Str(CharArr2Str((char*)TemplateData_));
+		if (!IO::File::Exists(charPTR2String((char*)TraceFile_))) {
+			IO::FileStream^ x= IO::File::Create(charPTR2String((char*)TraceFile_));
+			x->Close();
+		}
+		IO::File::AppendAllText(charPTR2String((char*)TraceFile_), templateRet);
 	}
 }
 

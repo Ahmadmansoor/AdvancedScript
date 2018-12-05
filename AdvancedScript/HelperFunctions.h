@@ -20,6 +20,7 @@ const char* Str2ConstChar(System::String^ string_);
 bool Str2bool(String^ input_);
 bool OnlyHexInString(String^ test);
 char* StringFormatInline_(String^ format);
+String^ StringFormatInline_Str(String^ format);
 
 System::Void GetArg(String^ input, Generic::List<String^>^% arguments);
 

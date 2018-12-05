@@ -10,9 +10,8 @@ static bool logx(int argc, char* argv[]);
 static bool logx_window(int argc, char* argv[]);
 static bool logxTrace(int argc, char* argv[]);
 
-static bool LogTraceOn = false;
 ///////////////////////
 System::Void LoadTemplateFiles_();
-bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateClass^% TemplateClassFound);
+
 
 

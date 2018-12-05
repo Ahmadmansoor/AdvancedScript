@@ -34,6 +34,14 @@ char* StringFormatInline_(String^ format) {
 	return result;
 }
 
+String^ StringFormatInline_Str(String^ format) {
+	char* result = new char[MAX_STRING_SIZE];
+	size_t resultSize = MAX_STRING_SIZE;
+	const char* format_ = Str2ConstChar(format);
+	DbgFunctions()->StringFormatInline(format_, MAX_STRING_SIZE, result);
+	return charPTR2String(result);
+}
+
 String^ GetAPIName_LableWay(duint Addr_) {
 	SEGMENTREG segment;
 	char* text = new char[MAX_STRING_SIZE];
