@@ -24,7 +24,7 @@ it anable you to save and rename and delete template edit Template.
 note : Template Folder will be in the x64dbg folder root as LogTemplate.
 No parameters needed.
 ```
-![logxtemplatemanager](https://user-images.githubusercontent.com/7176580/49494711-021db500-f87a-11e8-995a-8ba256d8098f.png)
+![logxtemplatemanager](https://user-images.githubusercontent.com/7176580/49510131-c6e2ac80-f8a0-11e8-8594-421f880e829b.png)
 
 ////////////////////////////////////////////////////////////////////////////
 
