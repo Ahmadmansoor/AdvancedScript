@@ -48,6 +48,9 @@ namespace AdvancedScript {
 		}
 	public: System::Windows::Forms::RichTextBox^  RTB1;
 	public: System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
+	private: System::Windows::Forms::ContextMenuStrip^  CMS1;
+	public:
+	private: System::Windows::Forms::ToolStripMenuItem^  clearToolStripMenuItem;
 	public:
 	protected:
 
@@ -79,12 +82,17 @@ namespace AdvancedScript {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			this->RTB1 = (gcnew System::Windows::Forms::RichTextBox());
 			this->saveFileDialog1 = (gcnew System::Windows::Forms::SaveFileDialog());
+			this->CMS1 = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->clearToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->CMS1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// RTB1
 			// 
+			this->RTB1->ContextMenuStrip = this->CMS1;
 			this->RTB1->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->RTB1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
@@ -94,6 +102,19 @@ namespace AdvancedScript {
 			this->RTB1->Size = System::Drawing::Size(678, 404);
 			this->RTB1->TabIndex = 0;
 			this->RTB1->Text = L"";
+			// 
+			// CMS1
+			// 
+			this->CMS1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->clearToolStripMenuItem });
+			this->CMS1->Name = L"CMS1";
+			this->CMS1->Size = System::Drawing::Size(153, 48);
+			// 
+			// clearToolStripMenuItem
+			// 
+			this->clearToolStripMenuItem->Name = L"clearToolStripMenuItem";
+			this->clearToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->clearToolStripMenuItem->Text = L"Clear";
+			this->clearToolStripMenuItem->Click += gcnew System::EventHandler(this, &LogWindow::clearToolStripMenuItem_Click);
 			// 
 			// LogWindow
 			// 
@@ -105,6 +126,7 @@ namespace AdvancedScript {
 			this->Text = L"LogWindow";
 			this->FormClosed += gcnew System::Windows::Forms::FormClosedEventHandler(this, &LogWindow::LogWindow_FormClosed);
 			this->Load += gcnew System::EventHandler(this, &LogWindow::LogWindow_Load);
+			this->CMS1->ResumeLayout(false);
 			this->ResumeLayout(false);
 
 		}
@@ -140,5 +162,9 @@ namespace AdvancedScript {
 		
 
 
-	};
+	private: System::Void clearToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		Log_Str = "";
+		AdvancedScript::LogWindow::LogWindow_->RTB1->Text = "";
+	}
+};
 }

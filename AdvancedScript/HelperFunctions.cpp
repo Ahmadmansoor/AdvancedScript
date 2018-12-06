@@ -4,6 +4,7 @@
 
 
 System::Void GetArg(String^ input,Generic::List<String^>^% arguments) { // this function use by refrence so the list will fill direct
+	// the arguments are not include the Function name
 	arguments = gcnew Generic::List<String^>;
 	arguments->Clear(); /// we have to clear the arry just in case it have elements form previose process
 	if (!input->Contains(" ")) { return; }
@@ -125,7 +126,7 @@ String^ duint2Hex(duint input_) {
 }
 
 
-bool Str2bool(String^ input_) {
+bool Str2bool(String^ input_) { 
 	try
 	{
 		if (input_->Trim()->ToLower() == "true") {
@@ -135,6 +136,23 @@ bool Str2bool(String^ input_) {
 		{
 			return false;
 		}
+
+		if (input_->Trim()->ToLower() == "on") {
+			return true;
+		}
+		if (input_->Trim()->ToLower() == "off")
+		{
+			return false;
+		}
+
+		if (input_->Trim()->ToLower() == "1") {
+			return true;
+		}
+		if (input_->Trim()->ToLower() == "0")
+		{
+			return false;
+		}
+
 		Script::Gui::Message("The arrgaments can't convert to bool, the default value will be false");
 		return false;
 	}

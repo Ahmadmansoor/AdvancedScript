@@ -11,7 +11,7 @@ using namespace System::Windows::Forms;
 
 
 bool LogOff_ = false;
-
+bool log2LogWindowAtBP = false;
 bool LogTraceOn = false;
 
 
@@ -130,18 +130,32 @@ static bool cbMainForm(int argc, char* argv[])
 	return true;
 }
 
+//cbLogxJustAtBP arg1,arg2 
+//arg1=true/false-on/off-1/0 Enable to log at BP at x64dbg log window
+//arg1=true/false-on/off-1/0 Enable to log at BP at AdvancedScript log window << this one is optional
 static bool cbLogxJustAtBP(int argc, char* argv[]) {
-	if (argc != 2) { _plugin_logprintf("worng arguments"); return false; }
-	String^ temp = charPTR2String(argv[0]);
-	temp = temp->Substring(temp->IndexOf(" ") + 1, temp->Length - (temp->IndexOf(" ") + 1));
-	LogOff_ = Str2bool(temp);
-	if (LogOff_) {
-		GuiDisableLog();
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	switch (arguments->Count)
+	{
+	case 1: {
+		LogOff_ = Str2bool(arguments[0]);
+		if (LogOff_) {GuiDisableLog();
+		}else {	GuiEnableLog();}
+		break;
 	}
-	else {
-		GuiEnableLog();
+	case 2: {
+		LogOff_ = Str2bool(arguments[0]);
+		if (LogOff_) {
+			GuiDisableLog();
+		}else { GuiEnableLog(); }
+		log2LogWindowAtBP = Str2bool(arguments[1]);
+		break;
 	}
-
+	default:
+		_plugin_logprintf("worng arguments"); 
+		return false;		
+	}
 	return true;
 }
 
