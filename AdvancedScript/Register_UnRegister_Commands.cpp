@@ -14,6 +14,15 @@ bool LogOff_ = false;
 bool log2LogWindowAtBP = false;
 bool LogTraceOn = false;
 
+//class Class_ConBP_StringCompare_arg
+//{
+//public:
+//	duint addr;
+//	const char* Str2Compare= new char[MAX_STRING_SIZE];
+//};
+//Class_ConBP_StringCompare_arg Class_ConBP_StringCompare_arg_;
+//duint ConBP_StringCompare_arg1_Add;
+
 
 //Managed types cannot be declared in an unmanaged context.
 //Since.NET does not support global variables, attempting to declare a global variable
@@ -71,12 +80,12 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 
 	/*if (!_plugin_registercommand(pluginHandle, "AdvancedScript", cbMainForm, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");*/
-
-	if (!_plugin_registercommand(pluginHandle, "LogxJustAtBP", cbLogxJustAtBP, false))
+	if (!_plugin_registercommand(pluginHandle, "test_", test, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
-	/*if (!_plugin_registercommand(pluginHandle, "test_", test, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");*/
+	/////////Logx....
+	if (!_plugin_registercommand(pluginHandle, "LogxJustAtBP", cbLogxJustAtBP, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 	if (!_plugin_registercommand(pluginHandle, "LogxTemplateManager", LogxTemplateManager, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
@@ -89,7 +98,10 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 
 	if (!_plugin_registercommand(pluginHandle, "logxTrace", logxTrace, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	/////////Logx....//////////
 
+	if (!_plugin_registercommand(pluginHandle, "StrComp_BP", StrComp_BP, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 
 	//LoadTemplateFiles();
@@ -97,14 +109,28 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
-	if (argc != 2) { _plugin_logprintf("worng arguments"); return false; }
-	String^ temp = charPTR2String(argv[0]);
-	temp = temp->Substring(temp->IndexOf(" ") + 1, temp->Length - (temp->IndexOf(" ") + 1));
-	String^ xc = "Rax = 0 " + Environment::NewLine + "test work ";
-	int c = ManagedGlobals::TemplateClassList_->Count;
-	//xc->Replace("0", temp);
-	//static AdvancedScript::LogTemplate::TemplateClassList^ g;
-	_plugin_logprintf(Str2ConstChar(xc));
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	switch (arguments->Count)
+	{
+	case 1: {
+		char* text_ = new char[MAX_STRING_SIZE];
+		
+		//DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
+		_plugin_logprint(text_);
+		break;
+	}
+	case 2: {
+		
+		break;
+	}
+	default:
+		_plugin_logprintf("worng arguments");
+		return false;
+	}
+	return true;
+
+	
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static void ShowDialog_IATFixer()
@@ -140,21 +166,24 @@ static bool cbLogxJustAtBP(int argc, char* argv[]) {
 	{
 	case 1: {
 		LogOff_ = Str2bool(arguments[0]);
-		if (LogOff_) {GuiDisableLog();
-		}else {	GuiEnableLog();}
+		if (LogOff_) {
+			GuiDisableLog();
+		}
+		else { GuiEnableLog(); }
 		break;
 	}
 	case 2: {
 		LogOff_ = Str2bool(arguments[0]);
 		if (LogOff_) {
 			GuiDisableLog();
-		}else { GuiEnableLog(); }
+		}
+		else { GuiEnableLog(); }
 		log2LogWindowAtBP = Str2bool(arguments[1]);
 		break;
 	}
 	default:
-		_plugin_logprintf("worng arguments"); 
-		return false;		
+		_plugin_logprintf("worng arguments");
+		return false;
 	}
 	return true;
 }
@@ -172,10 +201,8 @@ static bool LogxTemplateManager(int argc, char* argv[]) {
 	return true;
 }
 
-
-
 static void ShowDialog_LogWindow()
-{	
+{
 	AdvancedScript::LogWindow::LogWindow_->ShowDialog();
 }
 static bool logx_window(int argc, char* argv[]) {
@@ -185,8 +212,6 @@ static bool logx_window(int argc, char* argv[]) {
 	thread_->Start();
 	return true;
 }
-
-
 
 static bool logx(int argc, char* argv[]) {  // it need agument Template name like this <<logx Template0>>
 	Generic::List<String^>^ arguments;
@@ -212,9 +237,7 @@ static bool logx(int argc, char* argv[]) {  // it need agument Template name lik
 	return true;
 }
 
-
-
-static void Show_DialogSave() {	
+static void Show_DialogSave() {
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
 	FolderBrowserDialog^ FolderBrowserDialog_ = gcnew FolderBrowserDialog();
 	FolderBrowserDialog_->ShowDialog();
@@ -229,12 +252,12 @@ static void Show_DialogSave() {
 		LogTraceOn = false;
 		_plugin_logprintf("Trcer is off now");
 		ManagedGlobals::TraceFilePath = "";
-	}else {
+	}
+	else {
 		//ManagedGlobals::TraceTemplate = TemplateClassFound->TemplateName;
 		ManagedGlobals::TraceTemplate = TemplateClassFound->TemplateData;
 	}
 }
-
 static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,TraceFilename
 	Generic::List<String^>^ arguments;
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
@@ -244,11 +267,13 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 	//if ((arguments->Count != 2) && (arguments->Count != 1) && (arguments->Count != 3)) { _plugin_logprintf("worng arguments"); return false; }
 	if ((arguments->Count != 3) && (arguments->Count != 1)) { _plugin_logprintf("worng arguments"); return false; }
 	if (arguments[0] != "on" && arguments[0] != "off")
-	{	_plugin_logprintf("worng arguments on/off"); return false;	}
-	if (arguments[0] == "on") {		
+	{
+		_plugin_logprintf("worng arguments on/off"); return false;
+	}
+	if (arguments[0] == "on") {
 		if (!IO::Directory::Exists(Application::StartupPath + "\\LogTrace")) {
 			IO::Directory::CreateDirectory(Application::StartupPath + "\\LogTrace");
-		}		
+		}
 		if (!GetTemplate(arguments[1], TemplateClassFound)) {
 			LogTraceOn = false;
 			_plugin_logprintf("worng Template name, Trcer is off now");
@@ -260,22 +285,23 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 		_plugin_logprintf("Trcer is on now");
 		LogTraceOn = true;
 		TraceFile_ = Str2ConstChar(Application::StartupPath + "\\LogTrace\\" + arguments[2] + ".txt");
-	}else if (arguments[0] == "off") {
+	}
+	else if (arguments[0] == "off") {
 		LogTraceOn = false;
-		_plugin_logprintf("Trcer is off now");	
+		_plugin_logprintf("Trcer is off now");
 		return false;
-	}	
-	
-	
+	}
+
+
 	// we will save direct on the x64dbg folder 
 	/*if ((arguments->Count != 2) && (arguments->Count != 1) && (arguments->Count != 3)) { _plugin_logprintf("worng arguments"); return false; }
 	if (arguments[0] == "on") {
 		LogTraceOn = true;
 		_plugin_logprintf("Trcer is on now");
-		//here we will ask the user where to save 
+		//here we will ask the user where to save
 		Threading::Thread^ thread = gcnew Threading::Thread(gcnew Threading::ThreadStart(&Show_DialogSave));
 		thread->SetApartmentState(Threading::ApartmentState::STA);
-		thread->Start();		
+		thread->Start();
 	}else if (arguments[0] == "off") {
 		LogTraceOn = false;
 		_plugin_logprintf("Trcer is off now");
@@ -283,5 +309,59 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 	}
 	ManagedGlobals::logxTraceArg2 = arguments[1];
 	ManagedGlobals::TraceFilename = arguments[2];*/
+	return true;
+}
+
+//Conditional breakpoint compare strings
+// ConBP_StringCompare resume(true/false), logTemplate , Address , UserString2Compare
+static bool StrComp_BP(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;	
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	if (!GetTemplate(arguments[1], TemplateClassFound)) {
+		LogTraceOn = false;
+		_plugin_logprintf("worng Template name");
+		return false;
+	}
+	switch ((arguments->Count))
+	{
+	case 4: {	
+		String^ addr_temp = StringFormatInline_Str(arguments[2]);
+		duint addr = Hex2duint(addr_temp);  /// the address of String in the memory targed which need to comapre with 
+		if (addr == -1) {
+			_plugin_logprintf(Str2ConstChar("can't Getting Address!! maybe you forget { , because it should follow x64dbg string format "));
+			return false;
+		}
+		char* Str2Compare_ = new char[MAX_STRING_SIZE];
+		String^ Target_Str2Compare;
+		if (DbgGetStringAt(addr, Str2Compare_)) {
+			Target_Str2Compare= CharArr2Str(Str2Compare_);
+		}else {			
+			_plugin_logprintf(Str2ConstChar("Can't read the string at this address: " + duint2Hex(addr)));
+			return false;
+		}
+		String^ UserStr =arguments[3];	
+		if (!Target_Str2Compare->ToLower()->Trim()->Contains(UserStr->ToLower()->Trim())) {
+			//Script::Debug::Run();
+			_plugin_logprintf(Str2ConstChar(Target_Str2Compare));
+
+		}
+		else {
+			if (Str2bool(arguments[0])) {  /// resume runing after hit the BP
+				DbgCmdExecDirect(Str2ConstChar("logx " + TemplateClassFound->TemplateName));
+				DbgCmdExec("run"); // we use this command because (Script::Debug::Run();) make starnge behavier 
+				// as it run in one thread so no command can respond later
+			}
+			else {
+				DbgCmdExecDirect(Str2ConstChar("logx " + TemplateClassFound->TemplateName));
+			}
+		}		
+		break;
+	}
+	default:
+		_plugin_logprintf("worng arguments");
+		return false;
+		break;
+	}
 	return true;
 }

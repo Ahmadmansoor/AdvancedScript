@@ -18,7 +18,9 @@ extern const char* TraceFile_;
 extern const char* TemplateData_;
 extern bool log2LogWindowAtBP;
 
+
 PROCESS_INFORMATION* fdProcessInfo_x;
+
 
 PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 {
@@ -33,7 +35,7 @@ PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 		}
 	}
 	/////////////////////////
-
+	
 }
 
 PLUG_EXPORT void CBSTOPDEBUG(CBTYPE cbType, PLUG_CB_STOPDEBUG* info)

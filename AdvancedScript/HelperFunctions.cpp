@@ -2,28 +2,60 @@
 #include <msclr/marshal.h>
 #include "LogTemplate.h"
 
+//C and C++ deal with backslashes as escape sequences by default.
+//You got to tell C to not use your backslash as an escape sequence by adding an extra backslash to your string.
+//These are the common escape sequences :
+//\a - Bell(beep)
+//\b - Backspace
+//\f - Formfeed
+//\n - New line
+//\r - Carriage Return
+//\t - Horizontal Tab
+//\\ - Backslash
+//\' - Single Quotation Mark
+//\" - Double Quatation Mark
+//\ooo - Octal Representation
+//\xdd - Hexadecimal Representaion
 
-System::Void GetArg(String^ input,Generic::List<String^>^% arguments) { // this function use by refrence so the list will fill direct
+
+System::Void GetArg(String^ input, Generic::List<String^>^% arguments) { // this function use by refrence so the list will fill direct
 	// the arguments are not include the Function name
 	arguments = gcnew Generic::List<String^>;
 	arguments->Clear(); /// we have to clear the arry just in case it have elements form previose process
 	if (!input->Contains(" ")) { return; }
 	input = input->Substring(input->IndexOf(" "), input->Length - input->IndexOf(" "))->Trim(); // remove first agument which is the Function call
 	String^ temp;
-	bool notfound = false;
+	//bool notfound = false;
 	for (size_t i = 0; i <= input->Length; i++)
 	{
 		if (i == input->Length) {
-			arguments->Add(temp->Trim());
-			temp = "";
+			if (temp->Trim() != "") {
+				arguments->Add(temp->Trim());
+				temp = "";
+			}
 			break;
 		}
-		if (input->Substring(i,1) != ",") {
-			temp = temp + input->Substring(i, 1);
-		}else {
-			arguments->Add(temp->Trim());			
+		if (input->Substring(i, 1) != ",") {
+			//if ((input->Substring(i, 1) != ",") && (input->Substring(i, 1) != "\"")) {
+			if (input->Substring(i, 1) != ",") {
+				temp = temp + input->Substring(i, 1);
+			}
+			//if (input->Substring(i, 1) == "\"") {  /// case some arguments have (") like a string >> "Test.txt"
+			//	String^ restTemp = input->Substring(i + 1, input->Length - (i + 1)); // get the rest of the string (input)
+			//	int indexOfNextcomma= restTemp->IndexOf("\"");
+			//	if (indexOfNextcomma < 1) {
+			//		Script::Gui::Message("Something Wrong in the arguments");
+			//		return;
+			//	}
+			//	arguments->Add(restTemp->Substring(0, indexOfNextcomma));
+			//	temp = "";
+			//	i = i + indexOfNextcomma + 1;
+			//}
+		}
+		else {
+			arguments->Add(temp->Trim());
 			temp = "";
-		}		
+		}
 	}
 }
 
@@ -59,9 +91,7 @@ const char* Str2ConstChar(System::String^ string_) {
 }
 
 
-bool OnlyHexInString(String^ test)
-{
-
+bool OnlyHexInString(String^ test) {  // it will remove 0x if it's at the beganing of the string
 	try
 	{
 		int x = Convert::ToInt64(test);
@@ -71,7 +101,7 @@ bool OnlyHexInString(String^ test)
 	{
 		return false;
 	}
-	
+
 }
 
 
@@ -103,21 +133,36 @@ String^ charPTR2String(char* input) {
 }
 
 duint Hex2duint(String^ input_) {
-	try
+	if (input_->Substring(0, 2)->ToLower() == "0x") {
+		input_ = input_->Substring(2, input_->Length - 2);
+	}	
+	for (size_t i = 0; i < input_->Length; i++)
 	{
-		return __int64::Parse(reMoveSpaces(input_), System::Globalization::NumberStyles::HexNumber);
+		if (!Information::IsNumeric(input_->Substring(i, 1)) && !Char::IsLetter(input_->Substring(i, 1),0)) {
+			return -1;
+		}
 	}
-	catch (const std::exception&)
-	{
-		return -1;
-	}
+	
+#ifdef _WIN64
+	return __int64::Parse(reMoveSpaces(input_), System::Globalization::NumberStyles::HexNumber);
+#else
+	return __int32::Parse(reMoveSpaces(input_), System::Globalization::NumberStyles::HexNumber);
+#endif //_WIN64
+
+
 }
 
 
 String^ duint2Hex(duint input_) {
 	try
 	{
+#ifdef _WIN64
 		return Conversion::Hex(input_);
+#else
+		int tem = input_;
+		return Conversion::Hex(tem);
+#endif //_WIN64
+
 	}
 	catch (const std::exception&)
 	{
@@ -126,13 +171,13 @@ String^ duint2Hex(duint input_) {
 }
 
 
-bool Str2bool(String^ input_) { 
+bool Str2bool(String^ input_) {
 	try
 	{
 		if (input_->Trim()->ToLower() == "true") {
 			return true;
 		}
-		if(input_->Trim()->ToLower() == "false")
+		if (input_->Trim()->ToLower() == "false")
 		{
 			return false;
 		}
