@@ -2,6 +2,19 @@
 
 It's just Functions which will help Plugin Coder , maybe in the future It will be as name it have :)
 
+////////////////////////////////////////////////////////////////////////////
+## History Section:
+```
+- version 1.3:
+      1- Add another argument to cbLogxJustAtBP for printing on LogxWindow.
+      2- now it accept bool argument like this (true/false-on/off-1/0).
+      3- add StrComp_BP function for compare string in memory at BP.
+      4- compiled x32.
+ ```
+
+////////////////////////////////////////////////////////////////////////////
+## Log Section:
+
 ### 1- LogxJustAtBP: 
 ```
 Enable user to Log Just At BP or HW-BP so the Log window will contain the Value's you log, nothing else.
@@ -10,12 +23,15 @@ ofc you have to set the Log at Edit BreakPoint Dialog,Like this:
 ![bp_box](https://user-images.githubusercontent.com/7176580/49206425-787a6d00-f3cb-11e8-91fb-7b961eef9853.png)
 ```
 using:
-      LogxJustAtBP true  /// Log at BreakPoints
-      LogxJustAtBP false /// Log as defaults 
+      LogxJustAtBP true,true  /// Log at BreakPoints on both Log window ( x64dbg and LogxWindow)
+      LogxJustAtBP false,false /// Log as defaults 
+      you can use another way to set the arguments Like :
+      LogxJustAtBP on,on     or    LogxJustAtBP 1,1
+      LogxJustAtBP off,off     or    LogxJustAtBP 0,0
 ```
 **note: use the last version of x64dbg.**
 
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////
 
 ### 2- LogxTemplateManager: 
 ```
@@ -26,7 +42,7 @@ No parameters needed.
 ```
 ![logxtemplatemanager](https://user-images.githubusercontent.com/7176580/49510131-c6e2ac80-f8a0-11e8-8594-421f880e829b.png)
 
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////
 
 ### 3- logxwindow: 
 ```
@@ -36,7 +52,7 @@ No parameters needed
 ```
 ![logxwindow](https://user-images.githubusercontent.com/7176580/49495151-7f95f500-f87b-11e8-867d-33458678005f.png)
 
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////
 
 ### 4- logx: 
 ```
@@ -47,7 +63,7 @@ usage:
 ```
 ![logx](https://user-images.githubusercontent.com/7176580/49495460-78231b80-f87c-11e8-9cef-6c66e118f0df.png)
 
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////
 
 ### 5- logxTrace: 
 ```
@@ -62,3 +78,13 @@ logxTrace P1,P2,P3
 sample:
 logxTrace off
 logxTrace on,Template0,test
+```
+////////////////////////////////////////////////////////////////////////////
+## Functions Section:
+
+### 1- StrComp_BP : 
+```
+
+
+```
+//////////////////////////////////
