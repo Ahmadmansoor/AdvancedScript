@@ -5,6 +5,9 @@ It's just Functions which will help Plugin Coder , maybe in the future It will b
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 1.4:
+      1- make StrCompx in separate Thread and add Sleep time to wait x64dbg to finish process.
+      2- Fix Hex2duint function add length check in case it less than 2 . 
 - version 1.3:
       1- Add another argument to cbLogxJustAtBP for printing on LogxWindow.
       2- now it accept bool argument like this (true/false-on/off-1/0).
@@ -84,7 +87,24 @@ logxTrace on,Template0,test
 
 ### 1- StrComp_BP : 
 ```
-
-
+used at the command of BP dialog to get the string at the address of memory , this Function use 
+Contains compare so no need to write all string it's enough to write part of it and function will
+find it.
+```
+![strcompx](https://user-images.githubusercontent.com/7176580/49727096-e73bae00-fc88-11e8-9548-d97e1057d692.png)
+```
+Parameter:
+StrCompx P1, P2 , P3 , P4
+      P1: resume after hit the BP (true/false - on/off - 1/0). 1: contiue , 0: stop
+      P2: log Template name ,it should defined in the LogxTemplateManager.
+      P3: memory Address which hold the string if it's number then no problem, if it's string 
+            (like [rsp+4]) it should follow x64dbg string format 
+ ```
+![string Formatting](https://x64dbg.readthedocs.io/en/latest/introduction/Formatting.html?highlight=string)          
+```
+      P4: UserString2Compare u can put any string you want but it should not contain ,
+sample:  
+ StrCompx 0,t1,{[esp+4]},x32dbg   // t1 name of the template
+ StrCompx 1,Template0,{rdx},MSCTFIME UI
 ```
 //////////////////////////////////
