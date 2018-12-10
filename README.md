@@ -85,7 +85,7 @@ logxTrace on,Template0,test
 ////////////////////////////////////////////////////////////////////////////
 ## Functions Section:
 
-### 1- StrComp_BP : 
+### 1- strcompx : 
 ```
 used at the command of BP dialog to get the string at the address of memory , this Function use 
 Contains compare so no need to write all string it's enough to write part of it and function will
