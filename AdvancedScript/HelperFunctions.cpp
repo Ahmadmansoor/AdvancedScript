@@ -133,16 +133,18 @@ String^ charPTR2String(char* input) {
 }
 
 duint Hex2duint(String^ input_) {
-	if (input_->Substring(0, 2)->ToLower() == "0x") {
-		input_ = input_->Substring(2, input_->Length - 2);
-	}	
+	if (input_->Length > 2) {
+		if (input_->Substring(0, 2)->ToLower() == "0x") {
+			input_ = input_->Substring(2, input_->Length - 2);
+		}
+	}
 	for (size_t i = 0; i < input_->Length; i++)
 	{
-		if (!Information::IsNumeric(input_->Substring(i, 1)) && !Char::IsLetter(input_->Substring(i, 1),0)) {
+		if (!Information::IsNumeric(input_->Substring(i, 1)) && !Char::IsLetter(input_->Substring(i, 1), 0)) {
 			return -1;
 		}
 	}
-	
+
 #ifdef _WIN64
 	return __int64::Parse(reMoveSpaces(input_), System::Globalization::NumberStyles::HexNumber);
 #else

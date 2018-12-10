@@ -13,7 +13,7 @@ using namespace System::Windows::Forms;
 bool LogOff_ = false;
 bool log2LogWindowAtBP = false;
 bool LogTraceOn = false;
-
+bool cx = false;
 //class Class_ConBP_StringCompare_arg
 //{
 //public:
@@ -38,6 +38,7 @@ public:
 	static String^ TraceFilename = "";
 	static String^ TraceTemplate = "";
 	static String^ logxTraceArg2 = ""; // we used we need to pass it to callback Show_DialogSave because pass parameter is a little complex :(
+	static String^ temp="";
 };
 
 const char* TraceFile_ = new char[MAX_STRING_SIZE]; // to get Trace file Path+name
@@ -100,7 +101,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 	/////////Logx....//////////
 
-	if (!_plugin_registercommand(pluginHandle, "StrComp_BP", StrComp_BP, false))
+	if (!_plugin_registercommand(pluginHandle, "StrCompx", StrCompx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 
@@ -115,13 +116,13 @@ static bool test(int argc, char* argv[]) {
 	{
 	case 1: {
 		char* text_ = new char[MAX_STRING_SIZE];
-		
+
 		//DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
 		_plugin_logprint(text_);
 		break;
 	}
 	case 2: {
-		
+
 		break;
 	}
 	default:
@@ -130,7 +131,7 @@ static bool test(int argc, char* argv[]) {
 	}
 	return true;
 
-	
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static void ShowDialog_IATFixer()
@@ -312,39 +313,57 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 	return true;
 }
 
+
+static bool StrCompx(int argc, char* argv[]) {
+	ManagedGlobals::temp =CharArr2Str(argv[0]);
+	Threading::Thread^ x = gcnew Threading::Thread(gcnew Threading::ThreadStart(&StrComp_BP));
+	x->Start();	
+	GuiUpdateCallStack();
+	return true;
+}
 //Conditional breakpoint compare strings
 // ConBP_StringCompare resume(true/false), logTemplate , Address , UserString2Compare
-static bool StrComp_BP(int argc, char* argv[]) {
+static void StrComp_BP() {
 	Generic::List<String^>^ arguments;
-	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;	
-	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
+	GetArg(ManagedGlobals::temp, arguments); // this function use by refrence so the list will fill direct	
 	if (!GetTemplate(arguments[1], TemplateClassFound)) {
 		LogTraceOn = false;
 		_plugin_logprintf("worng Template name");
-		return false;
+		return;
 	}
 	switch ((arguments->Count))
 	{
-	case 4: {	
+	case 4: {
 		String^ addr_temp = StringFormatInline_Str(arguments[2]);
 		duint addr = Hex2duint(addr_temp);  /// the address of String in the memory targed which need to comapre with 
 		if (addr == -1) {
 			_plugin_logprintf(Str2ConstChar("can't Getting Address!! maybe you forget { , because it should follow x64dbg string format "));
-			return false;
+			DbgCmdExec("run");
+			return;
 		}
-		char* Str2Compare_ = new char[MAX_STRING_SIZE];
-		String^ Target_Str2Compare;
-		if (DbgGetStringAt(addr, Str2Compare_)) {
-			Target_Str2Compare= CharArr2Str(Str2Compare_);
-		}else {			
-			_plugin_logprintf(Str2ConstChar("Can't read the string at this address: " + duint2Hex(addr)));
-			return false;
-		}
-		String^ UserStr =arguments[3];	
-		if (!Target_Str2Compare->ToLower()->Trim()->Contains(UserStr->ToLower()->Trim())) {
-			//Script::Debug::Run();
-			_plugin_logprintf(Str2ConstChar(Target_Str2Compare));
 
+		String^ Target_Str2Compare;
+		//Application::DoEvents();
+		Threading::Thread::Sleep(1000);
+		//Application::DoEvents();
+		
+		char* Str2Compare_ = new char[MAX_STRING_SIZE];		
+		if (DbgGetStringAt(addr, Str2Compare_)) {
+			Target_Str2Compare = CharArr2Str(Str2Compare_);			
+		}
+		else {
+			_plugin_logprintf(Str2ConstChar("Can't read the string at this address: " + duint2Hex(addr)));
+			DbgCmdExec("run");
+			return;
+		}
+
+		_plugin_logprintf(Str2ConstChar(Target_Str2Compare));
+
+		String^ UserStr = arguments[3];
+		if (!Target_Str2Compare->ToLower()->Trim()->Contains(UserStr->ToLower()->Trim())) {
+			_plugin_logprintf(Str2ConstChar(Target_Str2Compare));
+			DbgCmdExec("run");
 		}
 		else {
 			if (Str2bool(arguments[0])) {  /// resume runing after hit the BP
@@ -355,13 +374,13 @@ static bool StrComp_BP(int argc, char* argv[]) {
 			else {
 				DbgCmdExecDirect(Str2ConstChar("logx " + TemplateClassFound->TemplateName));
 			}
-		}		
+		}
 		break;
 	}
 	default:
 		_plugin_logprintf("worng arguments");
-		return false;
+		return;
 		break;
 	}
-	return true;
+	return;
 }

@@ -18,6 +18,7 @@ extern const char* TraceFile_;
 extern const char* TemplateData_;
 extern bool log2LogWindowAtBP;
 
+extern bool cx;
 
 PROCESS_INFORMATION* fdProcessInfo_x;
 
@@ -38,12 +39,18 @@ PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 	
 }
 
+PLUG_EXPORT void CBPAUSEDEBUG(CBTYPE cbType, PLUG_CB_PAUSEDEBUG* info)
+{
+	
+}
+
 PLUG_EXPORT void CBSTOPDEBUG(CBTYPE cbType, PLUG_CB_STOPDEBUG* info)
 {
 	//dprintf("hit breakpoint on address %p\n", info->breakpoint->addr);	
 	if (LogOff_) { /// we will disEnable Log because it's not BP
 		GuiDisableLog();
 	}
+	
 }
 
 PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)

@@ -1,41 +1,47 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  AdvancedScript.cpp
+  AssemblyInfo.cpp
   HelperFunctions.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 HelperFunctions.cpp(29): warning C4018: '<=': signed/unsigned mismatch
 HelperFunctions.cpp(97): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
 HelperFunctions.cpp(100): warning C4101: 'e': unreferenced local variable
-HelperFunctions.cpp(139): warning C4018: '<': signed/unsigned mismatch
+HelperFunctions.cpp(141): warning C4018: '<': signed/unsigned mismatch
   LogTemplate.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+  LogWindow.cpp
+  MainForm.cpp
   PluginBasic.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-PluginBasic.cpp(92): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+PluginBasic.cpp(99): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+  Parser.cpp
   Register_UnRegister_Commands.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-Register_UnRegister_Commands.cpp(41): warning C4091: 'static ': ignored on left of 'ManagedGlobals' when no variable is declared
-Register_UnRegister_Commands.cpp(66): warning C4018: '<': signed/unsigned mismatch
-Register_UnRegister_Commands.cpp(84): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(84): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(88): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(88): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(91): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(91): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(94): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(94): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(97): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(97): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(100): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(100): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(104): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(104): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(42): warning C4091: 'static ': ignored on left of 'ManagedGlobals' when no variable is declared
+Register_UnRegister_Commands.cpp(67): warning C4018: '<': signed/unsigned mismatch
+Register_UnRegister_Commands.cpp(85): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(85): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(89): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(89): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(92): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(92): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(95): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(95): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(98): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(98): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(101): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(101): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(105): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(105): warning C4129: ' ': unrecognized character escape sequence
   Generating Code...
-e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(208): warning C4715: 'Str2bool': not all control paths return a value
+e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(210): warning C4715: 'Str2bool': not all control paths return a value
 e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(83): warning C4700: uninitialized local variable 'segment' used
+  .NETFramework,Version=v4.5.2.AssemblyAttributes.cpp
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library ..\..\x32\plugins\AdvancedScript.lib and object ..\..\x32\plugins\AdvancedScript.exp
   AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x32\plugins\AdvancedScript.dll
