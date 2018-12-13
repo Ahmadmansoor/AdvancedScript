@@ -4,6 +4,7 @@
 #include "HelperFunctions.h"
 #include "Parser.h"
 #include "LogWindow.h"
+#include "ScriptFun.h"
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
@@ -14,14 +15,7 @@ bool LogOff_ = false;
 bool log2LogWindowAtBP = false;
 bool LogTraceOn = false;
 bool cx = false;
-//class Class_ConBP_StringCompare_arg
-//{
-//public:
-//	duint addr;
-//	const char* Str2Compare= new char[MAX_STRING_SIZE];
-//};
-//Class_ConBP_StringCompare_arg Class_ConBP_StringCompare_arg_;
-//duint ConBP_StringCompare_arg1_Add;
+
 
 
 //Managed types cannot be declared in an unmanaged context.
@@ -38,7 +32,7 @@ public:
 	static String^ TraceFilename = "";
 	static String^ TraceTemplate = "";
 	static String^ logxTraceArg2 = ""; // we used we need to pass it to callback Show_DialogSave because pass parameter is a little complex :(
-	static String^ temp="";
+	static String^ temp = "";
 };
 
 const char* TraceFile_ = new char[MAX_STRING_SIZE]; // to get Trace file Path+name
@@ -100,35 +94,43 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	if (!_plugin_registercommand(pluginHandle, "logxTrace", logxTrace, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 	/////////Logx....//////////
-
 	if (!_plugin_registercommand(pluginHandle, "StrCompx", StrCompx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
+	/////////Script Commands....//////////
+	if (!_plugin_registercommand(pluginHandle, "Varx", Varx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
-	//LoadTemplateFiles();
+	if (!_plugin_registercommand(pluginHandle, "GetVarx", GetVarx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+
+	if (!_plugin_registercommand(pluginHandle, "SetVarx", SetVarx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
-	Generic::List<String^>^ arguments;
-	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	switch (arguments->Count)
-	{
-	case 1: {
-		char* text_ = new char[MAX_STRING_SIZE];
+	//Generic::List<String^>^ arguments;
+	//GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	//switch (arguments->Count)
+	//{
+	//case 1: {
+	//	char* text_ = new char[MAX_STRING_SIZE];
 
-		//DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
-		_plugin_logprint(text_);
-		break;
-	}
-	case 2: {
+	//	//DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
+	//	_plugin_logprint(text_);
+	//	break;
+	//}
+	//case 2: {
 
-		break;
-	}
-	default:
-		_plugin_logprintf("worng arguments");
-		return false;
-	}
+	//	break;
+	//}
+	//default:
+	//	_plugin_logprintf("worng arguments");
+	//	return false;
+	//}
+	DbgScriptSetIp(3);
+	//DbgScriptCmdExec("{jmp res}");
 	return true;
 
 
@@ -315,14 +317,14 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 
 
 static bool StrCompx(int argc, char* argv[]) {
-	ManagedGlobals::temp =CharArr2Str(argv[0]);
+	ManagedGlobals::temp = CharArr2Str(argv[0]);
 	Threading::Thread^ x = gcnew Threading::Thread(gcnew Threading::ThreadStart(&StrComp_BP));
-	x->Start();	
+	x->Start();
 	GuiUpdateCallStack();
 	return true;
 }
 //Conditional breakpoint compare strings
-// ConBP_StringCompare resume(true/false), logTemplate , Address , UserString2Compare
+// StrCompx resume(true/false), logTemplate , Address , UserString2Compare
 static void StrComp_BP() {
 	Generic::List<String^>^ arguments;
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
@@ -347,10 +349,10 @@ static void StrComp_BP() {
 		//Application::DoEvents();
 		Threading::Thread::Sleep(1000);
 		//Application::DoEvents();
-		
-		char* Str2Compare_ = new char[MAX_STRING_SIZE];		
+
+		char* Str2Compare_ = new char[MAX_STRING_SIZE];
 		if (DbgGetStringAt(addr, Str2Compare_)) {
-			Target_Str2Compare = CharArr2Str(Str2Compare_);			
+			Target_Str2Compare = CharArr2Str(Str2Compare_);
 		}
 		else {
 			_plugin_logprintf(Str2ConstChar("Can't read the string at this address: " + duint2Hex(addr)));
@@ -383,4 +385,84 @@ static void StrComp_BP() {
 		break;
 	}
 	return;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Register Script commands 
+
+static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		Varx_(arguments[0], arguments[1]); // varvalue will make it ""
+		break;
+	}
+	case 3: {
+		Varx_(arguments[0], arguments[1], arguments[2]);
+		break;
+	}
+	default:
+		_plugin_logprintf("worng arguments");
+		break;
+	}
+	return true;
+}
+
+static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int index)
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 1: {  // case the var is int or str so the value at index=0
+		VarPara_temp^ x = GetVarx_(arguments[0], 0);
+		if (x->varname != "")
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+		break;
+	}
+	case 2: { // case the var is Array so we need the index of this array 
+		if (Information::IsNumeric(arguments[1])) {
+			VarPara_temp^ x = GetVarx_(arguments[0], Str2Int(arguments[1]));
+			if (x->varname != "")
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+		}
+		else {
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+		}
+		break;
+	}
+	default:
+		_plugin_logprintf("worng arguments");
+		break;
+	}
+	return true;
+}
+
+static bool SetVarx(int argc, char* argv[]) { //SetVarx_(String^ varname,String^ value_, int index_)
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {  // case the var is int or str so the value at index=0
+		SetVarx_(arguments[0], arguments[1], 0);
+		break;
+	}
+	case 3: { // case the var is Array so we need the index of this array 
+		if (Information::IsNumeric(arguments[1])) {
+			SetVarx_(arguments[0], arguments[1], 0);
+		}
+		else {
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+		}
+		break;
+	}
+	default:
+		_plugin_logprintf("worng arguments");
+		break;
+	}
+	return true;
 }

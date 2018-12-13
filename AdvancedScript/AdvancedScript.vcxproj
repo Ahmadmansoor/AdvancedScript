@@ -180,6 +180,7 @@
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Register_UnRegister_Commands.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ScriptFun.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdvancedScript.cpp" />
@@ -191,6 +192,7 @@
     <ClCompile Include="PluginBasic.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Register_UnRegister_Commands.cpp" />
+    <ClCompile Include="ScriptFun.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

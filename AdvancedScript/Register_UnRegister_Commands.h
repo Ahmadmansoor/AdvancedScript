@@ -11,6 +11,10 @@ static bool logx_window(int argc, char* argv[]);
 static bool logxTrace(int argc, char* argv[]);
 static void StrComp_BP();
 static bool StrCompx(int argc, char* argv[]);
+//Script Functions 
+static bool Varx(int argc, char* argv[]);
+static bool GetVarx(int argc, char* argv[]);
+static bool SetVarx(int argc, char* argv[]);
 ///////////////////////
 System::Void LoadTemplateFiles_();
 

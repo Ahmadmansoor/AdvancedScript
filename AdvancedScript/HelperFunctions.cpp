@@ -218,3 +218,14 @@ String^ reMoveSpaces(String^ input_) {
 	}
 	return temp;
 }
+
+int Str2Int(String^ input_) {
+	if (Information::IsNumeric(input_)) {
+		return Conversion::Val(input_);
+	}
+	else {
+		_plugin_logprintf("can't get int from argument");
+		return -1;
+	}
+	
+}
