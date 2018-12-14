@@ -66,6 +66,6 @@ static void VarListClear();
 void Varx_(String^ vartype, String^ varname, String^ varvalue = "");
 VarPara_temp^ GetVarx_(String^ varname, int index);
 bool SetVarx_(String^ varname, String^ value_, int index_=0);
-
+String^ argumentValue(String^ argument);
 
 

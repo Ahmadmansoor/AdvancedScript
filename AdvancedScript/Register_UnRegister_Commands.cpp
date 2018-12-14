@@ -448,15 +448,20 @@ static bool SetVarx(int argc, char* argv[]) { //SetVarx_(String^ varname,String^
 	switch ((arguments->Count))
 	{
 	case 2: {  // case the var is int or str so the value at index=0
-		SetVarx_(arguments[0], arguments[1], 0);
+		SetVarx_(arguments[0], argumentValue(arguments[1]), 0);
 		break;
 	}
 	case 3: { // case the var is Array so we need the index of this array 
 		if (Information::IsNumeric(arguments[1])) {
-			SetVarx_(arguments[0], arguments[1], 0);
+			SetVarx_(arguments[0], arguments[1],Str2Int(arguments[2]));
 		}
 		else {
+			String^ temp = argumentValue(arguments[1]);
+			if (Information::IsNumeric(temp)) {
+				SetVarx_(arguments[0], temp, 0);
+			}else{
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+			}
 		}
 		break;
 	}

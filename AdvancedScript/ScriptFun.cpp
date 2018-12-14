@@ -192,3 +192,18 @@ bool SetVarx_(String^ varname,String^ value_, int index_) {
 		return false;
 	}
 }
+
+
+String^ argumentValue(String^ argument) {
+	if (Information::IsNumeric(argument)) {
+		return argument;
+	}
+	if (argument->Contains("{")) {
+		return StringFormatInline_Str(argument);
+	}
+	if (argument->Contains("GetVarx_")) {  /// I will do it later
+
+	}
+
+}
+

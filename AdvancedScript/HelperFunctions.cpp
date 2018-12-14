@@ -36,6 +36,13 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments) { // this
 			break;
 		}
 		if (input->Substring(i, 1) != ",") {
+			if (input->Substring(i, 1) == "(") {  /// in case we find function call inside
+				do
+				{
+					temp = temp + input->Substring(i, 1);
+					i += 1;
+				} while ((input->Substring(i, 1) != ")" && i!=input->Length));
+			}
 			//if ((input->Substring(i, 1) != ",") && (input->Substring(i, 1) != "\"")) {
 			if (input->Substring(i, 1) != ",") {
 				temp = temp + input->Substring(i, 1);
