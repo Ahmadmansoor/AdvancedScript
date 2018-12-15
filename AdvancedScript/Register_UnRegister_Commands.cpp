@@ -424,8 +424,9 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 		break;
 	}
 	case 2: { // case the var is Array so we need the index of this array 
-		if (Information::IsNumeric(arguments[1])) {
-			VarPara_temp^ x = GetVarx_(arguments[0], Str2Int(arguments[1]));
+		String^ arguments1 = argumentValue(arguments[1]);
+		if (Information::IsNumeric(arguments1)) {
+			VarPara_temp^ x = GetVarx_(arguments[0], Str2Int(arguments1));
 			if (x->varname != "")
 				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
 		}
@@ -441,24 +442,24 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 	return true;
 }
 
-static bool SetVarx(int argc, char* argv[]) { //SetVarx_(String^ varname,String^ value_, int index_)
+static bool SetVarx(int argc, char* argv[]) { //SetVarx_(String^ varname, int index_,String^ value_)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
 
 	switch ((arguments->Count))
 	{
 	case 2: {  // case the var is int or str so the value at index=0
-		SetVarx_(arguments[0], argumentValue(arguments[1]), 0);
+		SetVarx_(arguments[0],0, argumentValue(arguments[1]));
 		break;
 	}
 	case 3: { // case the var is Array so we need the index of this array 
 		if (Information::IsNumeric(arguments[1])) {
-			SetVarx_(arguments[0], arguments[1],Str2Int(arguments[2]));
+			SetVarx_(arguments[0], Str2Int(arguments[1]), arguments[2]);
 		}
 		else {
 			String^ temp = argumentValue(arguments[1]);
 			if (Information::IsNumeric(temp)) {
-				SetVarx_(arguments[0], temp, 0);
+				SetVarx_(arguments[0],0, temp);
 			}else{
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
 			}

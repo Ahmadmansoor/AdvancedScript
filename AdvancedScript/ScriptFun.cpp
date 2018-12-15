@@ -1,55 +1,13 @@
 #include "ScriptFun.h"
 
-static public ref class VarPara
-{
-public:
-	VarPara(String^ vartype_, String^ varname_, String^ varvalue_, int i) {
-		if ((vartype_ == "str") || (vartype_ == "int")) {
-			vartype = vartype_;
-			varname = varname_;
-			varvalue = gcnew array<String^>(1);
-			if (vartype_ == "str")
-				varvalue[i] = varvalue_;
-			if (vartype_ == "int" && varvalue_ == "") {
-				varvalue[i] = "0";
-			}
-			else { varvalue[i] = varvalue_; }
-
-		}
-		if (vartype_ == "array") {
-			vartype = vartype_;
-			varname = varname_;
-			varvalue = gcnew array<String^>(500);
-			/*for each (String^ var in varvalue)
-			{
-				var = "";
-			}*/
-			varvalue[0] = varvalue_;
-		}
-		if ((vartype_ != "str") && (vartype_ != "int") && (vartype_ != "array")) {
-			vartype = "";
-			varname = "";
-			varvalue = gcnew array<String^>(1);
-			varvalue[0] = varvalue_;
-		}
-	}
-
-public:
-	String^ vartype;
-	String^ varname;
-	array <String^>^ varvalue;
-};
-
-static ref class ScriptFunList {
-public:
-	static Generic::List<VarPara^>^ VarList = gcnew Generic::List<VarPara^>;
-
-};
 
 static void VarListClear() {
 	ScriptFunList::VarList->Clear();
 }
-static bool Varexist(String^ varname, String^% vartype_, int% index) {	// true there is variable with same name
+bool Varexist(String^ varname, String^% vartype_, int% index) {	// true there is variable with same name
+	if (varname->StartsWith("$")) {  // in case we pass variable with $ like $x
+		varname = varname->Substring(1, varname->Length - 1);
+	}
 	index = 0;  // clear index ( as it's a refrence variable)
 	for each (VarPara^ var in ScriptFunList::VarList)
 	{
@@ -65,19 +23,23 @@ static bool Varexist(String^ varname, String^% vartype_, int% index) {	// true t
 // defealt value for varvalue="" and will chnaged later to "0" when var is int
 void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	vartype = vartype->ToLower();
+	if (varname->Contains(" ")) {
+		_plugin_logprintf("Variable must not have spaces");
+		return;
+	}
 	String^ retvartype = "";
 	if (vartype == "str") {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\"+ VarPara_->vartype + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname  +" \\" + VarPara_->vartype + " :has been added"));
 				return;
 			}
 			else {
@@ -92,14 +54,14 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + " :has been added"));
 				return;
 			}
 			else {
@@ -114,14 +76,14 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + " :has been added"));
 				return;
 			}
 			else {
@@ -136,24 +98,29 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 
 }
 
-VarPara_temp^ GetVarx_(String^ varname, int index_) {
+VarPara_temp^ GetVarx_byIndex(String^ varname, int index_) {
+	VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[index_]->vartype, ScriptFunList::VarList[index_]->varname, ScriptFunList::VarList[index_]->varvalue[index_], index_);
+	return x;
+}
+
+VarPara_temp^ GetVarx_(String^ varname, int Arrayindex_) {
 	int indexofVar = 0;
 	String^ retvartype = "";
 	if (Varexist(varname, retvartype, indexofVar)) {
-		if (index_ > 0 && retvartype == "array") {
-			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[index_], indexofVar);
+		if (Arrayindex_ > 0 && retvartype == "array") {
+			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[Arrayindex_], indexofVar);
 			return x;
 		}
-		if (index_ > 0 && retvartype != "array") {
+		if (Arrayindex_ > 0 && retvartype != "array") {
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
 			VarPara_temp^ x = gcnew VarPara_temp("", "", "", -1);
 			return x;
 		}
-		if (index_ == 0) {
+		if (Arrayindex_ == 0) {
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
 			return x;
 		}
-		if (index_ < 0) {
+		if (Arrayindex_ < 0) {
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));
 			VarPara_temp^ x = gcnew VarPara_temp("", "", "", -1);
 			return x;
@@ -166,12 +133,13 @@ VarPara_temp^ GetVarx_(String^ varname, int index_) {
 	}
 }
 
-bool SetVarx_(String^ varname,String^ value_, int index_) {
+bool SetVarx_(String^ varname, int index_, String^ value_) {
 	int indexofVar = 0;
 	String^ retvartype = "";
 	if (Varexist(varname, retvartype, indexofVar)) {
 		if (index_ > 0 && retvartype == "array") {				
 		ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;	
+		_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname +"[" + index_ + "]= " + value_ ));
 		return true;
 		}
 		if (index_ > 0 && retvartype != "array") {
@@ -180,11 +148,12 @@ bool SetVarx_(String^ varname,String^ value_, int index_) {
 		}
 		if (index_ == 0) {
 			ScriptFunList::VarList[indexofVar]->varvalue[0]=value_;
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "[" + index_ + "]= " + value_));
 			return true;
 		}			
 		if (index_ < 0) {
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));			
-			return true;
+			return false;
 		}
 	}
 	else {
@@ -194,16 +163,4 @@ bool SetVarx_(String^ varname,String^ value_, int index_) {
 }
 
 
-String^ argumentValue(String^ argument) {
-	if (Information::IsNumeric(argument)) {
-		return argument;
-	}
-	if (argument->Contains("{")) {
-		return StringFormatInline_Str(argument);
-	}
-	if (argument->Contains("GetVarx_")) {  /// I will do it later
-
-	}
-
-}
 
