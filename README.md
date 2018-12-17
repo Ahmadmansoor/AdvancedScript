@@ -95,13 +95,13 @@ SetVarx P1, P2 , P3
            SetVarx y,200,10 >>>  y[200]=10
 ```
 ### 3- GetVarx / PrintVarx : 
-set value to the virables in AdvancedScript vriable system.
+set value to the virables in AdvancedScript vriables system.
 ```
 Parameter:
 SetVarx P1, P2 
       P1: variable name, it must begin with $, because we need to get the value .
       P2: element index of the array , no need for int and str or value=0
-      P3: the value of the variable can used AVS, no need to use "".
+          the value of the variable can used AVS, no need to use "".
       
    sample :
          - varx int, x, 90   >>>> x=90
@@ -115,6 +115,25 @@ SetVarx P1, P2
            SetVarx y,100,testx >>>  y[100]=testx
            SetVarx y,100,testx >>>  y[100]=testx
            SetVarx y,200,10 >>>  y[200]=10
+```
+### 3- findallmemx : 
+it's same findallmem in x64dbg system, but it accept variables in the parameter.
+```
+Parameter:
+SetVarx P1, P2, P3 
+      P1: The address to start searching from.
+      P2: The byte pattern to search for. This byte pattern can contain wildcards (?)
+            for example: EB0?90??8D
+      P3: The size of the data to search in. Default is the entire memory map..
+                  >>all variable can used AVS<<
+   sample :
+         - varx str, search, "4533C94533C033"
+           varx str, base, { rdx }
+           findallmemx $base, $search
+           mov rdi, ref.addr(0)
+
+         - findallmem 0x10000, "4533C94533C033"
+           mov rdi, ref.addr(0)
 ```
 ////////////////////////////////////////////////////////////////////////////
 ## Log Section:
