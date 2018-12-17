@@ -15,6 +15,7 @@ static bool StrCompx(int argc, char* argv[]);
 static bool Varx(int argc, char* argv[]);
 static bool GetVarx(int argc, char* argv[]);
 static bool SetVarx(int argc, char* argv[]);
+static bool findallmemx(int argc, char* argv[]);
 ///////////////////////
 System::Void LoadTemplateFiles_();
 

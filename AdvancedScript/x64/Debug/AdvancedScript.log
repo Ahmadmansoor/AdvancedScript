@@ -2,23 +2,59 @@
   Parser.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-d:\code\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-d:\code\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-d:\code\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
 Parser.cpp(30): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Parser.cpp(37): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Parser.cpp(43): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Parser.cpp(69): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Parser.cpp(70): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Parser.cpp(85): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Parser.cpp(149): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(152): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(154): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(172): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(175): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(168): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(173): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Parser.cpp(177): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-d:\code\advancedscript\advancedscript\parser.cpp(200): warning C4715: 'tokens': not all control paths return a value
+Parser.cpp(204): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(209): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(213): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Register_UnRegister_Commands.cpp
+C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
+Register_UnRegister_Commands.cpp(36): warning C4091: 'static ': ignored on left of 'ManagedGlobals' when no variable is declared
+Register_UnRegister_Commands.cpp(63): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Register_UnRegister_Commands.cpp(64): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Register_UnRegister_Commands.cpp(79): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(79): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(83): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(83): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(86): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(86): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(89): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(89): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(92): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(92): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(95): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(95): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(98): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(98): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(102): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(102): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(105): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(105): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(107): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(107): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(111): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(111): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(113): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(113): warning C4129: ' ': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(116): warning C4129: 'A': unrecognized character escape sequence
+Register_UnRegister_Commands.cpp(116): warning C4129: ' ': unrecognized character escape sequence
+  Generating Code...
+e:\code\x64dbg\advancedscript\advancedscript\parser.cpp(270): warning C4715: 'tokens': not all control paths return a value
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library ..\..\x64\plugins\AdvancedScript.lib and object ..\..\x64\plugins\AdvancedScript.exp
-  AdvancedScript.vcxproj -> D:\Code\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
+  AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
   AdvancedScript.vcxproj -> ..\..\x64\plugins\AdvancedScript.pdb (Partial PDB)

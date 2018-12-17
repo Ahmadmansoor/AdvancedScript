@@ -27,19 +27,23 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		_plugin_logprintf("Variable must not have spaces");
 		return;
 	}
+	String^ varvalue_ = argumentValue(varvalue);  /// resolve vriable value
+	if (!varvalue_->StartsWith("NULL/")) {  /// that mean the argument is string
+		varvalue = varvalue_;
+	}
 	String^ retvartype = "";
 	if (vartype == "str") {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\"+ VarPara_->vartype + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + "\\" + VarPara_->vartype + "\\" + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname  +" \\" + VarPara_->vartype + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
 				return;
 			}
 			else {
@@ -52,16 +56,21 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	/////////////////////////////
 	if (vartype == "int") {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
+		if (!Information::IsNumeric(varvalue)) {   /// we have to check it the value is Numeric
+			Script::Gui::Message("This is not int value, it will not defined");
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :not been added"));
+			return;
+		}		
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
 				return;
 			}
 			else {
@@ -76,14 +85,14 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
 				return;
 			}
 			else {
@@ -137,30 +146,60 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {
 	int indexofVar = 0;
 	String^ retvartype = "";
 	if (Varexist(varname, retvartype, indexofVar)) {
-		if (index_ > 0 && retvartype == "array") {				
-		ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;	
-		_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname +"[" + index_ + "]= " + value_ ));
-		return true;
+		if (index_ > 0 && retvartype == "array") {
+			ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "[" + index_ + "]= " + value_));
+			return true;
 		}
 		if (index_ > 0 && retvartype != "array") {
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));			
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
 			return false;
 		}
 		if (index_ == 0) {
-			ScriptFunList::VarList[indexofVar]->varvalue[0]=value_;
+			ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "[" + index_ + "]= " + value_));
 			return true;
-		}			
+		}
 		if (index_ < 0) {
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));			
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));
 			return false;
 		}
 	}
 	else {
-		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));		
+		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
 		return false;
 	}
 }
 
-
+String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
+	String^ cmd_ = "findallmem ";
+	String^ base_s = argumentValue(base_);
+	if (!base_s->StartsWith("NULL/")) {
+		duint base_x = Hex2duint(base_s);
+		if (base_x != -1) {  /// check base
+			cmd_ = cmd_ + duint2Hex(base_x) + ",";
+			String^ Searchvalue_x = argumentValue(Searchvalue_);
+			if (!Searchvalue_x->StartsWith("NULL/")) {
+				cmd_ = cmd_ + Searchvalue_x;
+				if (Size_ != "") {    /// if user define the size
+					duint Size_x = Hex2duint(argumentValue(Size_));
+					if (Size_x != -1) {
+						cmd_ = cmd_ + "," + duint2Hex(Size_x);
+						return cmd_;
+					}
+					else
+						return "NULL/ ";
+				}
+				else {
+					return cmd_;
+				}
+			}
+			else
+				return "NULL/ ";
+		}
+		else
+			return "NULL/ ";
+	}else
+		return "NULL/ ";
+}
 

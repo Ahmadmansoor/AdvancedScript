@@ -70,7 +70,7 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
-	_plugin_logprintf("[AdvancedScript 1.2] || Coded By AhmadMansoor /exetools ");
+	_plugin_logprintf("[AdvancedScript 1.6] || Coded By AhmadMansoor /exetools ");
 	_plugin_logprint(Str2ConstChar(Environment::NewLine));
 
 	/*if (!_plugin_registercommand(pluginHandle, "AdvancedScript", cbMainForm, false))
@@ -103,8 +103,16 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 
 	if (!_plugin_registercommand(pluginHandle, "GetVarx", GetVarx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "PrintVarx", GetVarx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+
 
 	if (!_plugin_registercommand(pluginHandle, "SetVarx", SetVarx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "MovVarx", SetVarx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+
+	if (!_plugin_registercommand(pluginHandle, "findallmemx", findallmemx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 }
@@ -449,7 +457,7 @@ static bool SetVarx(int argc, char* argv[]) { //SetVarx_(String^ varname, int in
 	switch ((arguments->Count))
 	{
 	case 2: {  // case the var is int or str so the value at index=0
-		SetVarx_(arguments[0],0, argumentValue(arguments[1]));
+		SetVarx_(arguments[0], 0, argumentValue(arguments[1]));
 		break;
 	}
 	case 3: { // case the var is Array so we need the index of this array 
@@ -459,9 +467,10 @@ static bool SetVarx(int argc, char* argv[]) { //SetVarx_(String^ varname, int in
 		else {
 			String^ temp = argumentValue(arguments[1]);
 			if (Information::IsNumeric(temp)) {
-				SetVarx_(arguments[0],0, temp);
-			}else{
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+				SetVarx_(arguments[0], 0, temp);
+			}
+			else {
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
 			}
 		}
 		break;
@@ -471,4 +480,27 @@ static bool SetVarx(int argc, char* argv[]) { //SetVarx_(String^ varname, int in
 		break;
 	}
 	return true;
+}
+
+static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,String^ Size_) 
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = findallmemx_(arguments[0], arguments[1]);
+		DbgCmdExecDirect(Str2ConstChar(cmd));
+		return true;
+	}
+	case 3: {
+		String^ cmd = findallmemx_(arguments[0], arguments[1], arguments[2]);
+		DbgCmdExecDirect(Str2ConstChar(cmd));
+		return true;
+	}
+	default:
+		_plugin_logprintf("worng arguments");
+		break;
+	}
+	return false;
 }
