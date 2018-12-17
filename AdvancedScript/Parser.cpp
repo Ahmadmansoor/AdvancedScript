@@ -235,6 +235,17 @@ String^ tokens(String^ input, String^% VarString) {
 			return Conversion::Str(Conversion::Val(para1) * Conversion::Val(para2));
 	}
 
+	if (input->IndexOf("/") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
+		para1 = BackWard(input, input->IndexOf("/"), VarString1);
+		para2 = ForWard(input, input->IndexOf("/") + 1, VarString2);
+		VarString = VarString1 + "+" + VarString2;
+		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
+			return "NULL/ ";
+		else
+			return Conversion::Str(Conversion::Val(para1) / Conversion::Val(para2));
+
+	}
+
 	if (input->IndexOf("+") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("+"), VarString1);
 		para2 = ForWard(input, input->IndexOf("+") + 1, VarString2);
@@ -256,17 +267,7 @@ String^ tokens(String^ input, String^% VarString) {
 			return Conversion::Str(Conversion::Val(para1) - Conversion::Val(para2));
 
 	}
-
-	if (input->IndexOf("/") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
-		para1 = BackWard(input, input->IndexOf("/"), VarString1);
-		para2 = ForWard(input, input->IndexOf("/") + 1, VarString2);
-		VarString = VarString1 + "+" + VarString2;
-		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
-			return "NULL/ ";
-		else
-			return Conversion::Str(Conversion::Val(para1) / Conversion::Val(para2));
-
-	}
+	
 }
 
 String^ argumentValue(String^ argument) {

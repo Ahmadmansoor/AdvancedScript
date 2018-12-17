@@ -450,7 +450,8 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 	return true;
 }
 
-static bool SetVarx(int argc, char* argv[]) { //SetVarx_(String^ varname, int index_,String^ value_)
+
+static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int index_,String^ value_)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
 

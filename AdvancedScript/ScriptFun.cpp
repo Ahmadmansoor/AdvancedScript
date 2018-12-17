@@ -157,7 +157,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {
 		}
 		if (index_ == 0) {
 			ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "[" + index_ + "]= " + value_));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
 			return true;
 		}
 		if (index_ < 0) {
