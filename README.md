@@ -21,6 +21,7 @@ It's just Functions which will help Plugin Coder , maybe in the future It will b
 
 ////////////////////////////////////////////////////////////////////////////
 ## Script Section:
+```
 -arguments value system (AVS): all argument pass through Parser system recognizer,how it work:
       1- search for all {} which is releated x64dbg system and try to resolve it.
       2- search for all $ which it's related to defined variables of AdvancedScript and resolve it. 
@@ -30,7 +31,7 @@ It's just Functions which will help Plugin Coder , maybe in the future It will b
       - {x} + $y +2
       - {rax} + 5       // all numbera are decimal , hexadecimal not support yet .
       - {rax +2*rcx} + $x
-
+```
 ### 1- Varx: 
 it's Like Var in x64dbg system, for defining variable's which can used in Script commands.
 ```
