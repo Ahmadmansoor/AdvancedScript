@@ -5,6 +5,10 @@ It's just Functions which will help Plugin Coder , maybe in the future It will b
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 1.6:
+      1- add Parser system to recognize arguments.
+      2- begin build Script system.
+      3- add more Helper Functions.
 - version 1.4:
       1- make StrCompx in separate Thread and add Sleep time to wait x64dbg to finish process.
       2- Fix Hex2duint function add length check in case it less than 2 . 
@@ -15,6 +19,103 @@ It's just Functions which will help Plugin Coder , maybe in the future It will b
       4- compiled x32.
  ```
 
+////////////////////////////////////////////////////////////////////////////
+## Script Section:
+-arguments value system (AVS): all argument pass through Parser system recognizer,how it work:
+      1- search for all {} which is releated x64dbg system and try to resolve it.
+      2- search for all $ which it's related to defined variables of AdvancedScript and resolve it. 
+      3- search for all tokens by order ( * / + -) and resolve it. 
+ sample :
+      - $x +4/2 -1
+      - {x} + $y +2
+      - {rax} + 5       // all numbera are decimal , hexadecimal not support yet .
+      - {rax +2*rcx} + $x
+
+### 1- Varx: 
+it's Like Var in x64dbg system, for defining variable's which can used in Script commands.
+```
+Parameter:
+Varx P1, P2 , P3(optional) 
+      P1: variable type it holde ( str , int , array )  /// array is defined with 500 elements.
+      P2: variable name it should not have spaces or begin with $ , 
+        >>>>>>but when resolve it's value it should add $ before it.<<<< like this $x  >> value of x 
+      P3: the value of the variable it's optional for str and array only and the value will be null
+            for int type it should be have a value and must be int 
+            note : you can use variable for this arguments like $x or {rax}.
+            no need to use ""
+  sample :
+         - varx int, x, 90
+         - varx array, y, 1
+         - varx str, x, {rax}
+         - varx array, y
+         - varx str, x
+```
+### 2- SetVarx / MovVarx : 
+set value to the virables in AdvancedScript vriable system.
+```
+Parameter:
+SetVarx P1, P2 , P3
+      P1: variable name, it must (not) begin with $, because we need to assigned new value .
+      P2: element index of the array , no need for int and str or value=0
+      P3: the value of the variable can used AVS, no need to use "".
+      
+   sample :
+         - varx int, x, 90   >>>> x=90
+           SetVarx x,10    >>>> x=10
+         
+         - varx str, x, {rax}     >>> x=rax value
+           SetVarx x,test    >>> x=test
+         
+         - varx array, y
+           SetVarx y,0,test1   >>>  y[0]=test1 
+           SetVarx y,100,testx >>>  y[100]=testx
+           SetVarx y,100,testx >>>  y[100]=testx
+           SetVarx y,200,10 >>>  y[200]=10
+```
+### 3- SetVarx / MovVarx : 
+set value to the virables in AdvancedScript vriable system.
+```
+Parameter:
+SetVarx P1, P2 , P3
+      P1: variable name, it must (not) begin with $, because we need to assigned new value .
+      P2: element index of the array , no need for int and str or value=0
+      P3: the value of the variable can used AVS, no need to use "".
+      
+   sample :
+         - varx int, x, 90   >>>> x=90
+           SetVarx x,10    >>>> x=10
+         
+         - varx str, x, {rax}     >>> x=rax value
+           SetVarx x,test    >>> x=test
+         
+         - varx array, y
+           SetVarx y,0,test1   >>>  y[0]=test1 
+           SetVarx y,100,testx >>>  y[100]=testx
+           SetVarx y,100,testx >>>  y[100]=testx
+           SetVarx y,200,10 >>>  y[200]=10
+```
+### 3- GetVarx / PrintVarx : 
+set value to the virables in AdvancedScript vriable system.
+```
+Parameter:
+SetVarx P1, P2 
+      P1: variable name, it must begin with $, because we need to get the value .
+      P2: element index of the array , no need for int and str or value=0
+      P3: the value of the variable can used AVS, no need to use "".
+      
+   sample :
+         - varx int, x, 90   >>>> x=90
+           SetVarx x,10    >>>> x=10
+         
+         - varx str, x, {rax}     >>> x=rax value
+           SetVarx x,test    >>> x=test
+         
+         - varx array, y
+           SetVarx y,0,test1   >>>  y[0]=test1 
+           SetVarx y,100,testx >>>  y[100]=testx
+           SetVarx y,100,testx >>>  y[100]=testx
+           SetVarx y,200,10 >>>  y[200]=10
+```
 ////////////////////////////////////////////////////////////////////////////
 ## Log Section:
 
