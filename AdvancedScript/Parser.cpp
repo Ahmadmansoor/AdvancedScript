@@ -33,13 +33,21 @@ String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace) {
 				VarString2Replace = value_;
 				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
 			}
-		}
-		if (temp->Substring(i + 1, 1) == " ") { /// if the next letter is space
-			if (Varexist(value_, vartype, index_)) {
-				VarString2Replace = value_;
-				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
+			else {
+				return "NULL/ ";
 			}
-		}
+		}		
+		//if (i + 1 < temp->Length) {
+			if (temp->Substring(i + 1, 1) == " ") { /// if the next letter is space
+				if (Varexist(value_, vartype, index_)) {
+					VarString2Replace = value_;
+					return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
+				}
+			}
+		//}
+		/*else {
+			return "NULL/ ";
+		}*/
 		value_1 = value_1 + temp->Substring(i + 1, 1);
 		if ((Varexist(value_, vartype, index_)) && (!Varexist(value_1, vartype, index_t))) {
 			VarString2Replace = value_;
@@ -156,8 +164,8 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 	}
 	else
 	{
-		if (temp->Substring(tokenindex , 1) == " ") { /// if the next char of token is space we skip it  note we add 1 to tokenindex , so we are at next chat of token
-			temp = temp->Substring(tokenindex +1 , temp->Length - (tokenindex +1 ));  /// we pass this First space
+		if (temp->Substring(tokenindex, 1) == " ") { /// if the next char of token is space we skip it  note we add 1 to tokenindex , so we are at next chat of token
+			temp = temp->Substring(tokenindex + 1, temp->Length - (tokenindex + 1));  /// we pass this First space
 			VarString = " ";
 		}
 		else {
@@ -167,7 +175,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 		{
 			value_ = value_ + temp->Substring(i, 1);
 			if (i + 1 == temp->Length) { /// if this later is the end of string 
-				VarString =  VarString + value_;  /// in case VarString hold space
+				VarString = VarString + value_;  /// in case VarString hold space
 				return argumentValue(value_->Trim());
 			}
 			if (temp->Substring(i + 1, 1) == " ") {  /// as there are still some char's left (i + 1 > 0)	
@@ -227,7 +235,7 @@ String^ tokens(String^ input, String^% VarString) {
 	String^ para1 = ""; 	String^ para2 = "";
 	if (input->IndexOf("*") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("*"), VarString1);
-		para2 = ForWard(input, input->IndexOf("*") + 1 , VarString2);  // we begin after token
+		para2 = ForWard(input, input->IndexOf("*") + 1, VarString2);  // we begin after token
 		VarString = VarString1 + "*" + VarString2;
 		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
 			return "NULL/ ";
@@ -250,11 +258,44 @@ String^ tokens(String^ input, String^% VarString) {
 		para1 = BackWard(input, input->IndexOf("+"), VarString1);
 		para2 = ForWard(input, input->IndexOf("+") + 1, VarString2);
 		VarString = VarString1 + "+" + VarString2;
-		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
+
+		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2)) {
+			/*duint p1; duint p2; duint value1=-1; duint value2 = -1;
+			if (!CheckHexAddrIsValid(para1, value1)) {
+				if ((!Information::IsNumeric(para1))) {
+					_plugin_logprint(Str2ConstChar("NULL/ this is wrong:" + para1));
+					return "NULL/ ";
+				}
+				else
+				{
+					p1 = value1;
+				}
+				
+			}
+			else
+			{
+				p1 = value1;
+			}
+			if (!CheckHexAddrIsValid(para2, value2)) {
+				if ((!Information::IsNumeric(para2))) {
+					_plugin_logprint(Str2ConstChar("NULL/ this is wrong:" + para2));
+					return "NULL/ ";
+				}
+				else
+				{
+					p2 = value2;
+				}
+			}
+			else
+			{
+				p1 = value1;
+			}
+			return Conversion::Str(duint2Hex(p1 + p2));*/
+			_plugin_logprint("one of this arguments are not numeric");
 			return "NULL/ ";
+		}
 		else
 			return Conversion::Str(Conversion::Val(para1) + Conversion::Val(para2));
-
 	}
 
 	if (input->IndexOf("-") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
@@ -267,13 +308,18 @@ String^ tokens(String^ input, String^% VarString) {
 			return Conversion::Str(Conversion::Val(para1) - Conversion::Val(para2));
 
 	}
-	
+
 }
 
 String^ argumentValue(String^ argument) {
 	String^ Originalargument = argument;
 	if (Information::IsNumeric(argument)) {
 		return argument;
+	}
+	duint value;
+	if (CheckHexAddrIsValid(argument,value)) {
+		//return argument;
+		return Conversion::Str(value);
 	}
 	if ((argument->IndexOf("{") >= 0) && (argument->IndexOf("}", argument->IndexOf("{")) >= 0)) {
 		while (argument->IndexOf("{") >= 0)
@@ -335,27 +381,36 @@ String^ argumentValue(String^ argument) {
 	return argument;
 }
 
+
+
 bool CheckexcutedCmd(String^ cmd_) {
 	Generic::List<String^>^ arguments;
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
-	
-	if (cmd_->StartsWith("memdump")) {
-		GetArg(cmd_->Substring(7,cmd_->Length - 7), arguments,true);
+
+	if (cmd_->StartsWith("mem(") || cmd_->StartsWith("mem (")) {
+		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
+		String^ addr = argumentValue(arguments[0]);
+		String^ Size_ = argumentValue(arguments[1]);
+		if ( (addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ ")) ) {
+			_plugin_logprint("wrong arguments for memdump command");
+			return false;
+		}
 		switch (arguments->Count)
 		{
-		case 2: {
-			dumpmem(arguments[0], arguments[1]);
-			break;
+		case 2: {			
+			dumpmem(addr, Size_);
+			return true;
 		}
 		case 3: {
-			dumpmem(arguments[0], arguments[1], arguments[2]);
-			break;
+			dumpmem(addr, Size_, arguments[2]);
+			return true;
 		}
 		default:
 			_plugin_logprint("wrong arguments for memdump command");
-			break;
+			return false;
 		}
 	}
+	_plugin_logprint(Str2ConstChar(argumentValue(cmd_)));
 	return true;
 }
 

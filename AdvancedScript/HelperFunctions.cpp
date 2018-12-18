@@ -109,19 +109,43 @@ const char* Str2ConstChar(System::String^ string_) {
 }
 
 
-bool OnlyHexInString(String^ test) {  // it will remove 0x if it's at the beganing of the string
-	try
-	{
-		int x = Convert::ToInt64(test);
-		return true;
-	}
-	catch (MyException^ e)
-	{
+//bool OnlyHexInString(String^ test) {  // it will remove 0x if it's at the beganing of the string
+//	try
+//	{
+//		int x = Convert::ToInt64(test);
+//		return true;
+//	}
+//	catch (MyException^ e)
+//	{
+//		return false;
+//	}
+//
+//}
+bool CheckHexAddrIsValid(String^ input_,duint% value) {
+	// For C-style hex notation (0xFF) you can use @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z"
+	array <String^>^ c = { "0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","a","b","c","d","e","f" };
+#ifdef _WIN64
+	if ((input_->Length < 5) || (input_->Length > 16)) {		
+		value = -1; 
 		return false;
 	}
+#else
+	if ((input_->Length < 5) || (input_->Length > 8)) {
+		value = -1;
+		return false;
+	}
+#endif // _WIN64
+	for (size_t i = 0; i < input_->Length; i++)
+	{		
+		if ( Array::IndexOf ( c, input_->Substring(i, 1)) < 0 ) {
+			value = -1;
+			return false;
+		}
 
+	}
+	value = Hex2duint(input_);
+	return true;
 }
-
 
 String^ CharArr2Str(char input_[]) {
 	return gcnew String(input_);
@@ -280,11 +304,17 @@ String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newVal
 }
 
 String^ AddZero2Addr(String^ input) {
-	if (input->Length >= 8)
+#ifdef _WIN64
+	int len_ = 16;
+#else
+	int len_ = 8;
+#endif
+	if (input->Length >= len_)
 		return input;
-	int rest_ = 8 - input->Length;
-	for (size_t i = 0; i < input->Length; i++)
+	int rest_ = len_ - input->Length;
+	for (size_t i = 0; i < rest_; i++)
 	{
 		input = "0" + input;
 	}
+	return input;
 }

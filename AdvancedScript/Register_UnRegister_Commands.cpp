@@ -70,7 +70,7 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
-	_plugin_logprintf("[AdvancedScript 1.6] || Coded By AhmadMansoor /exetools ");
+	_plugin_logprintf("[AdvancedScript 1.8] || Coded By AhmadMansoor /exetools ");
 	_plugin_logprint(Str2ConstChar(Environment::NewLine));
 
 	/*if (!_plugin_registercommand(pluginHandle, "AdvancedScript", cbMainForm, false))
@@ -252,6 +252,8 @@ static bool logx(int argc, char* argv[]) {  // it need agument Template name lik
 		_plugin_logprintf("worng arguments");
 		return false;
 	}	
+
+
 	return true;
 }
 

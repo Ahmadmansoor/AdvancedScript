@@ -21,7 +21,7 @@ String^ AddZero2Addr(String^ input);
 
 const char* Str2ConstChar(System::String^ string_);
 bool Str2bool(String^ input_);
-bool OnlyHexInString(String^ test);
+bool CheckHexAddrIsValid(String^ input_, duint% value);
 char* StringFormatInline_(String^ format);
 String^ StringFormatInline_Str(String^ format);
 
