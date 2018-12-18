@@ -7,10 +7,12 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString);
 String^ ForWard(String^ input, int tokenindex, String^% VarString);
 String^ findScriptSystemVarValue(String^ input);
 String^ findVarValue(String^ input, String^% VarString);
-String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newValue);
-
+bool CheckexcutedCmd(String^ cmd_);
 
 //script test 
+
+//Logx memdump(76FA0000, 50)
+
 
 //varx str, search, "4533C94533C033"
 //varx str, base, { rdx }

@@ -1,7 +1,7 @@
 #pragma once
 #include "Parser.h"
 #include "ScriptFun.h"
-
+#include "LogTemplate.h"
 
 int GetRegisterIndex(String^ input_) {
 	array <String^>^ RegisterEnum_ = { "DR0" ,"DR1" ,"DR2" ,"DR3" ,"DR6" ,
@@ -335,16 +335,27 @@ String^ argumentValue(String^ argument) {
 	return argument;
 }
 
-
-String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newValue) {
-	String^ temp = "";
-	if (OriginalString->IndexOf(oldValue) >= 0) {
-		int indexBegin = OriginalString->IndexOf(oldValue);
-		int length_ = oldValue->Length;
-
-		temp = OriginalString->Substring(0, indexBegin) + newValue;
-		String^ x = OriginalString->Substring(indexBegin + length_, OriginalString->Length - (oldValue->Length + indexBegin));
-		temp = temp + x;
+bool CheckexcutedCmd(String^ cmd_) {
+	Generic::List<String^>^ arguments;
+	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
+	
+	if (cmd_->StartsWith("memdump")) {
+		GetArg(cmd_->Substring(7,cmd_->Length - 7), arguments,true);
+		switch (arguments->Count)
+		{
+		case 2: {
+			dumpmem(arguments[0], arguments[1]);
+			break;
+		}
+		case 3: {
+			dumpmem(arguments[0], arguments[1], arguments[2]);
+			break;
+		}
+		default:
+			_plugin_logprint("wrong arguments for memdump command");
+			break;
+		}
 	}
-	return temp;
+	return true;
 }
+

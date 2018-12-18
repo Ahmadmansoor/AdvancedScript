@@ -1,38 +1,15 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  Register_UnRegister_Commands.cpp
+  HelperFunctions.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
-Register_UnRegister_Commands.cpp(36): warning C4091: 'static ': ignored on left of 'ManagedGlobals' when no variable is declared
-Register_UnRegister_Commands.cpp(61): warning C4018: '<': signed/unsigned mismatch
-Register_UnRegister_Commands.cpp(79): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(79): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(83): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(83): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(86): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(86): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(89): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(89): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(92): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(92): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(95): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(95): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(98): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(98): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(102): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(102): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(105): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(105): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(107): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(107): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(111): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(111): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(113): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(113): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(116): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(116): warning C4129: ' ': unrecognized character escape sequence
+HelperFunctions.cpp(40): warning C4018: '<=': signed/unsigned mismatch
+HelperFunctions.cpp(115): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+HelperFunctions.cpp(118): warning C4101: 'e': unreferenced local variable
+HelperFunctions.cpp(159): warning C4018: '<': signed/unsigned mismatch
+HelperFunctions.cpp(242): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+HelperFunctions.cpp(255): warning C4018: '<': signed/unsigned mismatch
+e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(228): warning C4715: 'Str2bool': not all control paths return a value
+e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(101): warning C4700: uninitialized local variable 'segment' used
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library ..\..\x32\plugins\AdvancedScript.lib and object ..\..\x32\plugins\AdvancedScript.exp
   AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x32\plugins\AdvancedScript.dll

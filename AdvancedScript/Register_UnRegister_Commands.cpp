@@ -124,24 +124,29 @@ static bool test(int argc, char* argv[]) {
 	//{
 	//case 1: {
 	//	char* text_ = new char[MAX_STRING_SIZE];
-
 	//	//DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
 	//	_plugin_logprint(text_);
 	//	break;
 	//}
 	//case 2: {
-
 	//	break;
 	//}
 	//default:
 	//	_plugin_logprintf("worng arguments");
 	//	return false;
 	//}
-	DbgScriptSetIp(3);
 	//DbgScriptCmdExec("{jmp res}");
+
+
+	// for script goto line
+	//DbgScriptSetIp(3);
+	
+	SELECTIONDATA sel;
+	GuiSelectionGet(GUI_DUMP, &sel);
+	unsigned char* x = new unsigned char[255];
+	DbgMemRead(sel.start,x,16);
+	const char f = x[5];
 	return true;
-
-
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static void ShowDialog_IATFixer()
@@ -228,23 +233,25 @@ static bool logx(int argc, char* argv[]) {  // it need agument Template name lik
 	Generic::List<String^>^ arguments;
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct
-
-	if (arguments->Count != 1) { _plugin_logprintf("worng arguments"); return false; }
-	if (GetTemplate(arguments[0], TemplateClassFound)) {
-		////////////////////////////////
-		//const char* format; size_t resultSize; char* result = new char[MAX_STRING_SIZE];
-		//format = (Str2ConstChar(TemplateClassFound->TemplateData));
-		//DbgFunctions is a way to get any Functions vaule in the enum of it 
-		// here we get the String Format In a line
-		//DbgFunctions()->StringFormatInline(format, MAX_STRING_SIZE, result);
-		//_plugin_logprintf(result);
-		////////////////////////////////	
-		AdvancedScript::LogWindow::LogWindow_->Log_Str = AdvancedScript::LogWindow::Log_Str + Environment::NewLine + charPTR2String(StringFormatInline_(TemplateClassFound->TemplateData));
-		if (AdvancedScript::LogWindow::LogWindow_->FormLoaded) {
-			AdvancedScript::LogWindow::LogWindow_->RTBAppendText(charPTR2String(StringFormatInline_((TemplateClassFound->TemplateData))));
+	switch ((arguments->Count))
+	{
+	case 1: {
+		if (GetTemplate(arguments[0], TemplateClassFound)) {
+			AdvancedScript::LogWindow::LogWindow_->Log_Str = AdvancedScript::LogWindow::Log_Str + Environment::NewLine + charPTR2String(StringFormatInline_(TemplateClassFound->TemplateData));
+			if (AdvancedScript::LogWindow::LogWindow_->FormLoaded) {
+				AdvancedScript::LogWindow::LogWindow_->RTBAppendText(charPTR2String(StringFormatInline_((TemplateClassFound->TemplateData))));
+			}
+			_plugin_logprintf(StringFormatInline_(TemplateClassFound->TemplateData));
 		}
-		_plugin_logprintf(StringFormatInline_(TemplateClassFound->TemplateData));
-	}
+		else {
+			CheckexcutedCmd(arguments[0]);
+		}
+		break;
+	}	
+	default:
+		_plugin_logprintf("worng arguments");
+		return false;
+	}	
 	return true;
 }
 

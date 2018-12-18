@@ -18,12 +18,23 @@
 //\xdd - Hexadecimal Representaion
 
 
-System::Void GetArg(String^ input, Generic::List<String^>^% arguments) { // this function use by refrence so the list will fill direct
+System::Void GetArg(String^ input, Generic::List<String^>^% arguments , bool brackets) { // this function use by refrence so the list will fill direct
 	// the arguments are not include the Function name
 	arguments = gcnew Generic::List<String^>;
 	arguments->Clear(); /// we have to clear the arry just in case it have elements form previose process
-	if (!input->Contains(" ")) { return; }
-	input = input->Substring(input->IndexOf(" "), input->Length - input->IndexOf(" "))->Trim(); // remove first agument which is the Function call
+	
+	if (brackets) {
+		if (input->IndexOf(")") < 0) {
+			_plugin_logprint("missing ) in brackets Phrase");
+			return;
+		}
+		input = input->Substring ( input->IndexOf("(") + 1, input->Length - (input->IndexOf("(") + 1)); ///remove after first (		
+		input = input->Substring(0, input->IndexOf(")"));		
+	}
+	else {
+		if (!input->Contains(" ")) { return; }
+		input = input->Substring(input->IndexOf(" "), input->Length - input->IndexOf(" "))->Trim(); // remove first agument which is the Function call
+	}	
 	String^ temp;
 	//bool notfound = false;
 	for (size_t i = 0; i <= input->Length; i++)
@@ -235,4 +246,45 @@ int Str2Int(String^ input_) {
 		return -1;
 	}
 	
+}
+
+String^ str2Asci(String^ input) {
+	String^ temp ;
+	if (input->Length < 2)
+		return "NULL/ ";
+	for (size_t i = 0; i < input->Length; i+=2)
+	{		
+		if ((input->Substring(i, 2) == "90") || (input->Substring(i, 2) == "00")) {
+			temp = temp + ".";
+		}
+		else {
+			int value = Convert::ToInt32(input->Substring(i, 2), 16);
+			temp = temp + Char::ConvertFromUtf32(value);
+		}		
+	}
+	return temp;
+}
+
+
+String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newValue) {
+	String^ temp = "";
+	if (OriginalString->IndexOf(oldValue) >= 0) {
+		int indexBegin = OriginalString->IndexOf(oldValue);
+		int length_ = oldValue->Length;
+
+		temp = OriginalString->Substring(0, indexBegin) + newValue;
+		String^ x = OriginalString->Substring(indexBegin + length_, OriginalString->Length - (oldValue->Length + indexBegin));
+		temp = temp + x;
+	}
+	return temp;
+}
+
+String^ AddZero2Addr(String^ input) {
+	if (input->Length >= 8)
+		return input;
+	int rest_ = 8 - input->Length;
+	for (size_t i = 0; i < input->Length; i++)
+	{
+		input = "0" + input;
+	}
 }

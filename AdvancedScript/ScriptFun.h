@@ -113,4 +113,4 @@ VarPara_temp^ GetVarx_(String^ varname, int Arrayindex_);
 bool SetVarx_(String^ varname, int index_, String^ value_);
 String^ argumentValue(String^ argument);
 String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_="");
-
+bool dumpmem(String^ addr, String^ size, String^ para = "");
