@@ -140,11 +140,11 @@ static bool test(int argc, char* argv[]) {
 
 	// for script goto line
 	//DbgScriptSetIp(3);
-	
+
 	SELECTIONDATA sel;
 	GuiSelectionGet(GUI_DUMP, &sel);
 	unsigned char* x = new unsigned char[255];
-	DbgMemRead(sel.start,x,16);
+	DbgMemRead(sel.start, x, 16);
 	const char f = x[5];
 	return true;
 }
@@ -247,11 +247,11 @@ static bool logx(int argc, char* argv[]) {  // it need agument Template name lik
 			CheckexcutedCmd(arguments[0]);
 		}
 		break;
-	}	
+	}
 	default:
 		_plugin_logprintf("worng arguments");
 		return false;
-	}	
+	}
 
 
 	return true;
@@ -422,7 +422,7 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		break;
 	}
 	default:
-		_plugin_logprintf("worng arguments");
+		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;
 	}
 	return true;
@@ -435,25 +435,25 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 	switch ((arguments->Count))
 	{
 	case 1: {  // case the var is int or str so the value at index=0
-		VarPara_temp^ x = GetVarx_(arguments[0], 0);
-		if (x->varname != "")
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+		GetVarx_(arguments[0], 0);
 		break;
 	}
 	case 2: { // case the var is Array so we need the index of this array 
 		String^ arguments1 = argumentValue(arguments[1]);
-		if (Information::IsNumeric(arguments1)) {
-			VarPara_temp^ x = GetVarx_(arguments[0], Str2Int(arguments1));
-			if (x->varname != "")
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+		//////////////////////////////////////////////////
+		duint intvalue = 0;
+		if (CheckHexIsValid(arguments1, intvalue)) {
+			GetVarx_(arguments[0], Str2Int(arguments1));			
 		}
 		else {
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
 		}
 		break;
+
+		//////////////////////////////////////////////////
 	}
 	default:
-		_plugin_logprintf("worng arguments");
+		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;
 	}
 	return true;
@@ -471,18 +471,24 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 		break;
 	}
 	case 3: { // case the var is Array so we need the index of this array 
-		if (Information::IsNumeric(arguments[1])) {
-			SetVarx_(arguments[0], Str2Int(arguments[1]), arguments[2]);
+		String^ temp = argumentValue(arguments[1]);
+		SetVarx_(arguments[0], Str2Int(temp), arguments[2]);
+		/*duint intValue = 0; bool Hextype_;
+		if (CheckHexIsValid(arguments[1], intValue, Hextype_)) {
+			if (Hextype_) 
+				SetVarx_(arguments[0], intValue, arguments[2]);
+			else			
+			SetVarx_(arguments[0], intValue, arguments[2]);
 		}
 		else {
 			String^ temp = argumentValue(arguments[1]);
 			if (Information::IsNumeric(temp)) {
-				SetVarx_(arguments[0], 0, temp);
+				SetVarx_(arguments[0],Str2Int(temp), arguments[2]);
 			}
 			else {
 				_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
 			}
-		}
+		}*/
 		break;
 	}
 	default:
@@ -495,7 +501,7 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,String^ Size_) 
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	
+
 	switch ((arguments->Count))
 	{
 	case 2: {

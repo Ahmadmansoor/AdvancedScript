@@ -3,6 +3,13 @@
 #include "ScriptFun.h"
 #include "LogTemplate.h"
 
+//////////////////////////////////////////////
+//notes:
+//- all numbers are decimal
+//- all hex numbers are begin with 0x  x small latter
+
+//////////////////////////////////////////////
+
 int GetRegisterIndex(String^ input_) {
 	array <String^>^ RegisterEnum_ = { "DR0" ,"DR1" ,"DR2" ,"DR3" ,"DR6" ,
 		"DR7" ,"EAX" ,"AX" ,"AH" ,"AL" ,"EBX" ,"BX" ,"BH" ,"BL" ,"ECX" ,
@@ -36,14 +43,14 @@ String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace) {
 			else {
 				return "NULL/ ";
 			}
-		}		
+		}
 		//if (i + 1 < temp->Length) {
-			if (temp->Substring(i + 1, 1) == " ") { /// if the next letter is space
-				if (Varexist(value_, vartype, index_)) {
-					VarString2Replace = value_;
-					return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
-				}
+		if (temp->Substring(i + 1, 1) == " ") { /// if the next letter is space
+			if (Varexist(value_, vartype, index_)) {
+				VarString2Replace = value_;
+				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
 			}
+		}
 		//}
 		/*else {
 			return "NULL/ ";
@@ -68,8 +75,13 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 		VarString = "$";
 		input = input->Substring(1, input->Length - 1);  // we reomved $ from the begining 
 	}
-	if (input->IndexOf("[") > 0) {  // var is Array  /// must be bigger than 0 because var has name ;)			
-		var_ = input->Substring(0, input->IndexOf("[") - 1);  // get Var name		
+	if (input->IndexOf("[") > 0) {  // variable is Array  /// must be bigger than 0 because var has name ;)			
+		var_ = input->Substring(0, input->IndexOf("[") - 1);  // get Var name	
+		/// need to check if this value is variable too we need to pass it to argumentValue
+		var_ = argumentValue(var_);
+		if (var_->StartsWith("NULL/ ")) {
+			return "NULL/ Can't resolve index of the variable" + input;
+		}
 		if (Varexist(var_->Trim(), vartype_, indexofVar)) { /// check if var exist  // we clear space here just , because we need to build VarString
 			if (vartype_ == "array" && input->IndexOf("]") > 0) { // var type must be array and the rest of string must have close ]
 				for (size_t i = input->IndexOf("[") + 1; i < input->Length; i++) //get index of var
@@ -233,6 +245,7 @@ String^ tokens(String^ input, String^% VarString) {
 	String^ VarString1 = "";
 	String^ VarString2 = "";
 	String^ para1 = ""; 	String^ para2 = "";
+
 	if (input->IndexOf("*") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("*"), VarString1);
 		para2 = ForWard(input, input->IndexOf("*") + 1, VarString2);  // we begin after token
@@ -270,7 +283,7 @@ String^ tokens(String^ input, String^% VarString) {
 				{
 					p1 = value1;
 				}
-				
+
 			}
 			else
 			{
@@ -311,25 +324,54 @@ String^ tokens(String^ input, String^% VarString) {
 
 }
 
-String^ argumentValue(String^ argument) {
-	String^ Originalargument = argument;
-	if (Information::IsNumeric(argument)) {
+String^ findHexValue(String^ input) {
+	String^ temp;
+	if (input->IndexOf("0x") >= 0) {
+		input = input->Substring(input->IndexOf("0x") + 2, input->Length - (input->IndexOf("0x") + 2));
+	}
+	else
+	{
+		return "NULL/ ";
+	}
+	for (size_t i = 0; i < input->Length; i++)
+	{
+		if (CheckHexIsValid(input->Substring(i, 1))) {
+			temp = temp + input->Substring(i, 1);
+			if (i + 1 <= input->Length) {
+				if (CheckHexIsValid(input->Substring(i+1, 1))) {
+					return temp;
+				}
+			}
+		}
+	}
+	return temp;
+}
+
+String^ argumentValue(String^ argument) {  /// return the value of the argument as string
+	//String^ Originalargument = argument;
+	if (Information::IsNumeric(argument)) {   /// check if int number
 		return argument;
 	}
-	duint value;
-	if (CheckHexAddrIsValid(argument,value)) {
-		//return argument;
-		return Conversion::Str(value);
+	if (argument->IndexOf("0x") >= 0) {  /// check if hex
+		while (argument->IndexOf("0x") >= 0) {
+			String^ replaceValue = "";
+			String^ oldvalue = argument->Substring(argument->IndexOf("0x"), argument->Length - argument->IndexOf("0x"));
+			replaceValue = int2Str(Hex2duint(findHexValue(oldvalue)));
+			if (!replaceValue->StartsWith("NULL/")) {
+				argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
+			}
+			else			
+				return "NULL/ ";
+		}
 	}
+
 	if ((argument->IndexOf("{") >= 0) && (argument->IndexOf("}", argument->IndexOf("{")) >= 0)) {
-		while (argument->IndexOf("{") >= 0)
-		{
-			String^ replaceValue = "";// argument->Substring(argument->IndexOf("{") + 1, argument->IndexOf("}") - 1);
+		while (argument->IndexOf("{") >= 0) {
+			String^ replaceValue = "";
 			String^ oldvalue = argument->Substring(argument->IndexOf("{"), argument->IndexOf("}") + 1);
 			replaceValue = findScriptSystemVarValue(oldvalue);
 			if (!replaceValue->StartsWith("NULL/")) {
 				argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
-				//argument = argument->Substring(oldvalue->Length, argument->Length - oldvalue->Length);
 			}
 			else
 			{
@@ -338,7 +380,7 @@ String^ argumentValue(String^ argument) {
 
 		}
 	}
-	/// find Variable Local System from VarList all variable should have $ at the begining like $x or $x[1]
+	/// find Variables Local System from VarList ,all variable should have $ at the begining like $x or $x[1]
 	if (argument->Contains("$")) {
 		while (argument->IndexOf("$") >= 0)
 		{
@@ -373,10 +415,10 @@ String^ argumentValue(String^ argument) {
 		}
 	}
 
-	if (Originalargument == argument) {
+	/*if (Originalargument == argument) {
 		_plugin_logprint("This argument not pass the check");
 		return "NULL/ ";
-	}
+	}*/
 
 	return argument;
 }
@@ -391,13 +433,13 @@ bool CheckexcutedCmd(String^ cmd_) {
 		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
 		String^ addr = argumentValue(arguments[0]);
 		String^ Size_ = argumentValue(arguments[1]);
-		if ( (addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ ")) ) {
+		if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
 			_plugin_logprint("wrong arguments for memdump command");
 			return false;
 		}
 		switch (arguments->Count)
 		{
-		case 2: {			
+		case 2: {
 			dumpmem(addr, Size_);
 			return true;
 		}

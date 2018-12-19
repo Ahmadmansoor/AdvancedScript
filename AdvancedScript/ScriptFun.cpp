@@ -31,19 +31,24 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	if (!varvalue_->StartsWith("NULL/")) {  /// that mean the argument is string
 		varvalue = varvalue_;
 	}
+	else
+	{
+		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "Can't get hex value, var not been added"));
+		return;
+	}
 	String^ retvartype = "";
 	if (vartype == "str") {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + "\\" + VarPara_->vartype + "\\" + " :has been added"));
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "= "+ varvalue + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " +VarPara_->varname  + "= " + varvalue + " :has been added"));
 				return;
 			}
 			else {
@@ -56,21 +61,24 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	/////////////////////////////
 	if (vartype == "int") {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
-		if (!Information::IsNumeric(varvalue)) {   /// we have to check it the value is Numeric
-			Script::Gui::Message("This is not int value, it will not defined");
+		duint intValue_=0;
+		/// we have to check it if the value is Numeric or hex 
+		if (!CheckHexIsValid(varvalue, intValue_)) {   
+			Script::Gui::Message("This is not hex value can converted to int, it will not defined");
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :not been added"));
 			return;
-		}		
+		}	
+		//VarPara_->varvalue[0] = Conversion::Str(intValue_);  // now we set the value as duint >>> no need we will save the value as hex in the var
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= " + varvalue + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= " + varvalue + " :has been added"));
 				return;
 			}
 			else {
@@ -85,14 +93,14 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine +VarPara_->vartype + " " + VarPara_->varname  + "[0]" + "= " + varvalue + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " \\" + VarPara_->vartype + "\\" + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[0]" + "= " + varvalue + " :has been added"));
 				return;
 			}
 			else {
@@ -112,39 +120,50 @@ VarPara_temp^ GetVarx_byIndex(String^ varname, int index_) {
 	return x;
 }
 
-VarPara_temp^ GetVarx_(String^ varname, int Arrayindex_) {
+Void GetVarx_(String^ varname, int Arrayindex_) {
 	int indexofVar = 0;
 	String^ retvartype = "";
 	if (Varexist(varname, retvartype, indexofVar)) {
 		if (Arrayindex_ > 0 && retvartype == "array") {
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[Arrayindex_], indexofVar);
-			return x;
+			_plugin_logprintf (Str2ConstChar(Environment::NewLine + x->varname + "[" + int2Str(Arrayindex_) + "]" + "= " + x->varvalue));
+			return;
 		}
-		if (Arrayindex_ > 0 && retvartype != "array") {
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
-			VarPara_temp^ x = gcnew VarPara_temp("", "", "", -1);
-			return x;
-		}
-		if (Arrayindex_ == 0) {
+		if (Arrayindex_ > 0 && retvartype != "array") {  // that's mean it's int or str  // so we will make Arrayindex_=0 as it'not array
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
-			return x;
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));			
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+			return;
+		}
+		if (Arrayindex_ == 0) {  // this mean it's str or int
+			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
+			if (x->vartype=="array")
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "[" + int2Str(Arrayindex_) + "]" + "= " + x->varvalue));
+			else
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+			return ;
 		}
 		if (Arrayindex_ < 0) {
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));
-			VarPara_temp^ x = gcnew VarPara_temp("", "", "", -1);
-			return x;
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));			
+			return ;
 		}
 	}
 	else {
-		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
-		VarPara_temp^ x = gcnew VarPara_temp("", "", "", -1);
-		return x;
+		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));		
+		return ;
 	}
 }
 
 bool SetVarx_(String^ varname, int index_, String^ value_) {
 	int indexofVar = 0;
 	String^ retvartype = "";
+
+	duint intValue = 0; bool Hextype_;     
+	if (CheckHexIsValid(value_, intValue, Hextype_)) {
+		if (Hextype_)
+			value_ = int2Str(intValue);
+	}
+
 	if (Varexist(varname, retvartype, indexofVar)) {
 		if (index_ > 0 && retvartype == "array") {
 			ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;

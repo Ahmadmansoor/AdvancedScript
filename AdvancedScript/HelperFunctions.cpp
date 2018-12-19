@@ -18,23 +18,23 @@
 //\xdd - Hexadecimal Representaion
 
 
-System::Void GetArg(String^ input, Generic::List<String^>^% arguments , bool brackets) { // this function use by refrence so the list will fill direct
+System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brackets) { // this function use by refrence so the list will fill direct
 	// the arguments are not include the Function name
 	arguments = gcnew Generic::List<String^>;
 	arguments->Clear(); /// we have to clear the arry just in case it have elements form previose process
-	
+
 	if (brackets) {
 		if (input->IndexOf(")") < 0) {
 			_plugin_logprint("missing ) in brackets Phrase");
 			return;
 		}
-		input = input->Substring ( input->IndexOf("(") + 1, input->Length - (input->IndexOf("(") + 1)); ///remove after first (		
-		input = input->Substring(0, input->IndexOf(")"));		
+		input = input->Substring(input->IndexOf("(") + 1, input->Length - (input->IndexOf("(") + 1)); ///remove after first (		
+		input = input->Substring(0, input->IndexOf(")"));
 	}
 	else {
 		if (!input->Contains(" ")) { return; }
 		input = input->Substring(input->IndexOf(" "), input->Length - input->IndexOf(" "))->Trim(); // remove first agument which is the Function call
-	}	
+	}
 	String^ temp;
 	//bool notfound = false;
 	for (size_t i = 0; i <= input->Length; i++)
@@ -52,7 +52,7 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments , bool bra
 				{
 					temp = temp + input->Substring(i, 1);
 					i += 1;
-				} while ((input->Substring(i, 1) != ")" && i!=input->Length));
+				} while ((input->Substring(i, 1) != ")" && i != input->Length));
 			}
 			//if ((input->Substring(i, 1) != ",") && (input->Substring(i, 1) != "\"")) {
 			if (input->Substring(i, 1) != ",") {
@@ -121,29 +121,31 @@ const char* Str2ConstChar(System::String^ string_) {
 //	}
 //
 //}
-bool CheckHexAddrIsValid(String^ input_,duint% value) {
+bool CheckHexIsValid(String^ input_) {
 	// For C-style hex notation (0xFF) you can use @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z"
 	array <String^>^ c = { "0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","a","b","c","d","e","f" };
 #ifdef _WIN64
-	if ((input_->Length < 5) || (input_->Length > 16)) {		
-		value = -1; 
-		return false;
-	}
+	//if ((input_->Length < 5) || (input_->Length > 16)) {		
+	if (Information::IsNumeric(input_)) {		
+		//value = Conversion::Val(input_);
+		return true;
+	}	
 #else
-	if ((input_->Length < 5) || (input_->Length > 8)) {
-		value = -1;
-		return false;
-	}
+	//if ((input_->Length < 5) || (input_->Length > 8)) {
+	if (Information::IsNumeric(input_)) {		
+		//value = Conversion::Val(input_);
+		return true;
+	}	
 #endif // _WIN64
 	for (size_t i = 0; i < input_->Length; i++)
-	{		
-		if ( Array::IndexOf ( c, input_->Substring(i, 1)) < 0 ) {
-			value = -1;
+	{
+		if (Array::IndexOf(c, input_->Substring(i, 1)) < 0) {
+			//value = -1;
 			return false;
 		}
 
-	}
-	value = Hex2duint(input_);
+	}	
+	//value = Hex2duint(input_);
 	return true;
 }
 
@@ -269,22 +271,22 @@ int Str2Int(String^ input_) {
 		_plugin_logprintf("can't get int from argument");
 		return -1;
 	}
-	
+
 }
 
 String^ str2Asci(String^ input) {
-	String^ temp ;
+	String^ temp;
 	if (input->Length < 2)
 		return "NULL/ ";
-	for (size_t i = 0; i < input->Length; i+=2)
-	{		
+	for (size_t i = 0; i < input->Length; i += 2)
+	{
 		if ((input->Substring(i, 2) == "90") || (input->Substring(i, 2) == "00")) {
 			temp = temp + ".";
 		}
 		else {
 			int value = Convert::ToInt32(input->Substring(i, 2), 16);
 			temp = temp + Char::ConvertFromUtf32(value);
-		}		
+		}
 	}
 	return temp;
 }
@@ -317,4 +319,15 @@ String^ AddZero2Addr(String^ input) {
 		input = "0" + input;
 	}
 	return input;
+}
+
+String^ int2Str(int input_) {
+	if (Information::IsNumeric(input_)) {
+		return Conversion::Str(input_);
+	}
+	return "NULL/ ";
+}
+
+int Str2int(String^ input_) {
+	return Conversion::Val(input_);
 }
