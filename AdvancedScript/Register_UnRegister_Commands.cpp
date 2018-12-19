@@ -441,8 +441,7 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 	case 2: { // case the var is Array so we need the index of this array 
 		String^ arguments1 = argumentValue(arguments[1]);
 		//////////////////////////////////////////////////
-		duint intvalue = 0;
-		if (CheckHexIsValid(arguments1, intvalue)) {
+		if (!arguments1->StartsWith("NULL/")) {
 			GetVarx_(arguments[0], Str2Int(arguments1));			
 		}
 		else {

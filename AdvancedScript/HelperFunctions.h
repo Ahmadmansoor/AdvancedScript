@@ -19,7 +19,7 @@ String^ str2Asci(String^ input);
 String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newValue);
 String^ AddZero2Addr(String^ input);
 String^ int2Str(int input_);
-int Str2int(String^ input_);
+String^ str2Hex(String^ input);
 
 const char* Str2ConstChar(System::String^ string_);
 bool Str2bool(String^ input_);

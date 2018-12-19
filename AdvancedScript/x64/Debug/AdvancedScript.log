@@ -9,20 +9,19 @@ HelperFunctions.cpp(55): warning C4267: 'argument': conversion from 'size_t' to 
 HelperFunctions.cpp(58): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 HelperFunctions.cpp(59): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 HelperFunctions.cpp(142): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-HelperFunctions.cpp(187): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-HelperFunctions.cpp(268): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
-HelperFunctions.cpp(283): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-HelperFunctions.cpp(287): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-HelperFunctions.cpp(332): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+HelperFunctions.cpp(200): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(281): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+HelperFunctions.cpp(296): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(300): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   LogTemplate.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
   Parser.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
 Parser.cpp(37): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Parser.cpp(48): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Parser.cpp(58): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
@@ -48,9 +47,9 @@ PluginBasic.cpp(99): warning C4996: 'strcpy': This function or variable may be u
   Register_UnRegister_Commands.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
 Register_UnRegister_Commands.cpp(36): warning C4091: 'static ': ignored on left of 'ManagedGlobals' when no variable is declared
 Register_UnRegister_Commands.cpp(63): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 Register_UnRegister_Commands.cpp(64): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
@@ -80,18 +79,19 @@ Register_UnRegister_Commands.cpp(113): warning C4129: 'A': unrecognized characte
 Register_UnRegister_Commands.cpp(113): warning C4129: ' ': unrecognized character escape sequence
 Register_UnRegister_Commands.cpp(116): warning C4129: 'A': unrecognized character escape sequence
 Register_UnRegister_Commands.cpp(116): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(445): error C2660: 'CheckHexIsValid': function does not take 2 arguments
   ScriptFun.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
-ScriptFun.cpp(61): error C2660: 'CheckHexIsValid': function does not take 2 arguments
-ScriptFun.cpp(157): error C2660: 'CheckHexIsValid': function does not take 3 arguments
-ScriptFun.cpp(159): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
-ScriptFun.cpp(225): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\code\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
+ScriptFun.cpp(255): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   Generating Code...
-e:\code\x64dbg\advancedscript\advancedscript\parser.cpp(325): warning C4715: 'tokens': not all control paths return a value
-e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(254): warning C4715: 'Str2bool': not all control paths return a value
-e:\code\x64dbg\advancedscript\advancedscript\helperfunctions.cpp(101): warning C4700: uninitialized local variable 'segment' used
+d:\code\advancedscript\advancedscript\scriptfun.cpp(216): warning C4715: 'SetVarx_': not all control paths return a value
+d:\code\advancedscript\advancedscript\parser.cpp(325): warning C4715: 'tokens': not all control paths return a value
+d:\code\advancedscript\advancedscript\helperfunctions.cpp(267): warning C4715: 'Str2bool': not all control paths return a value
+d:\code\advancedscript\advancedscript\helperfunctions.cpp(101): warning C4700: uninitialized local variable 'segment' used
+  AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
+     Creating library ..\..\x64\plugins\AdvancedScript.lib and object ..\..\x64\plugins\AdvancedScript.exp
+  AdvancedScript.vcxproj -> D:\Code\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
+  AdvancedScript.vcxproj -> ..\..\x64\plugins\AdvancedScript.pdb (Partial PDB)

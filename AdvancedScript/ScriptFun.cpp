@@ -27,15 +27,7 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		_plugin_logprintf("Variable must not have spaces");
 		return;
 	}
-	String^ varvalue_ = argumentValue(varvalue);  /// resolve vriable value
-	if (!varvalue_->StartsWith("NULL/")) {  /// that mean the argument is string
-		varvalue = varvalue_;
-	}
-	else
-	{
-		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "Can't get hex value, var not been added"));
-		return;
-	}
+	
 	String^ retvartype = "";
 	if (vartype == "str") {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
@@ -59,26 +51,25 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		}
 	};
 	/////////////////////////////
-	if (vartype == "int") {
-		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
-		duint intValue_=0;
-		/// we have to check it if the value is Numeric or hex 
-		if (!CheckHexIsValid(varvalue, intValue_)) {   
-			Script::Gui::Message("This is not hex value can converted to int, it will not defined");
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :not been added"));
-			return;
-		}	
-		//VarPara_->varvalue[0] = Conversion::Str(intValue_);  // now we set the value as duint >>> no need we will save the value as hex in the var
+	if (vartype == "int") {		
+		/// varValue_Int : resolve vriable value as Int we will used to store it in Int variable 
+		String^ varValue_Int = argumentValue(varvalue);
+		if (varValue_Int->StartsWith("NULL/")) {
+			Script::Gui::Message("This value can't resolve to int, it will not defined");
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + " :not been added"));			
+			return;			
+		}		
+		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varValue_Int, 0);  // we store varvalue as int 
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= " + varvalue + " :has been added"));
+			_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= " + varValue_Int + "\\"+ str2Hex(varvalue) + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= " + varvalue + " :has been added"));
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= " + varValue_Int + "\\" + str2Hex(varvalue) + " :has been added"));
 				return;
 			}
 			else {
@@ -132,15 +123,25 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 		if (Arrayindex_ > 0 && retvartype != "array") {  // that's mean it's int or str  // so we will make Arrayindex_=0 as it'not array
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));			
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+			//_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+			if (x->vartype == "int") {
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue + "\\" + str2Hex(x->varvalue)));
+			}
+			else  /// it mean str
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
 			return;
 		}
 		if (Arrayindex_ == 0) {  // this mean it's str or int
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
 			if (x->vartype=="array")
 				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "[" + int2Str(Arrayindex_) + "]" + "= " + x->varvalue));
-			else
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+			else {
+				if (x->vartype == "int") {
+					_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue + "\\" + str2Hex(x->varvalue)));
+				}
+				else  /// it mean str
+					_plugin_logprintf(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
+			}
 			return ;
 		}
 		if (Arrayindex_ < 0) {
@@ -156,14 +157,7 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 
 bool SetVarx_(String^ varname, int index_, String^ value_) {
 	int indexofVar = 0;
-	String^ retvartype = "";
-
-	duint intValue = 0; bool Hextype_;     
-	if (CheckHexIsValid(value_, intValue, Hextype_)) {
-		if (Hextype_)
-			value_ = int2Str(intValue);
-	}
-
+	String^ retvartype = "";	
 	if (Varexist(varname, retvartype, indexofVar)) {
 		if (index_ > 0 && retvartype == "array") {
 			ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;
@@ -172,11 +166,42 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {
 		}
 		if (index_ > 0 && retvartype != "array") {
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
-			return false;
+			if (ScriptFunList::VarList[indexofVar]->vartype = "int") {  /// case it's int
+				String^ t1 = argumentValue(value_);
+				if (t1->StartsWith("NULL/ ")) {
+					Script::Gui::Message("This value can't resolve to int, it will not defined");
+					_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + " :not been added"));
+					return false;
+				}
+				else
+				{
+					ScriptFunList::VarList[indexofVar]->varvalue[0] = t1;
+					_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "= " + t1 + "\\" + str2Hex(value_)));
+				}
+			}
+			else {  /// case str
+				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
+				_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
+			}
+			return true;
 		}
 		if (index_ == 0) {
+			if (ScriptFunList::VarList[indexofVar]->vartype = "int") {
+				String^ t1 = argumentValue(value_);
+				if (t1->StartsWith("NULL/ ")) {
+					Script::Gui::Message("This value can't resolve to int, it will not defined");
+					_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + " :not been added"));
+					return false;
+				}
+				else
+				{
+					ScriptFunList::VarList[indexofVar]->varvalue[0] = t1;
+					_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "= "+ t1 + "\\" + str2Hex(value_)));
+				}
+			}else {  /// case str
 			ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
 			_plugin_logprintf(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
+			}
 			return true;
 		}
 		if (index_ < 0) {

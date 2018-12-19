@@ -337,8 +337,8 @@ String^ findHexValue(String^ input) {
 	{
 		if (CheckHexIsValid(input->Substring(i, 1))) {
 			temp = temp + input->Substring(i, 1);
-			if (i + 1 <= input->Length) {
-				if (CheckHexIsValid(input->Substring(i+1, 1))) {
+			if (i + 1 < input->Length) {
+				if (!CheckHexIsValid(input->Substring(i+1, 1))) {
 					return temp;
 				}
 			}
@@ -347,7 +347,7 @@ String^ findHexValue(String^ input) {
 	return temp;
 }
 
-String^ argumentValue(String^ argument) {  /// return the value of the argument as string
+String^ argumentValue(String^ argument) {  /// return the <<int>> value of the argument as string
 	//String^ Originalargument = argument;
 	if (Information::IsNumeric(argument)) {   /// check if int number
 		return argument;

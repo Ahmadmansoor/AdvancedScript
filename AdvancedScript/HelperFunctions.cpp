@@ -176,6 +176,19 @@ String^ charPTR2String(char* input) {
 
 }
 
+String^ str2Hex(String^ input) {
+	if (input->StartsWith("0x")) {
+		return input;
+	}
+	else
+	{
+		if (Information::IsNumeric(input)) {
+			return duint2Hex(Str2Int((input)));
+		}
+	}
+	return "NULL/ ";
+}
+
 duint Hex2duint(String^ input_) {
 	if (input_->Length > 2) {
 		if (input_->Substring(0, 2)->ToLower() == "0x") {
@@ -328,6 +341,6 @@ String^ int2Str(int input_) {
 	return "NULL/ ";
 }
 
-int Str2int(String^ input_) {
-	return Conversion::Val(input_);
-}
+//int Str2int(String^ input_) {
+//	return Conversion::Val(input_);
+//}
