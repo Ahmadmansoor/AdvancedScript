@@ -70,7 +70,7 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
-	_plugin_logprintf("[AdvancedScript 1.8] || Coded By AhmadMansoor /exetools ");
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 1.8] || Coded By AhmadMansoor /exetools "));
 	_plugin_logprint(Str2ConstChar(Environment::NewLine));
 
 	/*if (!_plugin_registercommand(pluginHandle, "AdvancedScript", cbMainForm, false))
@@ -132,7 +132,7 @@ static bool test(int argc, char* argv[]) {
 	//	break;
 	//}
 	//default:
-	//	_plugin_logprintf("worng arguments");
+	//	_plugin_logputs("worng arguments");
 	//	return false;
 	//}
 	//DbgScriptCmdExec("{jmp res}");
@@ -198,7 +198,7 @@ static bool cbLogxJustAtBP(int argc, char* argv[]) {
 		break;
 	}
 	default:
-		_plugin_logprintf("worng arguments");
+		_plugin_logputs("worng arguments");
 		return false;
 	}
 	return true;
@@ -210,7 +210,7 @@ static void ShowDialog_TemplateManager()
 	LogTemplate.ShowDialog();
 }
 static bool LogxTemplateManager(int argc, char* argv[]) {
-	if (argc > 1) { _plugin_logprintf("worng arguments"); return false; }
+	if (argc > 1) { _plugin_logputs("worng arguments"); return false; }
 	String^ temp = charPTR2String(argv[0]);
 	Threading::Thread^ thread_ = gcnew Threading::Thread(gcnew Threading::ThreadStart(&ShowDialog_TemplateManager));
 	thread_->Start();
@@ -222,7 +222,7 @@ static void ShowDialog_LogWindow()
 	AdvancedScript::LogWindow::LogWindow_->ShowDialog();
 }
 static bool logx_window(int argc, char* argv[]) {
-	if (argc > 1) { _plugin_logprintf("worng arguments"); return false; }
+	if (argc > 1) { _plugin_logputs("worng arguments"); return false; }
 	String^ temp = charPTR2String(argv[0]);
 	Threading::Thread^ thread_ = gcnew Threading::Thread(gcnew Threading::ThreadStart(&ShowDialog_LogWindow));
 	thread_->Start();
@@ -249,7 +249,7 @@ static bool logx(int argc, char* argv[]) {  // it need agument Template name lik
 		break;
 	}
 	default:
-		_plugin_logprintf("worng arguments");
+		_plugin_logputs("worng arguments");
 		return false;
 	}
 
@@ -265,12 +265,12 @@ static void Show_DialogSave() {
 	if (ManagedGlobals::TraceFilePath == "") {
 		Script::Gui::Message("worng file,Trcer is off now");
 		LogTraceOn = false;
-		_plugin_logprintf("Trcer is off now");
+		_plugin_logputs("Trcer is off now");
 	}
 	if (!GetTemplate(ManagedGlobals::logxTraceArg2, TemplateClassFound)) {
 		Script::Gui::Message("No Template with this name");
 		LogTraceOn = false;
-		_plugin_logprintf("Trcer is off now");
+		_plugin_logputs("Trcer is off now");
 		ManagedGlobals::TraceFilePath = "";
 	}
 	else {
@@ -285,10 +285,10 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct
 
 	//if ((arguments->Count != 2) && (arguments->Count != 1) && (arguments->Count != 3)) { _plugin_logprintf("worng arguments"); return false; }
-	if ((arguments->Count != 3) && (arguments->Count != 1)) { _plugin_logprintf("worng arguments"); return false; }
+	if ((arguments->Count != 3) && (arguments->Count != 1)) { _plugin_logputs("worng arguments"); return false; }
 	if (arguments[0] != "on" && arguments[0] != "off")
 	{
-		_plugin_logprintf("worng arguments on/off"); return false;
+		_plugin_logputs("worng arguments on/off"); return false;
 	}
 	if (arguments[0] == "on") {
 		if (!IO::Directory::Exists(Application::StartupPath + "\\LogTrace")) {
@@ -296,19 +296,19 @@ static bool logxTrace(int argc, char* argv[]) { //logxTrace on/off,TemplateName,
 		}
 		if (!GetTemplate(arguments[1], TemplateClassFound)) {
 			LogTraceOn = false;
-			_plugin_logprintf("worng Template name, Trcer is off now");
+			_plugin_logputs("worng Template name, Trcer is off now");
 			return false;
 		}
 		else {
 			TemplateData_ = Str2ConstChar(TemplateClassFound->TemplateData);
 		}
-		_plugin_logprintf("Trcer is on now");
+		_plugin_logputs("Trcer is on now");
 		LogTraceOn = true;
 		TraceFile_ = Str2ConstChar(Application::StartupPath + "\\LogTrace\\" + arguments[2] + ".txt");
 	}
 	else if (arguments[0] == "off") {
 		LogTraceOn = false;
-		_plugin_logprintf("Trcer is off now");
+		_plugin_logputs("Trcer is off now");
 		return false;
 	}
 
@@ -348,7 +348,7 @@ static void StrComp_BP() {
 	GetArg(ManagedGlobals::temp, arguments); // this function use by refrence so the list will fill direct	
 	if (!GetTemplate(arguments[1], TemplateClassFound)) {
 		LogTraceOn = false;
-		_plugin_logprintf("worng Template name");
+		_plugin_logputs("worng Template name");
 		return;
 	}
 	switch ((arguments->Count))
@@ -357,7 +357,7 @@ static void StrComp_BP() {
 		String^ addr_temp = StringFormatInline_Str(arguments[2]);
 		duint addr = Hex2duint(addr_temp);  /// the address of String in the memory targed which need to comapre with 
 		if (addr == -1) {
-			_plugin_logprintf(Str2ConstChar("can't Getting Address!! maybe you forget { , because it should follow x64dbg string format "));
+			_plugin_logputs(Str2ConstChar("can't Getting Address!! maybe you forget { , because it should follow x64dbg string format "));
 			DbgCmdExec("run");
 			return;
 		}
@@ -372,16 +372,16 @@ static void StrComp_BP() {
 			Target_Str2Compare = CharArr2Str(Str2Compare_);
 		}
 		else {
-			_plugin_logprintf(Str2ConstChar("Can't read the string at this address: " + duint2Hex(addr)));
+			_plugin_logputs(Str2ConstChar("Can't read the string at this address: " + duint2Hex(addr)));
 			DbgCmdExec("run");
 			return;
 		}
 
-		_plugin_logprintf(Str2ConstChar(Target_Str2Compare));
+		_plugin_logputs(Str2ConstChar(Target_Str2Compare));
 
 		String^ UserStr = arguments[3];
 		if (!Target_Str2Compare->ToLower()->Trim()->Contains(UserStr->ToLower()->Trim())) {
-			_plugin_logprintf(Str2ConstChar(Target_Str2Compare));
+			_plugin_logputs(Str2ConstChar(Target_Str2Compare));
 			DbgCmdExec("run");
 		}
 		else {
@@ -397,7 +397,7 @@ static void StrComp_BP() {
 		break;
 	}
 	default:
-		_plugin_logprintf("worng arguments");
+		_plugin_logputs("worng arguments");
 		return;
 		break;
 	}
@@ -422,7 +422,7 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		break;
 	}
 	default:
-		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;
 	}
 	return true;
@@ -431,7 +431,7 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int index)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-
+	String^ OldValue_;
 	switch ((arguments->Count))
 	{
 	case 1: {  // case the var is int or str so the value at index=0
@@ -439,20 +439,20 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 		break;
 	}
 	case 2: { // case the var is Array so we need the index of this array 
-		String^ arguments1 = argumentValue(arguments[1]);
+		String^ arguments1 = argumentValue(arguments[1], OldValue_);
 		//////////////////////////////////////////////////
 		if (!arguments1->StartsWith("NULL/")) {
 			GetVarx_(arguments[0], Str2Int(arguments1));			
 		}
 		else {
-			_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
 		}
 		break;
 
 		//////////////////////////////////////////////////
 	}
 	default:
-		_plugin_logprintf(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;
 	}
 	return true;
@@ -462,16 +462,29 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int index_,String^ value_)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-
+	String^ OldValue_;
 	switch ((arguments->Count))
 	{
 	case 2: {  // case the var is int or str so the value at index=0
-		SetVarx_(arguments[0], 0, argumentValue(arguments[1]));
+		//SetVarx_(arguments[0], 0, arguments[1]);
+		//SetVarx_(arguments[0], 0, argumentValue(arguments[1],OldValue_));
+		String^ newValue_ = argumentValue(arguments[1], OldValue_);
+		if (newValue_->StartsWith("NULL/"))
+		SetVarx_(arguments[0], 0, OldValue_);
+		else
+		{
+		SetVarx_(arguments[0], 0, newValue_);
+		}
 		break;
 	}
 	case 3: { // case the var is Array so we need the index of this array 
-		String^ temp = argumentValue(arguments[1]);
-		SetVarx_(arguments[0], Str2Int(temp), arguments[2]);
+		String^ temp = argumentValue(arguments[1], OldValue_);
+		if (temp->StartsWith("NULL/")) {  // check index it must be int
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+		}
+		else {
+			SetVarx_(arguments[0], Str2Int(temp), arguments[2]);
+		}		
 		/*duint intValue = 0; bool Hextype_;
 		if (CheckHexIsValid(arguments[1], intValue, Hextype_)) {
 			if (Hextype_) 
@@ -485,13 +498,13 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 				SetVarx_(arguments[0],Str2Int(temp), arguments[2]);
 			}
 			else {
-				_plugin_logprintf(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
 			}
 		}*/
 		break;
 	}
 	default:
-		_plugin_logprintf("worng arguments");
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;
 	}
 	return true;
@@ -514,7 +527,7 @@ static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, 
 		return true;
 	}
 	default:
-		_plugin_logprintf("worng arguments");
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;
 	}
 	return false;

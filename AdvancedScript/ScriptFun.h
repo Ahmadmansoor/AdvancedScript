@@ -111,7 +111,6 @@ bool Varexist(String^ varname, String^% vartype_, int% index);
 void Varx_(String^ vartype, String^ varname, String^ varvalue = "");
 Void GetVarx_(String^ varname, int Arrayindex_=0);
 bool SetVarx_(String^ varname, int index_, String^ value_);
-String^ argumentValue(String^ argument);
-String^ findHexValue(String^ input);
 String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_="");
 bool dumpmem(String^ addr, String^ size, String^ para = "");
+

@@ -2,12 +2,17 @@
 #include "HelperFunctions.h"
 
 int GetRegisterIndex(String^ input_);
+String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace);
 String^ tokens(String^ input, String^% VarString);
 String^ BackWard(String^ input, int tokenindex, String^% VarString);
 String^ ForWard(String^ input, int tokenindex, String^% VarString);
 String^ findScriptSystemVarValue(String^ input);
 String^ findVarValue(String^ input, String^% VarString);
 bool CheckexcutedCmd(String^ cmd_);
+String^ findHexValue(String^ input);
+String^ resolveString(String^ input, int% commaCount);
+String^ argumentValue(String^ argument, String^% OldValue_);
+
 
 //script test 
 

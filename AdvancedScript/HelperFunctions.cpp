@@ -16,6 +16,9 @@
 //\" - Double Quatation Mark
 //\ooo - Octal Representation
 //\xdd - Hexadecimal Representaion
+//
+//% -mod
+// -div
 
 
 System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brackets) { // this function use by refrence so the list will fill direct

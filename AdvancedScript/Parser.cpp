@@ -78,7 +78,8 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 	if (input->IndexOf("[") > 0) {  // variable is Array  /// must be bigger than 0 because var has name ;)			
 		var_ = input->Substring(0, input->IndexOf("[") - 1);  // get Var name	
 		/// need to check if this value is variable too we need to pass it to argumentValue
-		var_ = argumentValue(var_);
+		String^ OldValue_;
+		var_ = argumentValue(var_, OldValue_);
 		if (var_->StartsWith("NULL/ ")) {
 			return "NULL/ Can't resolve index of the variable" + input;
 		}
@@ -94,7 +95,8 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 						break;
 					}
 				}
-				ArrayIndexValue = argumentValue(ArrayIndexValue);  /// now check if the index, maybe Numeric or variable
+				String^ OldValue_;
+				ArrayIndexValue = argumentValue(ArrayIndexValue, OldValue_);  /// now check if the index, maybe Numeric or variable
 				if (ArrayIndexValue->StartsWith("NULL/")) {
 					return "NULL/ something go wrong";
 				}
@@ -171,6 +173,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 	String^ temp = input;
 	String^ value_ = "";
 	String^ value_1 = ""; // we used to check if we need to go more far like 5 * 23 ]	
+	String^ OldValue_;
 	if (tokenindex + 1 > input->Length) {
 		return "NULL/ ";  /// token at the end of string
 	}
@@ -188,16 +191,26 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			value_ = value_ + temp->Substring(i, 1);
 			if (i + 1 == temp->Length) { /// if this later is the end of string 
 				VarString = VarString + value_;  /// in case VarString hold space
-				return argumentValue(value_->Trim());
+				return argumentValue(value_->Trim(), OldValue_);
 			}
 			if (temp->Substring(i + 1, 1) == " ") {  /// as there are still some char's left (i + 1 > 0)	
 				VarString = VarString + value_;  /// in case VarString hold space 
-				return argumentValue(value_->Trim());
+				return argumentValue(value_->Trim(), OldValue_);
 			}
+
+			array <String^>^ tokens_ = { "*" ,"+","-","/" };
+			//tokens_->IndexOf(tokens_, temp->Substring(i + 1, 1));
+			//if ( temp->Substring(i + 1, 1) == " ") {  /// as there are still some char's left (i + 1 > 0)	
+			if (tokens_->IndexOf(tokens_, temp->Substring(i + 1, 1)) >0 ) {  /// as there are still some char's left (i + 1 > 0)	
+				VarString = VarString + value_;  /// in case VarString hold space 
+
+				return "NULL/ ";
+			}
+
 			value_1 = value_ + temp->Substring(i + 1, 1);
-			if ((!argumentValue(value_)->StartsWith("NULL/ ")) && (argumentValue(value_1)->StartsWith("NULL/ "))) {
+			if ((!argumentValue(value_, OldValue_)->StartsWith("NULL/ ")) && (argumentValue(value_1, OldValue_)->StartsWith("NULL/ "))) {
 				VarString = VarString + value_1;
-				return argumentValue(value_1->Trim());
+				return argumentValue(value_1->Trim(), OldValue_);
 			}
 		}
 	}
@@ -208,6 +221,7 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 	String^ temp = input;
 	String^ value_ = "";
 	String^ value_1 = ""; // we used to check if we need to go more far like [55 * 23 ]
+	String^ OldValue_;
 	if (tokenindex - 1 < 0)
 		return "NULL/ ";  /// token at the begin of string
 	else {
@@ -224,16 +238,16 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 			value_ = temp->Substring(i - 1, 1) + value_;
 			if (i - 1 == 0) {
 				VarString = value_ + VarString;  /// in case VarString hold space 
-				return argumentValue(value_->Trim());
+				return argumentValue(value_->Trim(), OldValue_);
 			}
 			if (temp->Substring(i - 1, 1) == " ") { /// as there are still some char's left (i - 1 > 0)
 				VarString = value_ + VarString;  /// in case VarString hold space 
-				return argumentValue(value_->Trim());
+				return argumentValue(value_->Trim(), OldValue_);
 			}
 			value_1 = temp->Substring(i - 2, 1) + value_;  /// we check the next char with previous one if it can have a value or related variable
-			if ((!argumentValue(value_->Trim())->StartsWith("NULL/ ")) && (argumentValue(value_1->Trim())->StartsWith("NULL/ "))) {
+			if ((!argumentValue(value_->Trim(), OldValue_)->StartsWith("NULL/ ")) && (argumentValue(value_1->Trim(), OldValue_)->StartsWith("NULL/ "))) {
 				VarString = value_1 + VarString;
-				return argumentValue(value_1->Trim());
+				return argumentValue(value_1->Trim(), OldValue_);
 			}
 		}
 	}
@@ -272,38 +286,7 @@ String^ tokens(String^ input, String^% VarString) {
 		para2 = ForWard(input, input->IndexOf("+") + 1, VarString2);
 		VarString = VarString1 + "+" + VarString2;
 
-		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2)) {
-			/*duint p1; duint p2; duint value1=-1; duint value2 = -1;
-			if (!CheckHexAddrIsValid(para1, value1)) {
-				if ((!Information::IsNumeric(para1))) {
-					_plugin_logprint(Str2ConstChar("NULL/ this is wrong:" + para1));
-					return "NULL/ ";
-				}
-				else
-				{
-					p1 = value1;
-				}
-
-			}
-			else
-			{
-				p1 = value1;
-			}
-			if (!CheckHexAddrIsValid(para2, value2)) {
-				if ((!Information::IsNumeric(para2))) {
-					_plugin_logprint(Str2ConstChar("NULL/ this is wrong:" + para2));
-					return "NULL/ ";
-				}
-				else
-				{
-					p2 = value2;
-				}
-			}
-			else
-			{
-				p1 = value1;
-			}
-			return Conversion::Str(duint2Hex(p1 + p2));*/
+		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2)) {	
 			_plugin_logprint("one of this arguments are not numeric");
 			return "NULL/ ";
 		}
@@ -347,8 +330,44 @@ String^ findHexValue(String^ input) {
 	return temp;
 }
 
-String^ argumentValue(String^ argument) {  /// return the <<int>> value of the argument as string
+String^ resolveString(String^ input, int% commaCount) {
+	String^ temp = "";
+	
+	for (size_t i = 0; i < input->Length; i++)
+	{
+		if (input->Substring(i, 1) == "\"") {
+			commaCount += 1;
+		}
+	}
+	if (commaCount % 2 != 0) {  /// check if there is an open comma for each comma
+		commaCount = 0;
+		return input;
+	}
+
+	for (size_t i = 0; i < input->Length; i++)
+	{
+		if (input->Substring(i, 1) != "\"") {
+			temp = temp + input->Substring(i, 1);
+		}
+		else
+		{
+			String^ OldValue_;
+			temp = argumentValue(temp, OldValue_);  /// reolve this str in case it return NULL we take the old value (which could be half resolved)
+			if (temp->StartsWith("NULL/ ")) {
+				temp = OldValue_;
+			}
+			int NextCommaIndex = input->IndexOf("\"", i + 1);
+			String^ StringafterComma = input->Substring(i+1 , NextCommaIndex - (i+1)) ;
+			temp = temp + StringafterComma;
+			i = i + NextCommaIndex + 1;  /// now jmp to the next comma
+		}
+	}
+	return temp;
+}
+
+String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<int>> value of the argument as string
 	//String^ Originalargument = argument;
+	OldValue_ = ""; // rest the value
 	if (Information::IsNumeric(argument)) {   /// check if int number
 		return argument;
 	}
@@ -357,6 +376,7 @@ String^ argumentValue(String^ argument) {  /// return the <<int>> value of the a
 			String^ replaceValue = "";
 			String^ oldvalue = argument->Substring(argument->IndexOf("0x"), argument->Length - argument->IndexOf("0x"));
 			replaceValue = int2Str(Hex2duint(findHexValue(oldvalue)));
+			OldValue_ = oldvalue;
 			if (!replaceValue->StartsWith("NULL/")) {
 				argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
 			}
@@ -370,6 +390,7 @@ String^ argumentValue(String^ argument) {  /// return the <<int>> value of the a
 			String^ replaceValue = "";
 			String^ oldvalue = argument->Substring(argument->IndexOf("{"), argument->IndexOf("}") + 1);
 			replaceValue = findScriptSystemVarValue(oldvalue);
+			OldValue_ = oldvalue;
 			if (!replaceValue->StartsWith("NULL/")) {
 				argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
 			}
@@ -388,6 +409,7 @@ String^ argumentValue(String^ argument) {  /// return the <<int>> value of the a
 			String^ oldValue = "";
 			tempInput = tempInput->Substring(tempInput->IndexOf("$"), tempInput->Length - tempInput->IndexOf("$"));
 			tempInput = findVarValue(tempInput, oldValue);
+			OldValue_ = oldValue;
 			if (tempInput->StartsWith("NULL/")) {
 				_plugin_logprint(Str2ConstChar(tempInput));
 				return "NULL/ ";
@@ -398,14 +420,21 @@ String^ argumentValue(String^ argument) {  /// return the <<int>> value of the a
 			}
 		}
 	}
+
 	//////////////////////////////////////
-	if ((argument->Contains("*")) || (argument->Contains("+")) || (argument->Contains("-")) || (argument->Contains("*"))) {  /// I will do it later
-		while ((argument->Contains("*")) || (argument->Contains("+")) || (argument->Contains("-")) || (argument->Contains("*")))
+	int commaCount = 0;
+	argument = resolveString(argument, commaCount);
+	//////////////////////////////////////
+	if ((argument->Contains("*")) || (argument->Contains("+")) || (argument->Contains("-")) || (argument->Contains("/"))) {  /// I will do it later
+		while ((argument->Contains("*")) || (argument->Contains("+")) || (argument->Contains("-")) || (argument->Contains("/")))
 		{
 			String^ tempInput = argument;
 			String^ oldValue = "";
+			int commaCount;			
 			tempInput = tokens(tempInput, oldValue);
+			//OldValue_ = oldValue;
 			if (tempInput->StartsWith("NULL/")) {
+				OldValue_ = argument;
 				_plugin_logprint(Str2ConstChar(tempInput));
 				return "NULL/ ";
 			}
@@ -428,11 +457,12 @@ String^ argumentValue(String^ argument) {  /// return the <<int>> value of the a
 bool CheckexcutedCmd(String^ cmd_) {
 	Generic::List<String^>^ arguments;
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
+	String^ OldValue_;
 
 	if (cmd_->StartsWith("mem(") || cmd_->StartsWith("mem (")) {
 		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
-		String^ addr = argumentValue(arguments[0]);
-		String^ Size_ = argumentValue(arguments[1]);
+		String^ addr = argumentValue(arguments[0], OldValue_);
+		String^ Size_ = argumentValue(arguments[1], OldValue_);
 		if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
 			_plugin_logprint("wrong arguments for memdump command");
 			return false;
@@ -452,7 +482,7 @@ bool CheckexcutedCmd(String^ cmd_) {
 			return false;
 		}
 	}
-	_plugin_logprint(Str2ConstChar(argumentValue(cmd_)));
+	_plugin_logprint(Str2ConstChar(argumentValue(cmd_, OldValue_)));
 	return true;
 }
 
