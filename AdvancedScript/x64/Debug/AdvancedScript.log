@@ -1,48 +1,12 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  Register_UnRegister_Commands.cpp
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
-Register_UnRegister_Commands.cpp(36): warning C4091: 'static ': ignored on left of 'ManagedGlobals' when no variable is declared
-Register_UnRegister_Commands.cpp(63): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Register_UnRegister_Commands.cpp(64): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Register_UnRegister_Commands.cpp(79): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(79): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(83): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(83): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(86): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(86): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(89): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(89): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(92): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(92): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(95): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(95): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(98): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(98): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(102): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(102): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(105): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(105): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(107): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(107): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(111): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(111): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(113): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(113): warning C4129: ' ': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(116): warning C4129: 'A': unrecognized character escape sequence
-Register_UnRegister_Commands.cpp(116): warning C4129: ' ': unrecognized character escape sequence
   ScriptFun.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
 e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
 e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
-ScriptFun.cpp(265): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  Generating Code...
-e:\code\x64dbg\advancedscript\advancedscript\scriptfun.cpp(224): warning C4715: 'SetVarx_': not all control paths return a value
+ScriptFun.cpp(288): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+e:\code\x64dbg\advancedscript\advancedscript\scriptfun.cpp(237): warning C4715: 'SetVarx_': not all control paths return a value
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library ..\..\x64\plugins\AdvancedScript.lib and object ..\..\x64\plugins\AdvancedScript.exp
   AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll

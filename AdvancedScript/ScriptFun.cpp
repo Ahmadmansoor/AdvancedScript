@@ -32,6 +32,10 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	if (vartype == "str") {
 		int commaCount = 0;
 		String^ resolveVarValue = resolveString(varvalue, commaCount);
+		if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+			resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+			resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+		}
 		if (commaCount != 0) {
 			varvalue = resolveVarValue;
 		}		
@@ -87,6 +91,15 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	};
 	/////////////////////////////
 	if (vartype == "array") {
+		int commaCount = 0;
+		String^ resolveVarValue = resolveString(varvalue, commaCount);
+		if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+			resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+			resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+		}
+		if (commaCount != 0) {
+			varvalue = resolveVarValue;
+		}
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
@@ -175,7 +188,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {
 			String^ OldValue_;
 			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int
 				String^ t1 = argumentValue(value_, OldValue_);
-				if (t1->StartsWith("NULL/ ")) {
+				if ((t1->StartsWith("NULL/ ")) || !(Information::IsNumeric(t1))){
 					Script::Gui::Message("This value can't resolve to int, it will not defined");
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been set"));
 					return false;
@@ -196,7 +209,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {
 			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {
 				String^ OldValue_;
 				String^ t1 = argumentValue(value_, OldValue_);  
-				if (t1->StartsWith("NULL/ ")) {   /// if the value is not int 
+				if ( (t1->StartsWith("NULL/ ")) || !(Information::IsNumeric(t1)) ) {   /// if the value is not int 
 					Script::Gui::Message("This value can't resolve to int, it will not defined");
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been set"));
 					return false;
@@ -227,10 +240,20 @@ String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findallmem ";
 	String^ OldValue_;
 	String^ base_s = argumentValue(base_, OldValue_);
+	//if ((!CheckHexIsValid(base_s)) || (!base_s->StartsWith("0x"))) {
+	if (!Information::IsNumeric(base_s)) {
+		_plugin_logputs(Str2ConstChar(base_s + " is not a hex"));
+		return "NULL/ ";
+	}
+	if (Information::IsNumeric(base_s)) {
+		base_s = duint2Hex(Str2Int(base_s));
+	}
+	
 	if (!base_s->StartsWith("NULL/")) {
-		duint base_x = Hex2duint(base_s);
-		if (base_x != -1) {  /// check base
-			cmd_ = cmd_ + duint2Hex(base_x) + ",";
+		//duint base_x = Hex2duint(base_s);
+		//if (base_x != -1) {  /// check base
+			//cmd_ = cmd_ + duint2Hex(base_x) + ",";
+		cmd_ = cmd_ + base_s + ",";
 			String^ OldValue_;
 			String^ Searchvalue_x = argumentValue(Searchvalue_, OldValue_);
 			if (!Searchvalue_x->StartsWith("NULL/")) {
@@ -250,9 +273,9 @@ String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 			}
 			else
 				return "NULL/ ";
-		}
+		/*}
 		else
-			return "NULL/ ";
+			return "NULL/ ";*/
 	}else
 		return "NULL/ ";
 }

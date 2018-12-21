@@ -101,15 +101,15 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	if (!_plugin_registercommand(pluginHandle, "Varx", Varx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
-	if (!_plugin_registercommand(pluginHandle, "GetVarx", GetVarx, false))
+	if (!_plugin_registercommand(pluginHandle, "Getx", GetVarx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "PrintVarx", GetVarx, false))
+	if (!_plugin_registercommand(pluginHandle, "Printx", GetVarx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 
-	if (!_plugin_registercommand(pluginHandle, "SetVarx", SetVarx, false))
+	if (!_plugin_registercommand(pluginHandle, "Setx", SetVarx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "MovVarx", SetVarx, false))
+	if (!_plugin_registercommand(pluginHandle, "Movx", SetVarx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
 	if (!_plugin_registercommand(pluginHandle, "findallmemx", findallmemx, false))

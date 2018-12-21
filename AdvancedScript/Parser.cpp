@@ -273,7 +273,7 @@ String^ tokens(String^ input, String^% VarString) {
 	if (input->IndexOf("/") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("/"), VarString1);
 		para2 = ForWard(input, input->IndexOf("/") + 1, VarString2);
-		VarString = VarString1 + "+" + VarString2;
+		VarString = VarString1 + "/" + VarString2;
 		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
 			return "NULL/ ";
 		else
@@ -297,7 +297,7 @@ String^ tokens(String^ input, String^% VarString) {
 	if (input->IndexOf("-") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("-"), VarString1);
 		para2 = ForWard(input, input->IndexOf("-") + 1, VarString2);
-		VarString = VarString1 + "+" + VarString2;
+		VarString = VarString1 + "-" + VarString2;
 		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
 			return "NULL/ ";
 		else
@@ -332,7 +332,9 @@ String^ findHexValue(String^ input) {
 
 String^ resolveString(String^ input, int% commaCount) {
 	String^ temp = "";
-	
+	if (input->StartsWith("\"") && (input->EndsWith("\""))) {  /// that mean all string is commaed 
+		return input;
+	}
 	for (size_t i = 0; i < input->Length; i++)
 	{
 		if (input->Substring(i, 1) == "\"") {
@@ -371,6 +373,14 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 	if (Information::IsNumeric(argument)) {   /// check if int number
 		return argument;
 	}
+
+	//////////////////////////////////////
+	int commaCount = 0;
+	argument = resolveString(argument, commaCount);
+	if (argument->StartsWith("\"") && (argument->EndsWith("\""))) {  /// that mean all string is commaed 
+		return argument;
+	}
+	//////////////////////////////////////
 	if (argument->IndexOf("0x") >= 0) {  /// check if hex
 		while (argument->IndexOf("0x") >= 0) {
 			String^ replaceValue = "";
@@ -421,10 +431,7 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 		}
 	}
 
-	//////////////////////////////////////
-	int commaCount = 0;
-	argument = resolveString(argument, commaCount);
-	//////////////////////////////////////
+	
 	if ((argument->Contains("*")) || (argument->Contains("+")) || (argument->Contains("-")) || (argument->Contains("/"))) {  /// I will do it later
 		while ((argument->Contains("*")) || (argument->Contains("+")) || (argument->Contains("-")) || (argument->Contains("/")))
 		{
@@ -440,6 +447,11 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 			}
 			else {
 				argument = ReplaceAtIndex(argument, oldValue, tempInput);
+			}
+			if (Information::IsNumeric(argument)) {
+				if (Str2Int(argument) < 0) {
+					break;
+				}
 			}
 		}
 	}
