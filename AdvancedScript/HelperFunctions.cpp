@@ -124,32 +124,42 @@ const char* Str2ConstChar(System::String^ string_) {
 //	}
 //
 //}
-bool CheckHexIsValid(String^ input_) {
+
+
+/// <summary> 
+/// 0 not hex not numeric // 1 is numeric // 2 is hex 
+/// </summary> 
+int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is in in store in str var
 	// For C-style hex notation (0xFF) you can use @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z"
 	array <String^>^ c = { "0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","a","b","c","d","e","f" };
 #ifdef _WIN64
 	//if ((input_->Length < 5) || (input_->Length > 16)) {		
 	if (Information::IsNumeric(input_)) {		
-		//value = Conversion::Val(input_);
-		return true;
+		intValue = input_;
+		return 1;
 	}	
 #else
 	//if ((input_->Length < 5) || (input_->Length > 8)) {
 	if (Information::IsNumeric(input_)) {		
-		//value = Conversion::Val(input_);
-		return true;
+		intValue = input_;
+		return 1;
 	}	
 #endif // _WIN64
+	if (input_->Length > 2) {
+		if (input_->Substring(0, 2)->ToLower() == "0x") {   /// in case have 0x at begin we removed 
+			input_ = input_->Substring(2, input_->Length - 2);
+		}
+	}
 	for (size_t i = 0; i < input_->Length; i++)
 	{
 		if (Array::IndexOf(c, input_->Substring(i, 1)) < 0) {
-			//value = -1;
-			return false;
+			intValue = "NULL/ ";
+			return 0;
 		}
 
 	}	
-	//value = Hex2duint(input_);
-	return true;
+	intValue = int2Str(Hex2duint(input_));
+	return 2;
 }
 
 String^ CharArr2Str(char input_[]) {

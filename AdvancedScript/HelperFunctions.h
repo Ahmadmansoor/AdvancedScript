@@ -23,7 +23,7 @@ String^ str2Hex(String^ input);
 
 const char* Str2ConstChar(System::String^ string_);
 bool Str2bool(String^ input_);
-bool CheckHexIsValid(String^ input_);
+int CheckHexIsValid(String^ input_, String^% intValue);
 char* StringFormatInline_(String^ format);
 String^ StringFormatInline_Str(String^ format);
 

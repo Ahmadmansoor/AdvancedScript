@@ -1,13 +1,21 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  ScriptFun.cpp
+  HelperFunctions.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
-ScriptFun.cpp(288): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\code\x64dbg\advancedscript\advancedscript\scriptfun.cpp(237): warning C4715: 'SetVarx_': not all control paths return a value
+HelperFunctions.cpp(52): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(58): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(61): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(62): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(150): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(208): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(289): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+HelperFunctions.cpp(304): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(308): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\code\advancedscript\advancedscript\helperfunctions.cpp(275): warning C4715: 'Str2bool': not all control paths return a value
+d:\code\advancedscript\advancedscript\helperfunctions.cpp(104): warning C4700: uninitialized local variable 'segment' used
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library ..\..\x64\plugins\AdvancedScript.lib and object ..\..\x64\plugins\AdvancedScript.exp
-  AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
+  AdvancedScript.vcxproj -> D:\Code\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
   AdvancedScript.vcxproj -> ..\..\x64\plugins\AdvancedScript.pdb (Partial PDB)

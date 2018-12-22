@@ -9,7 +9,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString);
 String^ findScriptSystemVarValue(String^ input);
 String^ findVarValue(String^ input, String^% VarString);
 bool CheckexcutedCmd(String^ cmd_);
-String^ findHexValue(String^ input);
+//String^ findHexValue(String^ input);
 String^ resolveString(String^ input, int% commaCount);
 String^ argumentValue(String^ argument, String^% OldValue_);
 

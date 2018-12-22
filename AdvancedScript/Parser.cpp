@@ -66,7 +66,7 @@ String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace) {
 
 String^ findVarValue(String^ input, String^% VarString) {  /// find the variable begin with $ like $x or $x[1]  // this VarString will used for replacing string
 	String^ ArrayIndexValue = "";
-	String^ var_ = "";
+	String^ var_name = "";
 	String^ vartype_ = ""; int indexofVar = 0;
 	if (!input->Contains("$")) {
 		return "NULLx/ no Variable name";  // this mean there are no variable in this string
@@ -76,14 +76,14 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 		input = input->Substring(1, input->Length - 1);  // we reomved $ from the begining 
 	}
 	if (input->IndexOf("[") > 0) {  // variable is Array  /// must be bigger than 0 because var has name ;)			
-		var_ = input->Substring(0, input->IndexOf("[") - 1);  // get Var name	
+		var_name = input->Substring(0, input->IndexOf("["));  // get Var name	
 		/// need to check if this value is variable too we need to pass it to argumentValue
 		String^ OldValue_;
-		var_ = argumentValue(var_, OldValue_);
-		if (var_->StartsWith("NULL/ ")) {
+		var_name = argumentValue(var_name, OldValue_);
+		if (var_name->StartsWith("NULL/ ")) {
 			return "NULL/ Can't resolve index of the variable" + input;
 		}
-		if (Varexist(var_->Trim(), vartype_, indexofVar)) { /// check if var exist  // we clear space here just , because we need to build VarString
+		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist  // we clear space here just , because we need to build VarString
 			if (vartype_ == "array" && input->IndexOf("]") > 0) { // var type must be array and the rest of string must have close ]
 				for (size_t i = input->IndexOf("[") + 1; i < input->Length; i++) //get index of var
 				{
@@ -91,7 +91,8 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 						ArrayIndexValue = ArrayIndexValue + input->Substring(i, 1);
 					}
 					else {
-						VarString = VarString + var_ + input->Substring(input->IndexOf("["), input->Length - input->IndexOf("]", input->IndexOf("["))); // this is the end index of var we will used later to replace string
+						//String^ xx = input->Substring(0, input->IndexOf("]"));
+						VarString = VarString + input ; // this is the end index of var we will used later to replace string
 						break;
 					}
 				}
@@ -118,21 +119,21 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 		}
 	}
 	if (input->IndexOf(" ") > 0) {  /// var is int or str		
-		var_ = input->Substring(0, input->IndexOf(" "));  // get Var name	and clear spaces	
-		if (Varexist(var_->Trim(), vartype_, indexofVar)) { /// check if var exist	
-			VarString = "$" + var_; // this is the end index of var we will used later to replace string
+		var_name = input->Substring(0, input->IndexOf(" "));  // get Var name	and clear spaces	
+		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist	
+			VarString = "$" + var_name; // this is the end index of var we will used later to replace string
 			return ScriptFunList::VarList[indexofVar]->varvalue[0]; // return the value of the var					
 		}
 		else {
 			/// there are space but the string till space not have value or variable 
 			//return "NULL/ could'nt get the Variable name";
-			var_ = input;  // get Var name	and clear spaces
+			var_name = input;  // get Var name	and clear spaces
 						   /// we need to find the variable like getvarx y,$x*1
 						   /// $x*1  after $ >> x*1 so no space here so we need to find var by tokens
-			var_ = readVarName(var_, 0, VarString);  ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-			if (!var_->StartsWith("NULL/ ")) { /// check if var exist			
+			var_name = readVarName(var_name, 0, VarString);  ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			if (!var_name->StartsWith("NULL/ ")) { /// check if var exist			
 				VarString = "$" + VarString; // Get the old string which we will replce later
-				return var_;
+				return var_name;
 			}
 			else {
 				return "NULL/ Variable not in the list";
@@ -141,13 +142,13 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 	}
 	else {  /// there are no space at the end we need to search the rest of the string
 	   //return "NULL/ could'nt get the Variable name";
-		var_ = input;  // get Var name	and clear spaces
+		var_name = input;  // get Var name	and clear spaces
 		/// we need to find the variable like getvarx y,$x*1
 		/// $x*1  after $ >> x*1 so no space here so we need to find var by tokens
-		var_ = readVarName(var_, 0, VarString);  ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		if (!var_->StartsWith("NULL/ ")) { /// check if var exist			
+		var_name = readVarName(var_name, 0, VarString);  ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		if (!var_name->StartsWith("NULL/ ")) { /// check if var exist			
 			VarString = "$" + VarString; // Get the old string which we will replce later
-			return var_;
+			return var_name;
 		}
 		else {
 			return "NULL/ Variable not in the list";
@@ -370,10 +371,24 @@ String^ resolveString(String^ input, int% commaCount) {
 String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<int>> value of the argument as string
 	//String^ Originalargument = argument;
 	OldValue_ = ""; // rest the value
-	if (Information::IsNumeric(argument)) {   /// check if int number
+	/*if (Information::IsNumeric(argument)) {   /// check if int number
 		return argument;
+	}*/
+	int isNumOrHex = 0; String^ intValue;
+	isNumOrHex = CheckHexIsValid(argument, intValue);  // <<< need to know if it's whole str is number or hex 
+	switch (isNumOrHex)
+	{
+	case 1: {
+		argument = intValue;  // it mean it's already int and we store it in str var
+		break;
 	}
-
+	case 2: {
+		argument = int2Str(Hex2duint(argument));// it mean it's already hex format (000045FAB) and we convert it to int we store it in str var
+		break;
+	}
+	default:
+		break;
+	}
 	//////////////////////////////////////
 	int commaCount = 0;
 	argument = resolveString(argument, commaCount);
@@ -381,11 +396,28 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 		return argument;
 	}
 	//////////////////////////////////////
-	if (argument->IndexOf("0x") >= 0) {  /// check if hex
+	if (argument->IndexOf("0x") >= 0) {  /// check if we have a hex value in the string
 		while (argument->IndexOf("0x") >= 0) {
 			String^ replaceValue = "";
-			String^ oldvalue = argument->Substring(argument->IndexOf("0x"), argument->Length - argument->IndexOf("0x"));
-			replaceValue = int2Str(Hex2duint(findHexValue(oldvalue)));
+			String^ oldvalue = argument->Substring(argument->IndexOf("0x"), argument->Length - argument->IndexOf("0x"));  // we take the part which have hex value
+			
+//replaceValue = int2Str(Hex2duint(findHexValue(oldvalue)));
+			int isNumOrHex1 = 0; String^ intValue1;
+			isNumOrHex1 = CheckHexIsValid(oldvalue, intValue1);  // <<< need to know if it's number or hex 
+			switch (isNumOrHex1)
+			{
+			case 1: {
+				replaceValue = intValue1;  // it mean it's already int and we store it in str var
+				break;
+			}
+			case 2: {
+				replaceValue = int2Str(Hex2duint(intValue1));// it mean it's already hex format (000045FAB) and we convert it to int we store it in str var
+				break;
+			}
+			default:
+				break;
+			}
+
 			OldValue_ = oldvalue;
 			if (!replaceValue->StartsWith("NULL/")) {
 				argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
@@ -419,6 +451,22 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 			String^ oldValue = "";
 			tempInput = tempInput->Substring(tempInput->IndexOf("$"), tempInput->Length - tempInput->IndexOf("$"));
 			tempInput = findVarValue(tempInput, oldValue);
+			int isNumOrHex1 = 0; String^ intValue1;
+			isNumOrHex1=CheckHexIsValid(tempInput,intValue1);  // <<< need to know if it's number or hex 
+			switch (isNumOrHex1)
+			{			
+			case 1: {
+				tempInput = intValue1;  // it mean it's already int and we store it in str var
+				break;
+			}
+			case 2: {
+				tempInput = int2Str(Hex2duint(intValue1));// it mean it's already hex format (000045FAB) and we convert it to int we store it in str var
+				break;
+			}
+			default:
+				break;
+			}			
+			
 			OldValue_ = oldValue;
 			if (tempInput->StartsWith("NULL/")) {
 				_plugin_logprint(Str2ConstChar(tempInput));

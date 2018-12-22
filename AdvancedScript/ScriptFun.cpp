@@ -63,8 +63,8 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	if (vartype == "int") {		
 		/// varValue_Int : resolve vriable value as Int we will used to store it in Int variable 
 		String^ OldValue_;
-		String^ varValue_Int = argumentValue(varvalue, OldValue_);
-		if (varValue_Int->StartsWith("NULL/")) {
+		String^ varValue_Int = argumentValue(varvalue, OldValue_);		
+		if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
 			Script::Gui::Message("This value can't resolve to int, it will not defined");
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));			
 			return;			
