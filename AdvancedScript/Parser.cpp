@@ -75,7 +75,7 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 		VarString = "$";
 		input = input->Substring(1, input->Length - 1);  // we reomved $ from the begining 
 	}
-	if (input->IndexOf("[") > 0) {  // variable is Array  /// must be bigger than 0 because var has name ;)			
+	if ( (input->IndexOf("[") > 0) && (input->IndexOf("$") < 0)) {  // variable is Array  /// we must check if there are another var ( contain $ ) so we not mix with other var's		
 		var_name = input->Substring(0, input->IndexOf("["));  // get Var name	
 		/// need to check if this value is variable too we need to pass it to argumentValue
 		String^ OldValue_;
@@ -204,8 +204,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			//if ( temp->Substring(i + 1, 1) == " ") {  /// as there are still some char's left (i + 1 > 0)	
 			if (tokens_->IndexOf(tokens_, temp->Substring(i + 1, 1)) >0 ) {  /// as there are still some char's left (i + 1 > 0)	
 				VarString = VarString + value_;  /// in case VarString hold space 
-
-				return "NULL/ ";
+				return argumentValue(value_->Trim(), OldValue_);
 			}
 
 			value_1 = value_ + temp->Substring(i + 1, 1);
@@ -308,10 +307,11 @@ String^ tokens(String^ input, String^% VarString) {
 
 }
 
-String^ findHexValue(String^ input) {
+String^ findHexValue(String^ input,String^% oldvalue_) {
 	String^ temp;
 	if (input->IndexOf("0x") >= 0) {
 		input = input->Substring(input->IndexOf("0x") + 2, input->Length - (input->IndexOf("0x") + 2));
+		oldvalue_ = "0x";
 	}
 	else
 	{
@@ -319,22 +319,26 @@ String^ findHexValue(String^ input) {
 	}
 	for (size_t i = 0; i < input->Length; i++)
 	{
-		if (CheckHexIsValid(input->Substring(i, 1))) {
+		String^ intValue1; String^ intValue2;		
+		if ( CheckHexIsValid(input->Substring(i, 1), intValue1)  > 0) {  // if the char not hex or numeric 
 			temp = temp + input->Substring(i, 1);
 			if (i + 1 < input->Length) {
-				if (!CheckHexIsValid(input->Substring(i+1, 1))) {
-					return temp;
+				if (CheckHexIsValid(input->Substring(i+1, 1), intValue2) == 0) {
+					oldvalue_ = oldvalue_ + temp ;
+					break;
+					//return  int2Str(Hex2duint(temp));    /// now we return the value as int stored in str var
 				}
 			}
 		}
-	}
-	return temp;
+	}	
+	return  int2Str(Hex2duint(temp));    /// now we return the value as int stored in str var
 }
 
 String^ resolveString(String^ input, int% commaCount) {
 	String^ temp = "";
 	if (input->StartsWith("\"") && (input->EndsWith("\""))) {  /// that mean all string is commaed 
-		return input;
+		commaCount = 2;
+		return input->Substring(1,input->LastIndexOf("\"")-1);
 	}
 	for (size_t i = 0; i < input->Length; i++)
 	{
@@ -346,52 +350,89 @@ String^ resolveString(String^ input, int% commaCount) {
 		commaCount = 0;
 		return input;
 	}
-
+	if (commaCount == 0) {  /// in case there are no comma
+		String^ OldValue_;
+		return argumentValue(input, OldValue_);
+		 
+	}
 	for (size_t i = 0; i < input->Length; i++)
 	{
 		if (input->Substring(i, 1) != "\"") {
 			temp = temp + input->Substring(i, 1);
 		}
-		else
-		{
-			String^ OldValue_;
-			temp = argumentValue(temp, OldValue_);  /// reolve this str in case it return NULL we take the old value (which could be half resolved)
-			if (temp->StartsWith("NULL/ ")) {
-				temp = OldValue_;
+		if (i + 1 < input->Length) {
+			if (input->Substring(i + 1, 1) == "\"") {
+				String^ OldValue_;
+				temp = argumentValue(temp->Trim(), OldValue_);  /// reolve this str in case it return NULL we take the old value (which could be half resolved)
+				if (temp->StartsWith("NULL/ ")) {
+					temp = OldValue_;
+				}
+				int NextCommaIndex = 1 + input->IndexOf("\"", i + 1);
+				String^ StringafterComma = input->Substring(NextCommaIndex, input->Length - NextCommaIndex);
+				temp = temp + StringafterComma;
+				temp = temp->Substring(0, temp->Length - 1);  /// remove the next comma
+				i = i + NextCommaIndex + StringafterComma->Length;  /// now jmp to the next comma
 			}
-			int NextCommaIndex = input->IndexOf("\"", i + 1);
-			String^ StringafterComma = input->Substring(i+1 , NextCommaIndex - (i+1)) ;
-			temp = temp + StringafterComma;
-			i = i + NextCommaIndex + 1;  /// now jmp to the next comma
 		}
 	}
 	return temp;
 }
 
-String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<int>> value of the argument as string
-	//String^ Originalargument = argument;
-	OldValue_ = ""; // rest the value
-	/*if (Information::IsNumeric(argument)) {   /// check if int number
-		return argument;
-	}*/
+
+bool CheckexcutedCmd(String^ cmd_) {
+	Generic::List<String^>^ arguments;
+	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
+	String^ OldValue_;
+
+	if (cmd_->StartsWith("mem(") || cmd_->StartsWith("mem (")) {
+		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
+		String^ addr = argumentValue(arguments[0], OldValue_);
+		String^ Size_ = argumentValue(arguments[1], OldValue_);
+		if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
+			_plugin_logprint("wrong arguments for memdump command");
+			return false;
+		}
+		switch (arguments->Count)
+		{
+		case 2: {
+			dumpmem(addr, Size_);
+			return true;
+		}
+		case 3: {
+			dumpmem(addr, Size_, arguments[2]);
+			return true;
+		}
+		default:
+			_plugin_logprint("wrong arguments for memdump command");
+			return false;
+		}
+	}
+	_plugin_logprint(Str2ConstChar(argumentValue(cmd_, OldValue_)));
+	return true;
+}
+
+
+String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<int>> value of the argument storing in string var
+	OldValue_ = argument; // rest the value	
 	int isNumOrHex = 0; String^ intValue;
-	isNumOrHex = CheckHexIsValid(argument, intValue);  // <<< need to know if it's whole str is number or hex 
-	switch (isNumOrHex)
-	{
-	case 1: {
-		argument = intValue;  // it mean it's already int and we store it in str var
-		break;
-	}
-	case 2: {
-		argument = int2Str(Hex2duint(argument));// it mean it's already hex format (000045FAB) and we convert it to int we store it in str var
-		break;
-	}
-	default:
-		break;
-	}
+	if (CheckHexIsValid(argument, intValue) > 0) {  // <<< need to know if it's whole str is number or hex 	
+		switch (isNumOrHex)
+		{
+		case 1: {
+			argument = intValue;  // it mean it's already int and we store it in str var
+			return argument;
+		}
+		case 2: {
+			argument = int2Str(Hex2duint(argument));// it mean it's already hex format (000045FAB) and we convert it to int we store it in str var
+			return argument;
+		}
+		default:
+			break;
+		}
+	}	
 	//////////////////////////////////////
 	int commaCount = 0;
-	argument = resolveString(argument, commaCount);
+	//argument = resolveString(argument, commaCount);
 	if (argument->StartsWith("\"") && (argument->EndsWith("\""))) {  /// that mean all string is commaed 
 		return argument;
 	}
@@ -399,25 +440,9 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 	if (argument->IndexOf("0x") >= 0) {  /// check if we have a hex value in the string
 		while (argument->IndexOf("0x") >= 0) {
 			String^ replaceValue = "";
-			String^ oldvalue = argument->Substring(argument->IndexOf("0x"), argument->Length - argument->IndexOf("0x"));  // we take the part which have hex value
-			
-//replaceValue = int2Str(Hex2duint(findHexValue(oldvalue)));
-			int isNumOrHex1 = 0; String^ intValue1;
-			isNumOrHex1 = CheckHexIsValid(oldvalue, intValue1);  // <<< need to know if it's number or hex 
-			switch (isNumOrHex1)
-			{
-			case 1: {
-				replaceValue = intValue1;  // it mean it's already int and we store it in str var
-				break;
-			}
-			case 2: {
-				replaceValue = int2Str(Hex2duint(intValue1));// it mean it's already hex format (000045FAB) and we convert it to int we store it in str var
-				break;
-			}
-			default:
-				break;
-			}
-
+			String^ oldvalue;
+			String^ tempinput = argument->Substring(argument->IndexOf("0x"), argument->Length - argument->IndexOf("0x"));  // we take the part which have hex value
+			replaceValue = findHexValue(tempinput,oldvalue);			
 			OldValue_ = oldvalue;
 			if (!replaceValue->StartsWith("NULL/")) {
 				argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
@@ -431,7 +456,19 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 		while (argument->IndexOf("{") >= 0) {
 			String^ replaceValue = "";
 			String^ oldvalue = argument->Substring(argument->IndexOf("{"), argument->IndexOf("}") + 1);
-			replaceValue = findScriptSystemVarValue(oldvalue);
+			replaceValue =findScriptSystemVarValue(oldvalue);
+
+			String^ inValue;
+			int hexOrInt = CheckHexIsValid(replaceValue, inValue);
+			if (hexOrInt < 0) {    /// in case the value less than 0 so no need to get the hex we just get the entered first time
+				replaceValue = "NULL/";
+			}
+			if (hexOrInt == 1) {
+				replaceValue = inValue;
+			}
+			if (hexOrInt == 2) {
+				replaceValue = replaceValue;
+			}
 			OldValue_ = oldvalue;
 			if (!replaceValue->StartsWith("NULL/")) {
 				argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
@@ -452,21 +489,9 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 			tempInput = tempInput->Substring(tempInput->IndexOf("$"), tempInput->Length - tempInput->IndexOf("$"));
 			tempInput = findVarValue(tempInput, oldValue);
 			int isNumOrHex1 = 0; String^ intValue1;
-			isNumOrHex1=CheckHexIsValid(tempInput,intValue1);  // <<< need to know if it's number or hex 
-			switch (isNumOrHex1)
-			{			
-			case 1: {
+			if (CheckHexIsValid(tempInput, intValue1) > 0) {  // <<< need to know if it's number or hex 
 				tempInput = intValue1;  // it mean it's already int and we store it in str var
-				break;
-			}
-			case 2: {
-				tempInput = int2Str(Hex2duint(intValue1));// it mean it's already hex format (000045FAB) and we convert it to int we store it in str var
-				break;
-			}
-			default:
-				break;
 			}			
-			
 			OldValue_ = oldValue;
 			if (tempInput->StartsWith("NULL/")) {
 				_plugin_logprint(Str2ConstChar(tempInput));
@@ -513,36 +538,4 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 }
 
 
-
-bool CheckexcutedCmd(String^ cmd_) {
-	Generic::List<String^>^ arguments;
-	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
-	String^ OldValue_;
-
-	if (cmd_->StartsWith("mem(") || cmd_->StartsWith("mem (")) {
-		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
-		String^ addr = argumentValue(arguments[0], OldValue_);
-		String^ Size_ = argumentValue(arguments[1], OldValue_);
-		if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
-			_plugin_logprint("wrong arguments for memdump command");
-			return false;
-		}
-		switch (arguments->Count)
-		{
-		case 2: {
-			dumpmem(addr, Size_);
-			return true;
-		}
-		case 3: {
-			dumpmem(addr, Size_, arguments[2]);
-			return true;
-		}
-		default:
-			_plugin_logprint("wrong arguments for memdump command");
-			return false;
-		}
-	}
-	_plugin_logprint(Str2ConstChar(argumentValue(cmd_, OldValue_)));
-	return true;
-}
 

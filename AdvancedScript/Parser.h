@@ -9,7 +9,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString);
 String^ findScriptSystemVarValue(String^ input);
 String^ findVarValue(String^ input, String^% VarString);
 bool CheckexcutedCmd(String^ cmd_);
-//String^ findHexValue(String^ input);
+String^ findHexValue(String^ input, String^% oldvalue_);
 String^ resolveString(String^ input, int% commaCount);
 String^ argumentValue(String^ argument, String^% OldValue_);
 
@@ -17,6 +17,12 @@ String^ argumentValue(String^ argument, String^% OldValue_);
 //script test 
 
 //Logx memdump(76FA0000, 50)
+
+//varx int, x, 0x45fa
+//varx str, z, 0xaa
+//setx x, $z + 0x33 - 25
+//varx array, y, 0x10
+//setx x, $x + $y[0]
 
 
 //varx str, search, "4533C94533C033"

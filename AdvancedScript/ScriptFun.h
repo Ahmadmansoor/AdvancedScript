@@ -111,6 +111,22 @@ bool Varexist(String^ varname, String^% vartype_, int% index);
 void Varx_(String^ vartype, String^ varname, String^ varvalue = "");
 Void GetVarx_(String^ varname, int Arrayindex_=0);
 bool SetVarx_(String^ varname, int index_, String^ value_);
+String^ Movx_(String^ p1, String^ p2);
+String^ addx_(String^ p1, String^ p2);
+String^ subx_(String^ p1, String^ p2);
+String^ mulx_(String^ p1, String^ p2);
+String^ divx_(String^ p1, String^ p2);
+String^ andx_(String^ p1, String^ p2);
+String^ orx_(String^ p1, String^ p2);
+String^ xorx_(String^ p1, String^ p2);
+String^ shlx_(String^ p1, String^ p2);
+String^ pushx_(String^ p1);
+String^ popx_(String^ p1);
+String^ cmpx_(String^ p1, String^ p2);
+
+////
+String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_="");
+String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_="");
 String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_="");
 bool dumpmem(String^ addr, String^ size, String^ para = "");
 

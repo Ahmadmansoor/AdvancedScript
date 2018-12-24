@@ -129,7 +129,7 @@ const char* Str2ConstChar(System::String^ string_) {
 /// <summary> 
 /// 0 not hex not numeric // 1 is numeric // 2 is hex 
 /// </summary> 
-int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is in in store in str var
+int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is in int store in str var
 	// For C-style hex notation (0xFF) you can use @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z"
 	array <String^>^ c = { "0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","a","b","c","d","e","f" };
 #ifdef _WIN64

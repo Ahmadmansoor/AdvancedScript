@@ -4,6 +4,10 @@
 static void VarListClear() {
 	ScriptFunList::VarList->Clear();
 }
+VarPara_temp^ GetVarx_byIndex(String^ varname, int index_) {
+	VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[index_]->vartype, ScriptFunList::VarList[index_]->varname, ScriptFunList::VarList[index_]->varvalue[index_], index_);
+	return x;
+}
 bool Varexist(String^ varname, String^% vartype_, int% index) {	// true there is variable with same name
 	if (varname->StartsWith("$")) {  // in case we pass variable with $ like $x
 		varname = varname->Substring(1, varname->Length - 1);
@@ -23,18 +27,19 @@ bool Varexist(String^ varname, String^% vartype_, int% index) {	// true there is
 // defealt value for varvalue="" and will chnaged later to "0" when var is int
 void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	vartype = vartype->ToLower();
+	String^ oldValue="";
 	if (varname->Contains(" ")) {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces"));
 		return;
-	}
-	
+	}		
 	String^ retvartype = "";
 	if (vartype == "str") {
 		int commaCount = 0;
+		if (varvalue == "") { varvalue = "NULL"; } // in case user not define value
 		String^ resolveVarValue = resolveString(varvalue, commaCount);
 		if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
 			resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-			resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+			resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->LastIndexOf("\"")); // get string without comma's
 		}
 		if (commaCount != 0) {
 			varvalue = resolveVarValue;
@@ -65,21 +70,21 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		String^ OldValue_;
 		String^ varValue_Int = argumentValue(varvalue, OldValue_);		
 		if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
-			Script::Gui::Message("This value can't resolve to int, it will not defined");
+			Script::Gui::Message("This value can't resolve as int, it will not defined");
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));			
 			return;			
 		}		
-		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varValue_Int, 0);  // we store varvalue as int 
+		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, int2Str(Hex2duint(varValue_Int)), 0);  // we store varvalue as int 
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= " + varValue_Int + "\\"+ str2Hex(varvalue) + " :has been added"));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + varValue_Int + "\\"+ int2Str(Hex2duint(varvalue)) + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= " + varValue_Int + "\\" + str2Hex(varvalue) + " :has been added"));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + varValue_Int + "\\" + int2Str(Hex2duint(varvalue)) + " :has been added"));
 				return;
 			}
 			else {
@@ -125,9 +130,70 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 
 }
 
-VarPara_temp^ GetVarx_byIndex(String^ varname, int index_) {
-	VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[index_]->vartype, ScriptFunList::VarList[index_]->varname, ScriptFunList::VarList[index_]->varvalue[index_], index_);
-	return x;
+
+
+bool SetVarx_(String^ varname, int index_, String^ value_) {
+	int indexofVar = 0;
+	String^ retvartype = "";
+	if (Varexist(varname, retvartype, indexofVar)) {
+		varname = varname->Substring(1, varname->Length - 1);
+		if (index_ > 0 && retvartype == "array") {
+			ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "[" + index_ + "]= " + value_));
+			return true;
+		}
+		if (index_ > 0 && retvartype != "array") {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
+			String^ OldValue_;
+			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int
+				String^ t1 = argumentValue(value_, OldValue_);
+				if ((t1->StartsWith("NULL/ ")) || !(Information::IsNumeric(t1))) {
+					Script::Gui::Message("This value can't resolve to int, it will not defined");
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been set"));
+					return false;
+				}
+				else
+				{
+					ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_ + "\\" + str2Hex(value_)));
+				}
+			}
+			else {  /// case str
+				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
+			}
+			return true;
+		}
+		if (index_ == 0) {
+			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {
+				String^ OldValue_;
+				String^ t1 = argumentValue(value_, OldValue_);
+				if ((t1->StartsWith("NULL/ ")) || !(Information::IsNumeric(t1))) {   /// if the value is not int 
+					Script::Gui::Message("This value can't resolve to int, it will not defined");
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been set"));
+					return false;
+				}
+				else
+				{
+					ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_ + "\\" + str2Hex(value_)));
+				}
+			}
+			else {  /// case str
+				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
+			}
+			return true;
+		}
+		if (index_ < 0) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));
+			return false;
+		}
+	}
+	else {
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
+		return false;
+	}
 }
 
 Void GetVarx_(String^ varname, int Arrayindex_) {
@@ -174,79 +240,257 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 	}
 }
 
-bool SetVarx_(String^ varname, int index_, String^ value_) {
-	int indexofVar = 0;
-	String^ retvartype = "";	
-	if (Varexist(varname, retvartype, indexofVar)) {
-		if (index_ > 0 && retvartype == "array") {
-			ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "[" + index_ + "]= " + value_));
-			return true;
-		}
-		if (index_ > 0 && retvartype != "array") {
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
-			String^ OldValue_;
-			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int
-				String^ t1 = argumentValue(value_, OldValue_);
-				if ((t1->StartsWith("NULL/ ")) || !(Information::IsNumeric(t1))){
-					Script::Gui::Message("This value can't resolve to int, it will not defined");
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been set"));
-					return false;
+
+
+String^ Movx_(String^ p1, String^ p2) {
+	String^ cmd_ = "mov " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ addx_(String^ p1, String^ p2) {
+	String^ cmd_ = "add " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ subx_(String^ p1, String^ p2) {
+	String^ cmd_ = "sub " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ mulx_(String^ p1, String^ p2) {
+	String^ cmd_ = "mul " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ divx_(String^ p1, String^ p2) {
+	String^ cmd_ = "div " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ andx_(String^ p1, String^ p2) {
+	String^ cmd_ = "and " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ orx_(String^ p1, String^ p2) {
+	String^ cmd_ = "or " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ xorx_(String^ p1, String^ p2) {
+	String^ cmd_ = "xor " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ shlx_(String^ p1, String^ p2) {
+	String^ cmd_ = "shl " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ pushx_(String^ p1) {
+	String^ cmd_ = "push ";
+	String^ oldvalue = "";
+	p1 = argumentValue(p1, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p1);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ popx_(String^ p1) {
+	String^ cmd_ = "pop ";
+	String^ oldvalue = "";
+	p1 = argumentValue(p1, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p1);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ cmpx_(String^ p1, String^ p2) {
+	String^ cmd_ = "cmp " + p1 + ",";
+	String^ oldvalue = "";
+	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	if (!p1->StartsWith("NULL/ ")) {
+		cmd_ = cmd_ + str2Hex(p2);
+		return cmd_;
+	}
+	return "NULL/ ";
+}
+
+String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
+	String^ cmd_ = "find ";
+	String^ OldValue_;
+	String^ base_s = argumentValue(base_, OldValue_);
+
+	if (!Information::IsNumeric(base_s)) {
+		_plugin_logputs(Str2ConstChar(base_s + " is not a hex"));
+		return "NULL/ ";
+	}
+	if (Str2Int(base_s) < 0) {    /// in case the value less than 0 so no need to get the hex we just get the entered first time
+		base_s = base_;
+	}
+	else
+	{
+		base_s = duint2Hex(Str2Int(base_s));
+	}
+
+	if (!base_s->StartsWith("NULL/")) {
+		//duint base_x = Hex2duint(base_s);
+		//if (base_x != -1) {  /// check base
+		//cmd_ = cmd_ + duint2Hex(base_x) + ",";
+		cmd_ = cmd_ + base_s + ",";
+		String^ OldValue_;
+		String^ Searchvalue_x = argumentValue(Searchvalue_, OldValue_);
+		if (!Searchvalue_x->StartsWith("NULL/")) {
+			cmd_ = cmd_ + Searchvalue_x;
+			if (Size_ != "") {    /// if user define the size
+				duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
+				if (Size_x != -1) {
+					cmd_ = cmd_ + "," + duint2Hex(Size_x);
+					return cmd_;
 				}
 				else
-				{
-					ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_ + "\\" + str2Hex(value_)));
-				}
+					return "NULL/ ";
 			}
-			else {  /// case str
-				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
+			else {
+				return cmd_;
 			}
-			return true;
 		}
-		if (index_ == 0) {
-			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {
-				String^ OldValue_;
-				String^ t1 = argumentValue(value_, OldValue_);  
-				if ( (t1->StartsWith("NULL/ ")) || !(Information::IsNumeric(t1)) ) {   /// if the value is not int 
-					Script::Gui::Message("This value can't resolve to int, it will not defined");
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been set"));
-					return false;
+		else
+			return "NULL/ ";
+		/*}
+		else
+		return "NULL/ ";*/
+	}
+	else
+		return "NULL/ ";
+}
+
+String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
+	String^ cmd_ = "findall ";
+	String^ OldValue_;
+	String^ base_s = argumentValue(base_, OldValue_);
+
+	if (!Information::IsNumeric(base_s)) {
+		_plugin_logputs(Str2ConstChar(base_s + " is not a hex"));
+		return "NULL/ ";
+	}
+	if (Str2Int(base_s) < 0) {    /// in case the value less than 0 so no need to get the hex we just get the entered first time
+		base_s = base_;
+	}
+	else
+	{
+		base_s = duint2Hex(Str2Int(base_s));
+	}
+
+	if (!base_s->StartsWith("NULL/")) {
+		//duint base_x = Hex2duint(base_s);
+		//if (base_x != -1) {  /// check base
+		//cmd_ = cmd_ + duint2Hex(base_x) + ",";
+		cmd_ = cmd_ + base_s + ",";
+		String^ OldValue_;
+		String^ Searchvalue_x = argumentValue(Searchvalue_, OldValue_);
+		if (!Searchvalue_x->StartsWith("NULL/")) {
+			cmd_ = cmd_ + Searchvalue_x;
+			if (Size_ != "") {    /// if user define the size
+				duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
+				if (Size_x != -1) {
+					cmd_ = cmd_ + "," + duint2Hex(Size_x);
+					return cmd_;
 				}
 				else
-				{
-					ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= "+ value_ + "\\" + str2Hex(value_)));
-				}
-			}else {  /// case str
-			ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
+					return "NULL/ ";
 			}
-			return true;
+			else {
+				return cmd_;
+			}
 		}
-		if (index_ < 0) {
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));
-			return false;
-		}
+		else
+			return "NULL/ ";
+		/*}
+		else
+		return "NULL/ ";*/
 	}
-	else {
-		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
-		return false;
-	}
+	else
+		return "NULL/ ";
 }
 
 String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findallmem ";
 	String^ OldValue_;
 	String^ base_s = argumentValue(base_, OldValue_);
-	//if ((!CheckHexIsValid(base_s)) || (!base_s->StartsWith("0x"))) {
-	if (!Information::IsNumeric(base_s)) {
+	String^ dd = Microsoft::VisualBasic::Conversion::Hex(base_s);
+	/*if (!Information::IsNumeric(base_s)) {
 		_plugin_logputs(Str2ConstChar(base_s + " is not a hex"));
 		return "NULL/ ";
+	}*/
+	String^ inValue;
+	int hexOrInt = CheckHexIsValid(base_s, inValue);
+	if (hexOrInt < 0) {    /// in case the value less than 0 so no need to get the hex we just get the entered first time
+		base_s = "NULL/";
 	}
-	if (Information::IsNumeric(base_s)) {
-		base_s = duint2Hex(Str2Int(base_s));
+	if (hexOrInt == 1) {
+		base_s = inValue;
+	}
+	if ( (hexOrInt == 2) && (base_s->StartsWith("0x")) ) {
+		base_s =  base_s;
 	}
 	
 	if (!base_s->StartsWith("NULL/")) {

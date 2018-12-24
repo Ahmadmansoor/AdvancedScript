@@ -2,16 +2,21 @@
   Parser.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-d:\code\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-d:\code\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-d:\code\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
-Parser.cpp(28): warning C4018: '<': signed/unsigned mismatch
-Parser.cpp(67): warning C4018: '<': signed/unsigned mismatch
-Parser.cpp(85): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Parser.cpp(166): warning C4018: '<': signed/unsigned mismatch
-Parser.cpp(345): warning C4101: 'TemplateClassFound': unreferenced local variable
-d:\code\advancedscript\advancedscript\parser.cpp(271): warning C4715: 'tokens': not all control paths return a value
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
+e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
+Parser.cpp(35): warning C4018: '<': signed/unsigned mismatch
+Parser.cpp(88): warning C4018: '<': signed/unsigned mismatch
+Parser.cpp(108): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+Parser.cpp(190): warning C4018: '<': signed/unsigned mismatch
+Parser.cpp(320): warning C4018: '<': signed/unsigned mismatch
+Parser.cpp(325): warning C4018: '<': signed/unsigned mismatch
+Parser.cpp(342): warning C4018: '<': signed/unsigned mismatch
+Parser.cpp(353): warning C4018: '<': signed/unsigned mismatch
+Parser.cpp(377): warning C4101: 'TemplateClassFound': unreferenced local variable
+Parser.cpp(511): warning C4101: 'commaCount': unreferenced local variable
+e:\code\x64dbg\advancedscript\advancedscript\parser.cpp(308): warning C4715: 'tokens': not all control paths return a value
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library ..\..\x32\plugins\AdvancedScript.lib and object ..\..\x32\plugins\AdvancedScript.exp
-  AdvancedScript.vcxproj -> D:\Code\AdvancedScript\AdvancedScript\..\..\x32\plugins\AdvancedScript.dll
+  AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x32\plugins\AdvancedScript.dll
   AdvancedScript.vcxproj -> ..\..\x32\plugins\AdvancedScript.pdb (Partial PDB)

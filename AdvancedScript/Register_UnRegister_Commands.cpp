@@ -109,9 +109,33 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 
 	if (!_plugin_registercommand(pluginHandle, "Setx", SetVarx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "Movx", SetVarx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
+	/// Script instruments equivalent in x64dbg 
+	if (!_plugin_registercommand(pluginHandle, "Movx", Movx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "addx", addx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "subx", subx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "mulx", mulx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "andx", andx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "orx", orx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "xorx", xorx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "shlx", shlx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "popx", popx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "cmpx", cmpx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	////
+	if (!_plugin_registercommand(pluginHandle, "findx", findx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "findallx", findallx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 	if (!_plugin_registercommand(pluginHandle, "findallmemx", findallmemx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
@@ -413,7 +437,7 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 
 	switch ((arguments->Count))
 	{
-	case 2: {
+	case 2: {		
 		Varx_(arguments[0], arguments[1]); // varvalue will make it ""
 		break;
 	}
@@ -435,22 +459,31 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 	switch ((arguments->Count))
 	{
 	case 1: {  // case the var is int or str so the value at index=0
-		GetVarx_(arguments[0], 0);
-		break;
-	}
-	case 2: { // case the var is Array so we need the index of this array 
-		String^ arguments1 = argumentValue(arguments[1], OldValue_);
-		//////////////////////////////////////////////////
-		if (!arguments1->StartsWith("NULL/")) {
-			GetVarx_(arguments[0], Str2Int(arguments1));			
+		if (!arguments[0]->Contains("[")) {  /// this mean it's int or str
+			GetVarx_(arguments[0], 0);
+		}
+		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) {  /// this mean it's array
+			String^ ArrayIndex = arguments
+
 		}
 		else {
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
-		}
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "missing []"));
+		}		
 		break;
-
-		//////////////////////////////////////////////////
 	}
+	//case 2: { // case the var is Array so we need the index of this array 
+	//	String^ arguments1 = argumentValue(arguments[1], OldValue_);
+	//	//////////////////////////////////////////////////
+	//	if (!arguments1->StartsWith("NULL/")) {
+	//		GetVarx_(arguments[0], Str2Int(arguments1));			
+	//	}
+	//	else {
+	//		_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+	//	}
+	//	break;
+
+	//	//////////////////////////////////////////////////
+	//}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;
@@ -508,6 +541,352 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 		break;
 	}
 	return true;
+}
+
+static bool Movx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = Movx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}	
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool addx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = addx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool subx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = subx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool mulx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = mulx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool divx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = divx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool cmpx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = cmpx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool andx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = andx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool orx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = orx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool xorx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = xorx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool shlx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = shlx_(arguments[0], arguments[1]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool pushx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = pushx_(arguments[0]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool popx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = popx_(arguments[0]);
+		if (!cmd->Contains("NULL/")) {
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			break;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
+			break;
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool findx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,String^ Size_) 
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = findx_(arguments[0], arguments[1]);
+		DbgCmdExecDirect(Str2ConstChar(cmd));
+		return true;
+	}
+	case 3: {
+		String^ cmd = findx_(arguments[0], arguments[1], arguments[2]);
+		DbgCmdExecDirect(Str2ConstChar(cmd));
+		return true;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return false;
+}
+
+static bool findallx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,String^ Size_) 
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ cmd = findallx_(arguments[0], arguments[1]);
+		DbgCmdExecDirect(Str2ConstChar(cmd));
+		return true;
+	}
+	case 3: {
+		String^ cmd = findallx_(arguments[0], arguments[1], arguments[2]);
+		DbgCmdExecDirect(Str2ConstChar(cmd));
+		return true;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return false;
 }
 
 static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,String^ Size_) 

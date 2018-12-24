@@ -5,8 +5,8 @@ e:\code\x64dbg\x64\plugins\advancedscript.exp
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\vc140.pdb
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\scriptfun.obj
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\register_unregister_commands.obj
-e:\code\x64dbg\advancedscript\advancedscript\x64\debug\pluginbasic.obj
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\parser.obj
+e:\code\x64dbg\advancedscript\advancedscript\x64\debug\pluginbasic.obj
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\mainform.obj
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\logwindow.obj
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\logtemplate.obj
@@ -19,7 +19,6 @@ e:\code\x64dbg\x64\plugins\advancedscript.dll
 e:\code\x64dbg\x64\plugins\advancedscript.pdb
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\app.res
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\advancedscript.vcxproj.generateresource.cache
-e:\code\x64dbg\advancedscript\advancedscript\x64\debug\advancedscript.vcxprojresolveassemblyreference.cache
 e:\code\x64dbg\advancedscript\advancedscript\..\..\x64\plugins\advancedscript.dll
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\advancedscript.tlog\advancedscript.write.1u.tlog
 e:\code\x64dbg\advancedscript\advancedscript\x64\debug\advancedscript.tlog\cl.command.1.tlog
