@@ -437,12 +437,46 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 
 	switch ((arguments->Count))
 	{
-	case 2: {		
+	case 2: {
 		Varx_(arguments[0], arguments[1]); // varvalue will make it ""
 		break;
 	}
 	case 3: {
 		Varx_(arguments[0], arguments[1], arguments[2]);
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
+	}
+	return true;
+}
+
+static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int index_,String^ value_)
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	String^ OldValue_;
+	String^ arrayIndex;
+	switch ((arguments->Count))
+	{
+	case 2: {
+		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) { // this is array var
+			arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("["), arguments[0]->Length - arguments[0]->IndexOf("]"));
+			arrayIndex = argumentValue(arguments[1], OldValue_);
+			if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex))) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng index of array"));
+				return false;
+			}
+			else
+			{  /// we checkd that array index is int, need to check the value of he array
+				SetVarx_(arguments[0]->Substring(0, arrayIndex->IndexOf("["))->Trim(), Str2Int(arrayIndex->Trim()), arguments[1]);
+			}
+
+		}
+		else  /// var is str or int
+		{
+			SetVarx_(arguments[0], 0, arguments[1]);
+		}
 		break;
 	}
 	default:
@@ -463,27 +497,27 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 			GetVarx_(arguments[0], 0);
 		}
 		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) {  /// this mean it's array
-			String^ ArrayIndex = arguments
+			//String^ ArrayIndex = argumentValue
 
 		}
 		else {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "missing []"));
-		}		
+		}
 		break;
 	}
-	//case 2: { // case the var is Array so we need the index of this array 
-	//	String^ arguments1 = argumentValue(arguments[1], OldValue_);
-	//	//////////////////////////////////////////////////
-	//	if (!arguments1->StartsWith("NULL/")) {
-	//		GetVarx_(arguments[0], Str2Int(arguments1));			
-	//	}
-	//	else {
-	//		_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
-	//	}
-	//	break;
+			//case 2: { // case the var is Array so we need the index of this array 
+			//	String^ arguments1 = argumentValue(arguments[1], OldValue_);
+			//	//////////////////////////////////////////////////
+			//	if (!arguments1->StartsWith("NULL/")) {
+			//		GetVarx_(arguments[0], Str2Int(arguments1));			
+			//	}
+			//	else {
+			//		_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
+			//	}
+			//	break;
 
-	//	//////////////////////////////////////////////////
-	//}
+			//	//////////////////////////////////////////////////
+			//}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;
@@ -492,56 +526,6 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 }
 
 
-static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int index_,String^ value_)
-	Generic::List<String^>^ arguments;
-	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	String^ OldValue_;
-	switch ((arguments->Count))
-	{
-	case 2: {  // case the var is int or str so the value at index=0
-		//SetVarx_(arguments[0], 0, arguments[1]);
-		//SetVarx_(arguments[0], 0, argumentValue(arguments[1],OldValue_));
-		String^ newValue_ = argumentValue(arguments[1], OldValue_);
-		if (newValue_->StartsWith("NULL/"))
-		SetVarx_(arguments[0], 0, OldValue_);
-		else
-		{
-		SetVarx_(arguments[0], 0, newValue_);
-		}
-		break;
-	}
-	case 3: { // case the var is Array so we need the index of this array 
-		String^ temp = argumentValue(arguments[1], OldValue_);
-		if (temp->StartsWith("NULL/")) {  // check index it must be int
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
-		}
-		else {
-			SetVarx_(arguments[0], Str2Int(temp), arguments[2]);
-		}		
-		/*duint intValue = 0; bool Hextype_;
-		if (CheckHexIsValid(arguments[1], intValue, Hextype_)) {
-			if (Hextype_) 
-				SetVarx_(arguments[0], intValue, arguments[2]);
-			else			
-			SetVarx_(arguments[0], intValue, arguments[2]);
-		}
-		else {
-			String^ temp = argumentValue(arguments[1]);
-			if (Information::IsNumeric(temp)) {
-				SetVarx_(arguments[0],Str2Int(temp), arguments[2]);
-			}
-			else {
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
-			}
-		}*/
-		break;
-	}
-	default:
-		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
-	}
-	return true;
-}
 
 static bool Movx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varname, String^ varvalue="")
 	Generic::List<String^>^ arguments;
@@ -560,7 +544,7 @@ static bool Movx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
 			break;
 		}
-	}	
+	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;

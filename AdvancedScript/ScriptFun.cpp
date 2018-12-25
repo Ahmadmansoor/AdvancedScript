@@ -36,12 +36,12 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	if (vartype == "str") {
 		int commaCount = 0;
 		if (varvalue == "") { varvalue = "NULL"; } // in case user not define value
-		String^ resolveVarValue = resolveString(varvalue, commaCount);
+		String^ resolveVarValue = resolveString(varvalue, commaCount);   //// resolveString used to resolve strings in str or array vriables 
 		if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
 			resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
 			resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->LastIndexOf("\"")); // get string without comma's
-		}
-		if (commaCount != 0) {
+		}	
+		if (commaCount >= 0) {
 			varvalue = resolveVarValue;
 		}		
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
@@ -65,36 +65,6 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		}
 	};
 	/////////////////////////////
-	if (vartype == "int") {		
-		/// varValue_Int : resolve vriable value as Int we will used to store it in Int variable 
-		String^ OldValue_;
-		String^ varValue_Int = argumentValue(varvalue, OldValue_);		
-		if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
-			Script::Gui::Message("This value can't resolve as int, it will not defined");
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));			
-			return;			
-		}		
-		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, int2Str(Hex2duint(varValue_Int)), 0);  // we store varvalue as int 
-		if (ScriptFunList::VarList->Count == 0) {
-			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + varValue_Int + "\\"+ int2Str(Hex2duint(varvalue)) + " :has been added"));
-			return;
-		}
-		else {
-			int indexofVar = 0;
-			if (!Varexist(varname, retvartype, indexofVar)) {
-				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + varValue_Int + "\\" + int2Str(Hex2duint(varvalue)) + " :has been added"));
-				return;
-			}
-			else {
-				Script::Gui::Message("Variable already defined, it will not defined");
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :not been added"));
-				return;
-			}
-		}
-	};
-	/////////////////////////////
 	if (vartype == "array") {
 		int commaCount = 0;
 		String^ resolveVarValue = resolveString(varvalue, commaCount);
@@ -102,13 +72,13 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 			resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
 			resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
 		}
-		if (commaCount != 0) {
+		if (commaCount >= 0) {
 			varvalue = resolveVarValue;
 		}
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine +VarPara_->vartype + " " + VarPara_->varname  + "[0]" + "= " + varvalue + " :has been added"));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[0]" + "= " + varvalue + " :has been added"));
 			return;
 		}
 		else {
@@ -126,18 +96,55 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		}
 	};
 	/////////////////////////////
+	if (vartype == "int") {		
+		/// varValue_Int : resolve vriable value as Int we will used to store it in Int variable 
+		String^ OldValue_;
+		String^ varValue_Int = argumentValue(varvalue, OldValue_); ////// argumentValue used to resolve as int numbers 		 
+		if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
+			Script::Gui::Message("This value can't resolve as int, it will not defined");
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));			
+			return;			
+		}		
+		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varValue_Int, 0);  // we store varvalue as int 
+		if (ScriptFunList::VarList->Count == 0) {
+			ScriptFunList::VarList->Add(VarPara_);
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\"+ varValue_Int + " :has been added"));
+			return;
+		}
+		else {
+			int indexofVar = 0;
+			if (!Varexist(varname, retvartype, indexofVar)) {
+				ScriptFunList::VarList->Add(VarPara_);
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
+				return;
+			}
+			else {
+				Script::Gui::Message("Variable already defined, it will not defined");
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :not been added"));
+				return;
+			}
+		}
+	};	
+	/////////////////////////////
 	_plugin_logputs(Str2ConstChar(Environment::NewLine + "No variable type "));
 
 }
 
-
-
-bool SetVarx_(String^ varname, int index_, String^ value_) {
+bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is index of element at array
 	int indexofVar = 0;
 	String^ retvartype = "";
-	if (Varexist(varname, retvartype, indexofVar)) {
+	if ( (Varexist(varname, retvartype, indexofVar)) && (varname->StartsWith("$")) ) {
 		varname = varname->Substring(1, varname->Length - 1);
-		if (index_ > 0 && retvartype == "array") {
+		if (index_ > 0 && retvartype == "array") {  // is it is array then all elements are string 
+			int commaCount = 0;
+			String^ resolveVarValue = resolveString(value_, commaCount);
+			if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+				resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+				resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+			}
+			if (commaCount >= 0) {
+				value_ = resolveVarValue;
+			}
 			ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "[" + index_ + "]= " + value_));
 			return true;
@@ -145,20 +152,26 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {
 		if (index_ > 0 && retvartype != "array") {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
 			String^ OldValue_;
-			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int
-				String^ t1 = argumentValue(value_, OldValue_);
-				if ((t1->StartsWith("NULL/ ")) || !(Information::IsNumeric(t1))) {
-					Script::Gui::Message("This value can't resolve to int, it will not defined");
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been set"));
+			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int				
+				String^ varValue_Int = argumentValue(value_, OldValue_); ////// argumentValue used to resolve as int numbers 		 
+				if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
+					Script::Gui::Message("This value can't resolve as int, it will not defined");
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));
 					return false;
+				}else {
+					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int ));
 				}
-				else
-				{
-					ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_ + "\\" + str2Hex(value_)));
+			}else {  /// case str
+				int commaCount = 0;
+				String^ resolveVarValue = resolveString(value_, commaCount);
+				if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+					resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+					resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
 				}
-			}
-			else {  /// case str
+				if (commaCount >= 0) {
+					value_ = resolveVarValue;
+				}
 				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
 			}
@@ -167,19 +180,26 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {
 		if (index_ == 0) {
 			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {
 				String^ OldValue_;
-				String^ t1 = argumentValue(value_, OldValue_);
-				if ((t1->StartsWith("NULL/ ")) || !(Information::IsNumeric(t1))) {   /// if the value is not int 
-					Script::Gui::Message("This value can't resolve to int, it will not defined");
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been set"));
+				String^ varValue_Int = argumentValue(value_, OldValue_); ////// argumentValue used to resolve as int numbers 		 
+				if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
+					Script::Gui::Message("This value can't resolve as int, it will not defined");
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));
 					return false;
 				}
-				else
-				{
-					ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_ + "\\" + str2Hex(value_)));
+				else {
+					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int));
 				}
-			}
-			else {  /// case str
+			}else {  /// case str
+				int commaCount = 0;
+				String^ resolveVarValue = resolveString(value_, commaCount);
+				if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+					resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+					resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+				}
+				if (commaCount >= 0) {
+					value_ = resolveVarValue;
+				}
 				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
 			}

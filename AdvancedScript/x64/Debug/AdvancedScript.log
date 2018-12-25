@@ -1,15 +1,33 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  ScriptFun.cpp
+  Parser.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
 e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
 e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
-ScriptFun.cpp(77): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
-ScriptFun.cpp(80): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
-ScriptFun.cpp(87): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
-ScriptFun.cpp(532): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\code\x64dbg\advancedscript\advancedscript\scriptfun.cpp(197): warning C4715: 'SetVarx_': not all control paths return a value
+Parser.cpp(37): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(48): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(58): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(90): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(91): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(196): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(201): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(209): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(214): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(294): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
+Parser.cpp(362): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(363): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(365): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(373): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
+Parser.cpp(384): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(399): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(400): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(403): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(409): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+Parser.cpp(423): warning C4101: 'TemplateClassFound': unreferenced local variable
+Parser.cpp(461): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
+Parser.cpp(558): warning C4101: 'commaCount': unreferenced local variable
+e:\code\x64dbg\advancedscript\advancedscript\parser.cpp(347): warning C4715: 'tokens': not all control paths return a value
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library ..\..\x64\plugins\AdvancedScript.lib and object ..\..\x64\plugins\AdvancedScript.exp
   AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
