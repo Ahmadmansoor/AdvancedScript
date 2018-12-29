@@ -36,14 +36,17 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	if (vartype == "str") {
 		int commaCount = 0;
 		if (varvalue == "") { varvalue = "NULL"; } // in case user not define value
-		String^ resolveVarValue = resolveString(varvalue, commaCount);   //// resolveString used to resolve strings in str or array vriables 
-		if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
-			resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-			resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->LastIndexOf("\"")); // get string without comma's
-		}	
-		if (commaCount >= 0) {
-			varvalue = resolveVarValue;
-		}		
+		String^ intValue;
+		if (!CheckHexIsValid(varvalue, intValue)) {
+			String^ resolveVarValue = resolveString(varvalue, commaCount);   //// resolveString used to resolve strings in str or array vriables 
+			if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+				resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+				resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->LastIndexOf("\"")); // get string without comma's
+			}
+			if (commaCount >= 0) {
+				varvalue = resolveVarValue;
+			}
+		}
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
@@ -67,13 +70,17 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	/////////////////////////////
 	if (vartype == "array") {
 		int commaCount = 0;
-		String^ resolveVarValue = resolveString(varvalue, commaCount);
-		if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
-			resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-			resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
-		}
-		if (commaCount >= 0) {
-			varvalue = resolveVarValue;
+		if (varvalue == "") { varvalue = "NULL"; } // in case user not define value
+		String^ intValue;
+		if (!CheckHexIsValid(varvalue, intValue)) {
+			String^ resolveVarValue = resolveString(varvalue, commaCount);
+			if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+				resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+				resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+			}
+			if (commaCount >= 0) {
+				varvalue = resolveVarValue;
+			}
 		}
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
@@ -137,13 +144,17 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 		varname = varname->Substring(1, varname->Length - 1);
 		if (index_ > 0 && retvartype == "array") {  // is it is array then all elements are string 
 			int commaCount = 0;
-			String^ resolveVarValue = resolveString(value_, commaCount);
-			if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
-				resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-				resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
-			}
-			if (commaCount >= 0) {
-				value_ = resolveVarValue;
+			if (value_ == "") { value_ = "NULL"; } // in case user not define value
+			String^ intValue;
+			if (!CheckHexIsValid(value_, intValue)) {
+				String^ resolveVarValue = resolveString(value_, commaCount);
+				if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+					resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+					resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+				}
+				if (commaCount >= 0) {
+					value_ = resolveVarValue;
+				}
 			}
 			ScriptFunList::VarList[indexofVar]->varvalue[index_] = value_;
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "[" + index_ + "]= " + value_));
@@ -164,13 +175,17 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 				}
 			}else {  /// case str
 				int commaCount = 0;
-				String^ resolveVarValue = resolveString(value_, commaCount);
-				if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
-					resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-					resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
-				}
-				if (commaCount >= 0) {
-					value_ = resolveVarValue;
+				if (value_ == "") { value_ = "NULL"; } // in case user not define value
+				String^ intValue;
+				if (!CheckHexIsValid(value_, intValue)) {
+					String^ resolveVarValue = resolveString(value_, commaCount);
+					if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+						resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+						resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+					}
+					if (commaCount >= 0) {
+						value_ = resolveVarValue;
+					}
 				}
 				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
@@ -192,13 +207,17 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 				}
 			}else {  /// case str
 				int commaCount = 0;
-				String^ resolveVarValue = resolveString(value_, commaCount);
-				if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
-					resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-					resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
-				}
-				if (commaCount >= 0) {
-					value_ = resolveVarValue;
+				if (value_ == "") { value_ = "NULL"; } // in case user not define value
+				String^ intValue;
+				if (!CheckHexIsValid(value_, intValue)) {
+					String^ resolveVarValue = resolveString(value_, commaCount);
+					if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+						resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+						resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
+					}
+					if (commaCount >= 0) {
+						value_ = resolveVarValue;
+					}
 				}
 				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));

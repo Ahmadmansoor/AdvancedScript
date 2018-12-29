@@ -27,6 +27,14 @@ int CheckHexIsValid(String^ input_, String^% intValue);
 char* StringFormatInline_(String^ format);
 String^ StringFormatInline_Str(String^ format);
 
+enum VarType
+{
+	int_,
+	str,
+	array_,
+};
+
+
 System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brackets=false);
 
 ///////////////////////////////////////////////////////////////////Helper Functions

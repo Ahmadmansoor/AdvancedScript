@@ -135,13 +135,13 @@ int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is
 #ifdef _WIN64
 	//if ((input_->Length < 5) || (input_->Length > 16)) {		
 	if (Information::IsNumeric(input_)) {		
-		intValue = input_;
+		intValue = int2Str(Hex2duint(input_));
 		return 1;
 	}	
 #else
 	//if ((input_->Length < 5) || (input_->Length > 8)) {
 	if (Information::IsNumeric(input_)) {		
-		intValue = input_;
+		intValue = int2Str(Hex2duint(input_));
 		return 1;
 	}	
 #endif // _WIN64
@@ -208,17 +208,18 @@ duint Hex2duint(String^ input_) {
 			input_ = input_->Substring(2, input_->Length - 2);
 		}
 	}
-	for (size_t i = 0; i < input_->Length; i++)
-	{
-		if (!Information::IsNumeric(input_->Substring(i, 1)) && !Char::IsLetter(input_->Substring(i, 1), 0)) {
+	String^ input_temp = input_->Trim();
+	for (size_t i = 0; i < input_temp->Length; i++)
+	{		
+		if (!Information::IsNumeric(input_temp->Substring(i, 1)) && !Char::IsLetter(input_temp->Substring(i, 1), 0)) {
 			return -1;
 		}
 	}
 
 #ifdef _WIN64
-	return __int64::Parse(reMoveSpaces(input_), System::Globalization::NumberStyles::HexNumber);
+	return __int64::Parse(reMoveSpaces(input_temp), System::Globalization::NumberStyles::HexNumber);
 #else
-	return __int32::Parse(reMoveSpaces(input_), System::Globalization::NumberStyles::HexNumber);
+	return __int32::Parse(reMoveSpaces(input_temp), System::Globalization::NumberStyles::HexNumber);
 #endif //_WIN64
 
 

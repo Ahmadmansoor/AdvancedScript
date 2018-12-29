@@ -185,8 +185,8 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 		return "NULL/ ";  /// token at the end of string
 	else {
 
-		temp = temp->Substring(tokenindex, temp->Length - tokenindex); // get value before token
-		int i1 = temp->Length;
+		temp = temp->Substring(tokenindex, temp->Length - tokenindex); // get value after token
+		int i1 = 0;
 		while (temp->Substring(i1 + 1, 1) == " ")  /// count how many spaces
 		{
 			VarString = " " +VarString ;
@@ -194,12 +194,12 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			i1 += 1;
 		}
 		temp = (temp->Substring(tokenindex))->Trim(); /// remove all spaces before token like >>  55   + 10
-		int i = temp->Length - 1;
+		int i = 1;
 		while (tokens_->IndexOf(tokens_, temp->Substring(i, 1)) < 0) /// should not be in this list
 		{
 			value_ = temp->Substring(i, 1) + value_;
 			if (i - 1 < 0) { break; } // if we reach the begin of the string
-			i -= 1;
+			i += 1;
 		}
 		VarString = value_ + VarString;
 		String^ intValue;
@@ -503,7 +503,8 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 		//switch (isNumOrHex)
 		//{
 		//case 1: {
-		argument = int2Str(Hex2duint(intValue)); /// if the value is number we get the int value form the hex value
+		//argument = duint2Hex(Str2Int(intValue)); /// if the value is number we get the int value form the hex value
+		argument = intValue; /// if the value is number we get the int value form the hex value
 		return argument;
 		//}
 		//case 2: {
@@ -621,5 +622,25 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 	return argument;
 }
 
+
+String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value should be int , other wise it would be str and we add str to gather
+	array <String^>^ tokens_ = { "*" ,"/" ,"+" ,"-" ,"$" ," " , "(" , ")" , "{" , "}" , "\"" };
+	Generic::List <String^>^ StrHolder;
+	String^ temp;
+	for (size_t i = 0; i < input->Length; i++)
+	{		
+		if (Array::IndexOf(tokens_, input->Substring(i, 1)) < 0) {
+			temp = temp + input->Substring(i, 1);
+		}
+		if (i + 1 < input->Length) {		
+			
+				StrHolder->Add(temp);
+
+			}
+		
+		
+	}
+
+}
 
 
