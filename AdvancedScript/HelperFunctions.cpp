@@ -365,7 +365,7 @@ bool IsAllSpaces(String^ input_) {
 	return true;
 }
 
-VarType type2VarType(String^ vartype) {
+VarType GetVarType(String^ vartype) {
 	if (vartype == "str") {
 		return VarType::str;
 	}

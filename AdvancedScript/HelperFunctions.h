@@ -38,7 +38,7 @@ enum VarType
 	array_,
 };
 
-VarType type2VarType(String^ vartype);
+VarType GetVarType(String^ vartype);
 
 System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brackets=false);
 

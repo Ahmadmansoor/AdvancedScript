@@ -29,25 +29,26 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	vartype = vartype->ToLower();
 	String^ oldValue="";
 	
-	if (varname->Contains(" ")) {
-		_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces"));
+	if ( (varname->Contains(" ")) || (varname->Contains("$")) ) {
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
 		return;
 	}		
 	String^ retvartype = "";
 	if (vartype == "str") {
-		int commaCount = 0;
-		if (varvalue == "") { varvalue = "NULL"; } // in case user not define value
-		String^ intValue;
-		if (!CheckHexIsValid(varvalue, intValue)) {
-			String^ resolveVarValue = resolveString(varvalue, commaCount);   //// resolveString used to resolve strings in str or array vriables 
-			if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
-				resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-				resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->LastIndexOf("\"")); // get string without comma's
-			}
-			if (commaCount >= 0) {
-				varvalue = resolveVarValue;
-			}
-		}
+		String^ resolveVarValue = StrAnalyze(varvalue, GetVarType("str"));
+		//int commaCount = 0;
+		//if (varvalue == "") { varvalue = "NULL"; } // in case user not define value
+		//String^ intValue;
+		//if (!CheckHexIsValid(varvalue, intValue)) {
+		//	String^ resolveVarValue = resolveString(varvalue, commaCount);   //// resolveString used to resolve strings in str or array vriables 
+		//	if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
+		//		resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
+		//		resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->LastIndexOf("\"")); // get string without comma's
+		//	}
+		//	if (commaCount >= 0) {
+		//		varvalue = resolveVarValue;
+		//	}
+		//}
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varvalue, 0);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
@@ -107,7 +108,8 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	if (vartype == "int") {		
 		/// varValue_Int : resolve vriable value as Int we will used to store it in Int variable 
 		String^ OldValue_;
-		String^ varValue_Int = argumentValue(varvalue, OldValue_); ////// argumentValue used to resolve as int numbers 		 
+		//String^ varValue_Int = argumentValue(varvalue, OldValue_); ////// argumentValue used to resolve as int numbers 		 
+		String^ varValue_Int = StrAnalyze(varvalue, VarType::int_);  		 
 		if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
 			Script::Gui::Message("This value can't resolve as int, it will not defined");
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));			

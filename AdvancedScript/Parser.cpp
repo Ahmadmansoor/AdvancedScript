@@ -39,27 +39,29 @@ String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace) {
 			if (Varexist(value_, vartype, index_)) {
 				VarString2Replace = value_;
 				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
-			}
-			else {
-				return "NULL/ ";
-			}
-		}
-		//if (i + 1 < temp->Length) {
+			}else {	return "NULL/ ";}
+		}		
 		if (temp->Substring(i + 1, 1) == " ") { /// if the next letter is space
 			if (Varexist(value_, vartype, index_)) {
 				VarString2Replace = value_;
 				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
 			}
+		}	
+		while (Varexist(value_, vartype, index_))
+		{
+			if (i + 1 < temp->Length) {
+				i += 1;
+				value_ = value_ + temp->Substring(i, 1);
+			}
+			else
+			{
+				VarString2Replace = value_;
+				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
+				break;
+			}
+			
 		}
-		//}
-		/*else {
-			return "NULL/ ";
-		}*/
-		value_1 = value_ + temp->Substring(i + 1, 1);
-		if ((Varexist(value_, vartype, index_)) && (!Varexist(value_1, vartype, index_t))) {
-			VarString2Replace = value_;
-			return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
-		}
+		
 	}
 	return "NULL/ ";
 }
@@ -76,13 +78,7 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 		input = input->Substring(1, input->Length - 1);  // we reomved $ from the begining 
 	}
 	if ((input->IndexOf("[") > 0) && (input->IndexOf("$") < 0)) {  // variable is Array  /// we must check if there are another var ( contain $ ) so we not mix with other var's		
-		var_name = input->Substring(0, input->IndexOf("["));  // get Var name	
-		/// need to check if this value is variable too we need to pass it to argumentValue
-		/*String^ OldValue_;
-		var_name = argumentValue(var_name, OldValue_);
-		if (var_name->StartsWith("NULL/ ")) {
-			return "NULL/ Can't resolve the variable" + input;
-		}*/
+		var_name = input->Substring(0, input->IndexOf("["));  // get Var name			
 		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist  // we clear space here just , because we need to build VarString
 			if (vartype_ == "array" && input->IndexOf("]") > 0) { // var type must be array and the rest of string must have close ]
 				for (size_t i = input->IndexOf("[") + 1; i < input->Length; i++) //get index of var
@@ -90,8 +86,7 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 					if (input->Substring(i, 1) != "]") {
 						ArrayIndexValue = ArrayIndexValue + input->Substring(i, 1);
 					}
-					else {
-						//String^ xx = input->Substring(0, input->IndexOf("]"));
+					else {						
 						VarString = VarString + input; // this is the end index of var we will used later to replace string
 						break;
 					}
@@ -100,10 +95,7 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 				ArrayIndexValue = argumentValue(ArrayIndexValue, OldValue_);  /// now check if the index, maybe Numeric or variable
 				if (ArrayIndexValue->StartsWith("NULL/")) {
 					return "NULL/ something go wrong in resolve index";
-				}
-				/*if (!Information::IsNumeric(ArrayIndexValue)) {
-					return "NULL/ array index is not Numeric";/// that something wrong in the index of the array
-				}*/
+				}				
 				String^ intValue;
 				if (CheckHexIsValid(ArrayIndexValue, intValue) == 0) {
 					return "NULL/ array index is not Numeric";/// that something wrong in the index of the array 
@@ -176,9 +168,7 @@ String^ findScriptSystemVarValue(String^ input) {
 
 String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenindex is hold the index of token
 	String^ temp = input;
-	String^ value_ = "";
-	//String^ value_1 = ""; // we used to check if we need to go more far like [55 * 23 ]
-	//String^ OldValue_;
+	String^ value_ = "";	
 	array <String^>^ tokens_ = { "*" ,"/" ,"+" ,"-" ,"$" ," " ,"(",")" };
 	tokenindex = tokenindex + 1; // exclude token form the string
 	if (tokenindex + 1 > temp->Length)
@@ -193,7 +183,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			if (i1 + 1 > input->Length) { break; } // if we reach the begin of the string
 			i1 += 1;
 		}
-		temp = (temp->Substring(tokenindex))->Trim(); /// remove all spaces before token like >>  55   + 10
+		temp = temp->Trim(); /// remove all spaces before token like >>  55   + 10
 		int i = 1;
 		while (tokens_->IndexOf(tokens_, temp->Substring(i, 1)) < 0) /// should not be in this list
 		{
@@ -201,69 +191,20 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			if (i - 1 < 0) { break; } // if we reach the begin of the string
 			i += 1;
 		}
-		VarString = value_ + VarString;
-		String^ intValue;
-		if (CheckHexIsValid(value_, intValue) > 0) {   /// check it if it's hex(number) value 
-			return intValue;
+		VarString = value_ + VarString;		
+		if (Information::IsNumeric(value_)) {   /// check it if it's number value 
+			return value_;
 		}
-		else {  /// that mean it hold variable or something else
-			String^ oldvalue1;
-			return argumentValue(value_, oldvalue1);
+		else {  /// that mean it hold variable or something else			
+			return GetArgValueByType(value_, VarType::int_);
 		}
 	}
-	return "NULL/ ";
-
-	//String^ temp = input;
-	//String^ value_ = "";
-	//String^ value_1 = ""; // we used to check if we need to go more far like 5 * 23 ]	
-	//String^ OldValue_;
-	//if (tokenindex + 1 > input->Length) {
-	//	return "NULL/ ";  /// token at the end of string
-	//}
-	//else
-	//{
-	//	if (temp->Substring(tokenindex, 1) == " ") { /// if the next char of token is space we skip it  note we add 1 to tokenindex , so we are at next chat of token
-	//		temp = temp->Substring(tokenindex + 1, temp->Length - (tokenindex + 1));  /// we pass this First space
-	//		VarString = " ";
-	//	}
-	//	else {
-	//		temp = temp->Substring(tokenindex, temp->Length - tokenindex); /// take all string after tokenindex
-	//	}
-	//	for (size_t i = 0; i < temp->Length; i++)
-	//	{
-	//		value_ = value_ + temp->Substring(i, 1);
-	//		if (i + 1 == temp->Length) { /// if this later is the end of string 
-	//			VarString = VarString + value_;  /// in case VarString hold space
-	//			return argumentValue(value_->Trim(), OldValue_);
-	//		}
-	//		if (temp->Substring(i + 1, 1) == " ") {  /// as there are still some char's left (i + 1 > 0)	
-	//			VarString = VarString + value_;  /// in case VarString hold space 
-	//			return argumentValue(value_->Trim(), OldValue_);
-	//		}
-
-	//		array <String^>^ tokens_ = { "*" ,"+","-","/" };
-	//		//tokens_->IndexOf(tokens_, temp->Substring(i + 1, 1));
-	//		//if ( temp->Substring(i + 1, 1) == " ") {  /// as there are still some char's left (i + 1 > 0)	
-	//		if (tokens_->IndexOf(tokens_, temp->Substring(i + 1, 1)) >0) {  /// as there are still some char's left (i + 1 > 0)	
-	//			VarString = VarString + value_;  /// in case VarString hold space 
-	//			return argumentValue(value_->Trim(), OldValue_);
-	//		}
-
-	//		value_1 = value_ + temp->Substring(i + 1, 1);
-	//		if ((!argumentValue(value_, OldValue_)->StartsWith("NULL/ ")) && (argumentValue(value_1, OldValue_)->StartsWith("NULL/ "))) {
-	//			VarString = VarString + value_1;
-	//			return argumentValue(value_1->Trim(), OldValue_);
-	//		}
-	//	}
-	//}
-	//return "NULL/ ";
+	return "NULL/ ";	
 }
 
 String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 	String^ temp = input;
-	String^ value_ = "";
-	//String^ value_1 = ""; // we used to check if we need to go more far like [55 * 23 ]
-	//String^ OldValue_;
+	String^ value_ = "";	
 	array <String^>^ tokens_ = { "*" ,"/" ,"+" ,"-" ,"$" ," " ,"(",")" };
 	if (tokenindex - 1 < 0)
 		return "NULL/ ";  /// token at the begin of string
@@ -287,45 +228,14 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 		}
 		VarString = value_ + VarString;
 		String^ intValue;
-		if (CheckHexIsValid(value_, intValue) > 0) {   /// check it if it's hex(number) value 
-			return intValue;
+		if (Information::IsNumeric(value_)) {   /// check it if it's hex(number) value 
+			return value_;
 		}
-		else {  /// that mean it hold variable or something else
-			String^ oldvalue1;
-			return argumentValue(value_, oldvalue1);
+		else {  /// that mean it hold variable or something else			
+			return GetArgValueByType(value_, VarType::int_);
 		}
 	}
-	return "NULL/ ";
-	//if (tokenindex - 1 < 0)
-	//	return "NULL/ ";  /// token at the begin of string
-	//else {
-	//	if (temp->Substring(tokenindex - 1, 1) == " ") {  /// if the before char of token is space we skip it 
-	//		temp = temp->Substring(0, tokenindex - 1); /// begin from after space  like  55 +
-	//		VarString = " ";
-	//	}
-	//	else {
-	//		temp = temp->Substring(0, tokenindex); /// then we get the rest of the string form index 0 till the token index
-	//		//VarString = temp;
-	//	}
-	//	for (size_t i = temp->Length; i > 0; i--)
-	//	{
-	//		value_ = temp->Substring(i - 1, 1) + value_;
-	//		if (i - 1 == 0) {
-	//			VarString = value_ + VarString;  /// in case VarString hold space 
-	//			return argumentValue(value_->Trim(), OldValue_);
-	//		}
-	//		if (temp->Substring(i - 1, 1) == " ") { /// as there are still some char's left (i - 1 > 0)
-	//			VarString = value_ + VarString;  /// in case VarString hold space 
-	//			return argumentValue(value_->Trim(), OldValue_);
-	//		}
-	//		value_1 = temp->Substring(i - 2, 1) + value_;  /// we check the next char with previous one if it can have a value or related variable
-	//		if ((!argumentValue(value_->Trim(), OldValue_)->StartsWith("NULL/ ")) && (argumentValue(value_1->Trim(), OldValue_)->StartsWith("NULL/ "))) {
-	//			VarString = value_1 + VarString;
-	//			return argumentValue(value_1->Trim(), OldValue_);
-	//		}
-	//	}
-	//}
-	//return "NULL/ ";
+	return "NULL/ ";	
 }
 
 String^ tokens(String^ input, String^% VarString) {
@@ -622,12 +532,153 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 	return argument;
 }
 
+String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value by type	
+
+	switch (type_)
+	{
+	case int_: 
+	{
+		int isNumOrHex = 0; String^ intValue;
+		if ((argument->Contains("\"")) || (argument->Contains("\\"))) {
+			return "NULL/ ";
+		}
+		if (CheckHexIsValid(argument, intValue) > 0) {
+			argument = intValue; /// if the value is number we get the int value form the hex value
+			return argument;
+		}
+		if (argument->IndexOf("0x") >= 0) {  /// check if we have a hex value in the string
+			while (argument->IndexOf("0x") >= 0) {
+				String^ replaceValue = "";
+				String^ oldvalue;
+				String^ tempinput = argument->Substring(argument->IndexOf("0x"), argument->Length - argument->IndexOf("0x"));  // we take the part which have hex value
+				replaceValue = findHexValue(tempinput, oldvalue);	  /// return as int		
+				if (!replaceValue->StartsWith("NULL/")) {
+					argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
+				}
+				else { return "NULL/ "; }
+			}
+		}
+		if ((argument->IndexOf("{") >= 0) && (argument->IndexOf("}", argument->IndexOf("{")) >= 0)) {
+			while (argument->IndexOf("{") >= 0) {
+				String^ replaceValue = "";
+				String^ oldvalue = argument->Substring(argument->IndexOf("{"), argument->IndexOf("}") + 1);
+				replaceValue = findScriptSystemVarValue(oldvalue);
+				String^ inValue;  /// now the value should be int other wise wrong value to handle
+				if (CheckHexIsValid(replaceValue, inValue) > 0) {
+					replaceValue = inValue;
+				}
+				if (!inValue->StartsWith("NULL/")) {
+					argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
+				}
+				else { return "NULL/ "; }
+			}
+		}
+		/// find Variables Local System from VarList ,all variable should have $ at the begining like $x or $x[1]
+		if (argument->Contains("$")) {
+			String^ tempInput = argument;
+			while (argument->IndexOf("$") >= 0) {
+				String^ oldValue = "";
+				tempInput = argument->Substring(argument->IndexOf("$"), argument->Length - argument->IndexOf("$"));
+				tempInput = findVarValue(tempInput, oldValue);
+				int isNumOrHex1 = 0; String^ intValue1;
+				if (CheckHexIsValid(tempInput, intValue1) > 0) {
+					tempInput = intValue1;
+				}
+				if (tempInput->StartsWith("NULL/")) {
+					_plugin_logprint(Str2ConstChar(Environment::NewLine + tempInput));
+					return "NULL/ ";
+				}
+				else {
+					argument = ReplaceAtIndex(argument, oldValue, tempInput);
+				}
+			}
+		}
+		if ((argument->Contains("*")) || (argument->Contains("+")) || (argument->Contains("-")) || (argument->Contains("/"))) {  /// I will do it later
+			while ((argument->Contains("*")) || (argument->Contains("+")) || (argument->Contains("-")) || (argument->Contains("/")))
+			{
+				if ((argument->StartsWith("*")) || (argument->StartsWith("+")) || (argument->StartsWith("/"))) {
+					_plugin_logprint(Str2ConstChar(Environment::NewLine + "it begin with tokens + / *"));
+					return "NULL/ ";
+				}
+				if (argument->StartsWith("-")) {  // in case it back negtive value or the number is negtive value
+					return argument;
+				}
+				String^ tempInput = argument;
+				String^ oldValue = "";
+				tempInput = tokens(tempInput, oldValue);  /// we will get them as int value			
+				if (tempInput->StartsWith("NULL/")) {
+					_plugin_logprint(Str2ConstChar(Environment::NewLine + tempInput));
+					return "NULL/ ";
+				}
+				else {
+					argument = ReplaceAtIndex(argument, oldValue, tempInput);
+				}
+				/*if (Information::IsNumeric(argument)) {  /// in case it back negtive value
+					if (Str2Int(argument) < 0) {
+						break;
+					}
+				}*/
+			}
+		}
+		break;
+	}
+		////////////			////////////			////////////
+	case str: 
+	{
+		if (argument->StartsWith("\"") && (argument->EndsWith("\""))) {  /// that mean all string is commaed 
+			return argument;
+		}
+		if ((argument->IndexOf("{") >= 0) && (argument->IndexOf("}", argument->IndexOf("{")) >= 0)) {
+			while (argument->IndexOf("{") >= 0) {
+				String^ replaceValue = "";
+				String^ oldvalue = argument->Substring(argument->IndexOf("{"), argument->IndexOf("}") + 1);
+				replaceValue = findScriptSystemVarValue(oldvalue);
+				String^ inValue;
+				/*if (CheckHexIsValid(replaceValue, inValue) > 0) {   /// no need to check it
+					replaceValue = inValue;
+				}*/
+				if (!replaceValue->StartsWith("NULL/")) {
+					argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
+				}
+			}
+		}
+		/// find Variables Local System from VarList ,all variable should have $ at the begining like $x or $x[1]
+		if (argument->Contains("$")) {
+			String^ tempInput = argument;
+			while (argument->IndexOf("$") >= 0)
+			{
+				String^ oldValue = "";
+				tempInput = argument->Substring(argument->IndexOf("$"), argument->Length - argument->IndexOf("$"));
+				tempInput = findVarValue(tempInput, oldValue);
+				/*int isNumOrHex1 = 0; String^ intValue1;
+				if (CheckHexIsValid(tempInput, intValue1) > 0) {
+					tempInput = intValue1;
+				}*/
+				if (tempInput->StartsWith("NULL/")) {
+					_plugin_logprint(Str2ConstChar(tempInput));
+					return "NULL/ ";
+				}
+				else {
+					argument = ReplaceAtIndex(argument, oldValue, tempInput);
+				}
+			}
+		}	
+		break;
+	}
+		////////////			////////////			////////////
+	default:
+		break;
+	}
+
+
+	return argument;
+}
 
 String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value should be int , other wise it would be str and we add str to gather
 	array <String^>^ breaks = { "*" ,"/" ,"+" ,"-" ,"$" ," " , "{" , "}" , "\"" };
 	array <String^>^ token_ = { "*" ,"/" ,"+" ,"-" };
 	array <String^>^ vars_ = { "$" ," " , "{" , "\"" };
-	Generic::List <String^>^ StrHolder = gcnew Generic::List <String^>;
+	Generic::List <String^>^ StrHolderList = gcnew Generic::List <String^>;
 	String^ temp;
 	int begin_ = 0;
 	if (Array::IndexOf(vars_, input->Substring(0, 1)) >= 0) {/// if (i=0) begin with vars defenations this we need to add it 
@@ -651,13 +702,13 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 		if (input->Substring(0, 1) == "{") {
 			if (type_ != VarType::int_) {  /// case array or str 
 				if (input->IndexOf("}") < 0) { // if we don't find { then we consider it as char in string
-					temp = temp + input->Substring(0, 1);					
+					temp = temp + input->Substring(0, 1);
 					begin_ += 1;
 				}
 				else
 				{
 					//temp = temp + input->Substring(0, input->IndexOf("}") + 1);  /// we collect all {...}
-					StrHolder->Add(input->Substring(0, input->IndexOf("}") + 1));
+					StrHolderList->Add(input->Substring(0, input->IndexOf("}") + 1));
 					begin_ = input->IndexOf("}") + 1;
 				}
 			}
@@ -668,7 +719,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 				else
 				{
 					//temp = temp + input->Substring(0, input->IndexOf("}") + 1);  /// we collect all {...}
-					StrHolder->Add(input->Substring(0, input->IndexOf("}") + 1));
+					StrHolderList->Add(input->Substring(0, input->IndexOf("}") + 1));
 					begin_ = input->IndexOf("}") + 1;
 				}
 			}
@@ -683,7 +734,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 				else
 				{
 					//temp = temp + input->Substring(0, input->IndexOf("\"", 1, 1) + 1);  /// we collect all "..."
-					StrHolder->Add(input->Substring(0, input->IndexOf("\"", 1, input->Length - 1 ) + 1));
+					StrHolderList->Add(input->Substring(0, input->IndexOf("\"", 1, input->Length - 1) + 1));
 					begin_ = input->IndexOf("\"", 1, input->Length - 1) + 1;
 				}
 			}
@@ -701,34 +752,34 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 		else
 		{
 			if (input->Substring(i, 1) == " ") {  /// in case calc str or array we need spaces
-				if (type_ != VarType::int_) {						
-						temp = temp + input->Substring(i, 1);
-						if (i + 1 < input->Length) {
-							if (input->Substring(i+1, 1) != " ") {
-								StrHolder->Add(temp);
-								temp = "";   /// rest temp	
-							}
-						}														
-				}				
+				if (type_ != VarType::int_) {
+					temp = temp + input->Substring(i, 1);
+					if (i + 1 < input->Length) {
+						if (input->Substring(i + 1, 1) != " ") {
+							StrHolderList->Add(temp);
+							temp = "";   /// rest temp	
+						}
+					}
+				}
 			}
 			if (input->Substring(i, 1) == "$") {
 				if (temp != "") {
-					StrHolder->Add(temp);
+					StrHolderList->Add(temp);
 					temp = "";
-				}				
-				temp = temp + input->Substring(i, 1);				
+				}
+				temp = temp + input->Substring(i, 1);
 			}
 
 			if (input->Substring(i, 1) == "{") {
 				if (type_ != VarType::int_) {  /// case array or str 
-					if (input->IndexOf("}",i, input->Length - i) < 0) { // if we don't find { then we consider it as char in string
-						temp = temp + input->Substring(i, 1);						
+					if (input->IndexOf("}", i, input->Length - i) < 0) { // if we don't find { then we consider it as char in string
+						temp = temp + input->Substring(i, 1);
 					}
 					else
-					{						
-						temp = temp + input->Substring(i, (input->IndexOf("}", i, input->Length - i) - i )+1);  /// we collect all {...}
+					{
+						temp = temp + input->Substring(i, (input->IndexOf("}", i, input->Length - i) - i) + 1);  /// we collect all {...}
 						if (temp != "") {
-							StrHolder->Add(temp);
+							StrHolderList->Add(temp);
 							temp = "";
 						}
 						i = input->IndexOf("}", i, input->Length - i) + 1;
@@ -745,9 +796,9 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 					{
 						temp = temp + input->Substring(i, (input->IndexOf("}", i, input->Length - i) - i) + 1);  /// we collect all {...}
 						if (temp != "") {
-							StrHolder->Add(temp);
-							temp = "";							
-						}	
+							StrHolderList->Add(temp);
+							temp = "";
+						}
 						i = input->IndexOf("}", i, input->Length - i) + 1;
 						if (i >= input->Length) {
 							break;
@@ -759,17 +810,17 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 			if (input->Substring(i, 1) == "\"") {  /// if it's "
 				if (type_ != VarType::int_) {  /// case array or str 
 					if (input->IndexOf("\"", i, input->Length - i) < 0) { // if we don't find " then we consider it as char in string
-						temp = temp + input->Substring(i, 1);						
+						temp = temp + input->Substring(i, 1);
 					}
 					else
-					{								
-						int cc = input->IndexOf("\"", i+1, input->Length - (i+1)) ;
+					{
+						int cc = input->IndexOf("\"", i + 1, input->Length - (i + 1));
 						temp = temp + input->Substring(i, (cc - i) + 1);  /// we collect all "..."
 						if (temp != "") {
-							StrHolder->Add(temp);
-							temp = "";							
-						}		
-						i = cc  + 1;
+							StrHolderList->Add(temp);
+							temp = "";
+						}
+						i = cc + 1;
 						if (i >= input->Length) {
 							break;
 						}
@@ -779,24 +830,54 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 					return "NULL/ ";
 				}
 			}
-			if (Array::IndexOf(token_, input->Substring(i, 1)) >= 0) {				
+			if (Array::IndexOf(token_, input->Substring(i, 1)) >= 0) {
 				if (temp != "") {
-					StrHolder->Add(temp);
+					StrHolderList->Add(temp);
 				}
-				StrHolder->Add(input->Substring(i, 1));
+				StrHolderList->Add(input->Substring(i, 1));
 				temp = "";
 			}
 
 		}
 		if (i == input->Length - 1) {
-			StrHolder->Add(temp);
+			StrHolderList->Add(temp);
 			temp = "";
 		}
 	}
-	
+	////////////// now we work on evaluate StrHolderList array
+	String^ StrHolder = "";	
+	switch (type_)
+	{
+	case int_:		
+		for (size_t i = 0; i < StrHolderList->Count; i++)
+		{
+			if ((StrHolderList[i] != "") || (StrHolderList[i] != " ")) {
+				if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
+					StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::int_);
+					StrHolder = StrHolder + StrHolderList[i];
+				}
+				else
+				{
+					StrHolder = StrHolder + StrHolderList[i];
+				}
+			}
+		}
+		if (!Information::IsNumeric(StrHolder)) {  ///// that mean all string has been solved as int no need for more analyze
+			StrHolder = GetArgValueByType(StrHolder, VarType::int_);
+		}
+		break;
+	case str:
 
 
-	return "NULL/ ";
+
+
+		break;
+
+	default:
+		break;
+	}
+
+	return StrHolder;
 }
 
 
