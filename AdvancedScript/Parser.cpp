@@ -189,7 +189,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 		int i1 = 0;
 		while (temp->Substring(i1 + 1, 1) == " ")  /// count how many spaces
 		{
-			VarString = " " +VarString ;
+			VarString = " " + VarString;
 			if (i1 + 1 > input->Length) { break; } // if we reach the begin of the string
 			i1 += 1;
 		}
@@ -212,7 +212,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 		}
 	}
 	return "NULL/ ";
-																	 
+
 	//String^ temp = input;
 	//String^ value_ = "";
 	//String^ value_1 = ""; // we used to check if we need to go more far like 5 * 23 ]	
@@ -272,16 +272,16 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 		temp = temp->Substring(0, tokenindex); // get value before token
 		int i1 = temp->Length;
 		while (temp->Substring(i1 - 1, 1) == " ")  /// count how many spaces
-		{			
+		{
 			VarString = VarString + " ";
 			if (i1 - 1 < 0) { break; } // if we reach the begin of the string
 			i1 -= 1;
 		}
 		temp = (temp->Substring(0, tokenindex))->Trim(); /// remove all spaces before token like >>  55   + 10
-		int i = temp->Length -1;		
-		while (tokens_->IndexOf(tokens_, temp->Substring(i , 1)) < 0) /// should not be in this list
-		{			
-			value_ = temp->Substring(i , 1) + value_;
+		int i = temp->Length - 1;
+		while (tokens_->IndexOf(tokens_, temp->Substring(i, 1)) < 0) /// should not be in this list
+		{
+			value_ = temp->Substring(i, 1) + value_;
 			if (i - 1 < 0) { break; } // if we reach the begin of the string
 			i -= 1;
 		}
@@ -292,8 +292,8 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 		}
 		else {  /// that mean it hold variable or something else
 			String^ oldvalue1;
-			return argumentValue(value_,oldvalue1);
-		}		
+			return argumentValue(value_, oldvalue1);
+		}
 	}
 	return "NULL/ ";
 	//if (tokenindex - 1 < 0)
@@ -624,23 +624,179 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 
 
 String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value should be int , other wise it would be str and we add str to gather
-	array <String^>^ tokens_ = { "*" ,"/" ,"+" ,"-" ,"$" ," " , "(" , ")" , "{" , "}" , "\"" };
-	Generic::List <String^>^ StrHolder;
+	array <String^>^ breaks = { "*" ,"/" ,"+" ,"-" ,"$" ," " , "{" , "}" , "\"" };
+	array <String^>^ token_ = { "*" ,"/" ,"+" ,"-" };
+	array <String^>^ vars_ = { "$" ," " , "{" , "\"" };
+	Generic::List <String^>^ StrHolder = gcnew Generic::List <String^>;
 	String^ temp;
-	for (size_t i = 0; i < input->Length; i++)
-	{		
-		if (Array::IndexOf(tokens_, input->Substring(i, 1)) < 0) {
+	int begin_ = 0;
+	if (Array::IndexOf(vars_, input->Substring(0, 1)) >= 0) {/// if (i=0) begin with vars defenations this we need to add it 
+
+		if (input->Substring(0, 1) == " ") {  /// in case calc str or array we need spaces
+			if (type_ != VarType::int_) {
+				temp = temp + input->Substring(0, 1);
+				begin_ += 1;
+			}
+			else
+			{
+				temp = input;
+				temp = temp->Trim();   /// case int calculation
+			}
+		}
+		if (input->Substring(0, 1) == "$") {
+			temp = temp + input->Substring(0, 1);
+			begin_ += 1;
+		}
+
+		if (input->Substring(0, 1) == "{") {
+			if (type_ != VarType::int_) {  /// case array or str 
+				if (input->IndexOf("}") < 0) { // if we don't find { then we consider it as char in string
+					temp = temp + input->Substring(0, 1);					
+					begin_ += 1;
+				}
+				else
+				{
+					//temp = temp + input->Substring(0, input->IndexOf("}") + 1);  /// we collect all {...}
+					StrHolder->Add(input->Substring(0, input->IndexOf("}") + 1));
+					begin_ = input->IndexOf("}") + 1;
+				}
+			}
+			else {  /// case it is int , so if we don't find next } then this wrong 
+				if (input->IndexOf("}") < 0) {
+					return "NULL/ ";
+				}
+				else
+				{
+					//temp = temp + input->Substring(0, input->IndexOf("}") + 1);  /// we collect all {...}
+					StrHolder->Add(input->Substring(0, input->IndexOf("}") + 1));
+					begin_ = input->IndexOf("}") + 1;
+				}
+			}
+		}
+
+		if (input->Substring(0, 1) == "\"") {  /// if it's "
+			if (type_ != VarType::int_) {  /// case array or str 
+				if (input->IndexOf("\"", 1, input->Length - 1) < 0) { // if we don't find " then we consider it as char in string
+					temp = temp + input->Substring(0, 1);
+					begin_ += 1;
+				}
+				else
+				{
+					//temp = temp + input->Substring(0, input->IndexOf("\"", 1, 1) + 1);  /// we collect all "..."
+					StrHolder->Add(input->Substring(0, input->IndexOf("\"", 1, input->Length - 1 ) + 1));
+					begin_ = input->IndexOf("\"", 1, input->Length - 1) + 1;
+				}
+			}
+			else {  /// case it is int , " not acceptable				
+				return "NULL/ ";
+			}
+		}
+
+	}
+	for (size_t i = begin_; i < input->Length; i++)
+	{
+		if (Array::IndexOf(breaks, input->Substring(i, 1)) < 0) {
 			temp = temp + input->Substring(i, 1);
 		}
-		if (i + 1 < input->Length) {		
-			
-				StrHolder->Add(temp);
-
+		else
+		{
+			if (input->Substring(i, 1) == " ") {  /// in case calc str or array we need spaces
+				if (type_ != VarType::int_) {						
+						temp = temp + input->Substring(i, 1);
+						if (i + 1 < input->Length) {
+							if (input->Substring(i+1, 1) != " ") {
+								StrHolder->Add(temp);
+								temp = "";   /// rest temp	
+							}
+						}														
+				}				
 			}
-		
-		
-	}
+			if (input->Substring(i, 1) == "$") {
+				if (temp != "") {
+					StrHolder->Add(temp);
+					temp = "";
+				}				
+				temp = temp + input->Substring(i, 1);				
+			}
 
+			if (input->Substring(i, 1) == "{") {
+				if (type_ != VarType::int_) {  /// case array or str 
+					if (input->IndexOf("}",i, input->Length - i) < 0) { // if we don't find { then we consider it as char in string
+						temp = temp + input->Substring(i, 1);						
+					}
+					else
+					{						
+						temp = temp + input->Substring(i, (input->IndexOf("}", i, input->Length - i) - i )+1);  /// we collect all {...}
+						if (temp != "") {
+							StrHolder->Add(temp);
+							temp = "";
+						}
+						i = input->IndexOf("}", i, input->Length - i) + 1;
+						if (i >= input->Length) {
+							break;
+						}
+					}
+				}
+				else {  /// case it is int , so if we don't find next } then this wrong 
+					if (input->IndexOf("}", i, input->Length - i) < 0) {
+						return "NULL/ ";
+					}
+					else
+					{
+						temp = temp + input->Substring(i, (input->IndexOf("}", i, input->Length - i) - i) + 1);  /// we collect all {...}
+						if (temp != "") {
+							StrHolder->Add(temp);
+							temp = "";							
+						}	
+						i = input->IndexOf("}", i, input->Length - i) + 1;
+						if (i >= input->Length) {
+							break;
+						}
+					}
+				}
+			}
+
+			if (input->Substring(i, 1) == "\"") {  /// if it's "
+				if (type_ != VarType::int_) {  /// case array or str 
+					if (input->IndexOf("\"", i, input->Length - i) < 0) { // if we don't find " then we consider it as char in string
+						temp = temp + input->Substring(i, 1);						
+					}
+					else
+					{								
+						int cc = input->IndexOf("\"", i+1, input->Length - (i+1)) ;
+						temp = temp + input->Substring(i, (cc - i) + 1);  /// we collect all "..."
+						if (temp != "") {
+							StrHolder->Add(temp);
+							temp = "";							
+						}		
+						i = cc  + 1;
+						if (i >= input->Length) {
+							break;
+						}
+					}
+				}
+				else {  /// case it is int , " not acceptable				
+					return "NULL/ ";
+				}
+			}
+			if (Array::IndexOf(token_, input->Substring(i, 1)) >= 0) {				
+				if (temp != "") {
+					StrHolder->Add(temp);
+				}
+				StrHolder->Add(input->Substring(i, 1));
+				temp = "";
+			}
+
+		}
+		if (i == input->Length - 1) {
+			StrHolder->Add(temp);
+			temp = "";
+		}
+	}
+	
+
+
+	return "NULL/ ";
 }
 
 

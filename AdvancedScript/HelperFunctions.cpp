@@ -355,6 +355,25 @@ String^ int2Str(int input_) {
 	return "NULL/ ";
 }
 
-//int Str2int(String^ input_) {
-//	return Conversion::Val(input_);
-//}
+bool IsAllSpaces(String^ input_) {
+	for (size_t i = 0; i < input_->Length; i++)
+	{
+		if (input_->Substring(i, 1) != " ") {
+			return false;
+		}
+	}
+	return true;
+}
+
+VarType type2VarType(String^ vartype) {
+	if (vartype == "str") {
+		return VarType::str;
+	}
+	if (vartype == "int") {
+		return VarType::int_;
+	}
+	if (vartype == "array") {
+		return VarType::array_;
+	}
+
+}

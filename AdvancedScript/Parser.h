@@ -12,7 +12,7 @@ bool CheckexcutedCmd(String^ cmd_);
 String^ findHexValue(String^ input, String^% oldvalue_);
 String^ resolveString(String^ input, int% commaCount);
 String^ argumentValue(String^ argument, String^% OldValue_);
-
+String^ StrAnalyze(String^ input, VarType type_);
 
 //script test 
 

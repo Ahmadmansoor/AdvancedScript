@@ -20,6 +20,10 @@ String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newVal
 String^ AddZero2Addr(String^ input);
 String^ int2Str(int input_);
 String^ str2Hex(String^ input);
+bool IsAllSpaces(String^ input_);
+
+
+
 
 const char* Str2ConstChar(System::String^ string_);
 bool Str2bool(String^ input_);
@@ -34,6 +38,7 @@ enum VarType
 	array_,
 };
 
+VarType type2VarType(String^ vartype);
 
 System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brackets=false);
 

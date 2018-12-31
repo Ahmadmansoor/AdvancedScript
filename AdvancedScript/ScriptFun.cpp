@@ -28,6 +28,7 @@ bool Varexist(String^ varname, String^% vartype_, int% index) {	// true there is
 void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	vartype = vartype->ToLower();
 	String^ oldValue="";
+	
 	if (varname->Contains(" ")) {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces"));
 		return;
@@ -140,6 +141,8 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is index of element at array
 	int indexofVar = 0;
 	String^ retvartype = "";
+	String^ ss = StrAnalyze(value_, VarType::str);
+	return true;
 	if ( (Varexist(varname, retvartype, indexofVar)) && (varname->StartsWith("$")) ) {
 		varname = varname->Substring(1, varname->Length - 1);
 		if (index_ > 0 && retvartype == "array") {  // is it is array then all elements are string 
