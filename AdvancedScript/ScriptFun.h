@@ -81,7 +81,7 @@ public:
 		if (vartype_ == "array") {
 			vartype = vartype_;
 			varname = varname_;
-			varvalue = gcnew array<String^>(500);			
+			varvalue = gcnew array<String^>(0x500);			
 			varvalue[0] = varvalue_;
 		}
 		if ((vartype_ != "str") && (vartype_ != "int") && (vartype_ != "array")) {

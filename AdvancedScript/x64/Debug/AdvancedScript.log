@@ -1,58 +1,15 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  Parser.cpp
+  ScriptFun.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
-e:\code\x64dbg\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
-Parser.cpp(37): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(44): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(54): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(86): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(87): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(275): warning C4101: 'intValue': unreferenced local variable
-Parser.cpp(324): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
-Parser.cpp(392): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(393): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(395): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(403): warning C4244: 'argument': conversion from 'duint' to 'int', possible loss of data
-Parser.cpp(414): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(429): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(430): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(433): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(439): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(453): warning C4101: 'TemplateClassFound': unreferenced local variable
-Parser.cpp(589): warning C4101: 'commaCount': unreferenced local variable
-Parser.cpp(711): warning C4101: 'inValue': unreferenced local variable
-Parser.cpp(824): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(825): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(829): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(831): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(833): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(840): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(845): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(848): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(850): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(851): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(855): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(860): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(867): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(872): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(877): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(885): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(887): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(888): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(892): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(893): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(908): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(912): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(929): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(930): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(931): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(932): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-Parser.cpp(936): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-e:\code\x64dbg\advancedscript\advancedscript\parser.cpp(377): warning C4715: 'tokens': not all control paths return a value
+d:\code\advancedscript\advancedscript\ScriptFun.h(62): warning C4091: 'static ': ignored on left of 'VarPara_temp' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(99): warning C4091: 'static ': ignored on left of 'VarPara' when no variable is declared
+d:\code\advancedscript\advancedscript\ScriptFun.h(105): warning C4091: 'static ': ignored on left of 'ScriptFunList' when no variable is declared
+ScriptFun.cpp(131): warning C4101: 'OldValue_': unreferenced local variable
+ScriptFun.cpp(165): warning C4101: 'OldValue_': unreferenced local variable
+ScriptFun.cpp(541): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\code\advancedscript\advancedscript\scriptfun.cpp(206): warning C4715: 'SetVarx_': not all control paths return a value
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
      Creating library ..\..\x64\plugins\AdvancedScript.lib and object ..\..\x64\plugins\AdvancedScript.exp
-  AdvancedScript.vcxproj -> E:\Code\x64dbg\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
+  AdvancedScript.vcxproj -> D:\Code\AdvancedScript\AdvancedScript\..\..\x64\plugins\AdvancedScript.dll
   AdvancedScript.vcxproj -> ..\..\x64\plugins\AdvancedScript.pdb (Partial PDB)

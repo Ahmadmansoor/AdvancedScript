@@ -461,15 +461,16 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 	{
 	case 2: {
 		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) { // this is array var
-			arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("["), arguments[0]->Length - arguments[0]->IndexOf("]"));
-			arrayIndex = argumentValue(arguments[1], OldValue_);
+			arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("]") - 1));
+			//arrayIndex = argumentValue(arguments[1], OldValue_);
+			arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
 			if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex))) {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng index of array"));
 				return false;
 			}
 			else
-			{  /// we checkd that array index is int, need to check the value of he array
-				SetVarx_(arguments[0]->Substring(0, arrayIndex->IndexOf("["))->Trim(), Str2Int(arrayIndex->Trim()), arguments[1]);
+			{  /// we checkd that array index is int, need to check the value of the array
+				SetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("["))->Trim(), Str2Int(arrayIndex->Trim()), arguments[1]);
 			}
 
 		}

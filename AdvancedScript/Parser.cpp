@@ -39,14 +39,15 @@ String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace) {
 			if (Varexist(value_, vartype, index_)) {
 				VarString2Replace = value_;
 				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
-			}else {	return "NULL/ ";}
-		}		
+			}
+			else { return "NULL/ "; }
+		}
 		if (temp->Substring(i + 1, 1) == " ") { /// if the next letter is space
 			if (Varexist(value_, vartype, index_)) {
 				VarString2Replace = value_;
 				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
 			}
-		}	
+		}
 		while (Varexist(value_, vartype, index_))
 		{
 			if (i + 1 < temp->Length) {
@@ -57,16 +58,19 @@ String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace) {
 			{
 				VarString2Replace = value_;
 				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
-				break;
+				//break;
 			}
-			
+
 		}
-		
+
 	}
 	return "NULL/ ";
 }
 
-String^ findVarValue(String^ input, String^% VarString) {  /// find the variable begin with $ like $x or $x[1]  // this VarString will used for replacing string
+String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
+	// find the variable begin with $ like $x or $x[1]  // this VarString will used for replacing string
+	// In case Var is int then no need to check for Hex validation 
+	// but if the Var is string we need to check for hex validation and shift it to int 	
 	String^ ArrayIndexValue = "";
 	String^ var_name = "";
 	String^ vartype_ = ""; int indexofVar = 0;
@@ -86,23 +90,48 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 					if (input->Substring(i, 1) != "]") {
 						ArrayIndexValue = ArrayIndexValue + input->Substring(i, 1);
 					}
-					else {						
+					else {
 						VarString = VarString + input; // this is the end index of var we will used later to replace string
 						break;
 					}
 				}
-				String^ OldValue_;
-				ArrayIndexValue = argumentValue(ArrayIndexValue, OldValue_);  /// now check if the index, maybe Numeric or variable
+				ArrayIndexValue = GetArgValueByType(ArrayIndexValue, VarType::int_); /// now check if the index, maybe Numeric or variable
 				if (ArrayIndexValue->StartsWith("NULL/")) {
 					return "NULL/ something go wrong in resolve index";
-				}				
+				}
+				if (Information::IsNumeric(ArrayIndexValue)) {  /// if it's resolved as int value then we used it 
+					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
+						return ScriptFunList::VarList[indexofVar]->varvalue[Str2Int(ArrayIndexValue)];
+					}
+					else //// but if the ret value of the var is int so we need to resolve it as int
+					{
+						String^ intValue;  /// we ret the int value from the array 
+						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[Str2Int(ArrayIndexValue)], intValue) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
+							return "NULL/ array value is not Numeric";/// that something wrong in the index of the array 
+						}
+						else {
+							return intValue; 
+						}
+					}
+				}
 				String^ intValue;
-				if (CheckHexIsValid(ArrayIndexValue, intValue) == 0) {
+				if (CheckHexIsValid(ArrayIndexValue, intValue) == 0) {  /// /// check if array index is not Numeric then if could be Hex
 					return "NULL/ array index is not Numeric";/// that something wrong in the index of the array 
 				}
 				else {
-					int ArrayIndexValue_ = Str2Int(intValue);  /// x Conversion::Val(ArrayIndexValue);
-					return ScriptFunList::VarList[indexofVar]->varvalue[ArrayIndexValue_]; // return the value of the array var
+					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
+						return ScriptFunList::VarList[indexofVar]->varvalue[Str2Int(intValue)];
+					}
+					else //// but if the ret value of the var is int so we need to resolve it as int
+					{
+						String^ intValue1;  /// we ret the int value from the array 
+						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[Str2Int(intValue)], intValue1) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
+							return "NULL/ array value is not Numeric";/// that something wrong in the index of the array 
+						}
+						else {
+							return intValue1; // return the value of the array var
+						}
+					}
 				}
 			}
 			else
@@ -118,36 +147,54 @@ String^ findVarValue(String^ input, String^% VarString) {  /// find the variable
 		var_name = input->Substring(0, input->IndexOf(" "));  // get Var name	and clear spaces	
 		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist	
 			VarString = "$" + var_name; // this is the end index of var we will used later to replace string
-			return ScriptFunList::VarList[indexofVar]->varvalue[0]; // return the value of the var					
-		}
-		else {
-			/// there are space but the string till space not have value or variable 
-			//return "NULL/ could'nt get the Variable name";
-			var_name = input;  // get Var name	and clear spaces
-						   /// we need to find the variable like getvarx y,$x*1
-						   /// $x*1  after $ >> x*1 so no space here so we need to find var by tokens
-			var_name = readVarName(var_name, 0, VarString);  ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-			if (!var_name->StartsWith("NULL/ ")) { /// check if var exist			
-				VarString = "$" + VarString; // Get the old string which we will replce later
-				return var_name;
+
+			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
+				return ScriptFunList::VarList[indexofVar]->varvalue[0];
 			}
-			else {
-				return "NULL/ Variable not in the list";
+			else //// but if the ret value of the var is int so we need to resolve it as int
+			{
+				/// now we need to check the var type to ret the value of int and checkValue of the str
+				if (vartype_ = "int") {  /// in case it is int no need to check Hex 
+					return ScriptFunList::VarList[indexofVar]->varvalue[0]; // return the value of the int var as it
+				}
+				else {  /// in case it str we need to check for hex validation and convert to int
+					String^ intValue;
+					if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[0], intValue) == 0) {
+						return "NULL/ Value of str var is not Numeric";
+					}
+					else {
+						return intValue; // return the value 
+					}
+				}
 			}
 		}
 	}
-	else {  /// there are no space at the end we need to search the rest of the string
-	   //return "NULL/ could'nt get the Variable name";
-		var_name = input;  // get Var name	and clear spaces
-		/// we need to find the variable like getvarx y,$x*1
-		/// $x*1  after $ >> x*1 so no space here so we need to find var by tokens
-		var_name = readVarName(var_name, 0, VarString);  ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		if (!var_name->StartsWith("NULL/ ")) { /// check if var exist			
-			VarString = "$" + VarString; // Get the old string which we will replce later
-			return var_name;
-		}
-		else {
-			return "NULL/ Variable not in the list";
+	else
+	{  /// there are no space at the end we need to search the rest of the string	  
+		var_name = input;   /// we didn't find it as array or didn't find space then we get all string as var name
+		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist	
+			VarString = "$" + var_name; // this is the end index of var we will used later to replace string
+
+			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
+				return ScriptFunList::VarList[indexofVar]->varvalue[0];
+			}
+			else //// but if the ret value of the var is int so we need to resolve it as int
+			{
+				/// now we need to check the var type to ret the value of int and checkValue of the str
+				if (vartype_ = "int") {  /// in case it is int no need to check Hex 
+					return ScriptFunList::VarList[indexofVar]->varvalue[0]; // return the value of the int var as it
+				}
+				else {  /// in case it str we need to check for hex validation and convert to int
+					String^ intValue;
+					if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[0], intValue) == 0) {
+						return "NULL/ Value of str var is not Numeric";
+					}
+					else {
+						return intValue; // return the value 
+					}
+				}
+
+			}
 		}
 	}
 	return "NULL/ no Variable name";  // this mean there are no variable in this string 
@@ -168,13 +215,13 @@ String^ findScriptSystemVarValue(String^ input) {
 
 String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenindex is hold the index of token
 	String^ temp = input;
-	String^ value_ = "";	
+	String^ value_ = "";
 	array <String^>^ tokens_ = { "*" ,"/" ,"+" ,"-" ,"$" ," " ,"(",")" };
 	tokenindex = tokenindex + 1; // exclude token form the string
 	if (tokenindex + 1 > temp->Length)
 		return "NULL/ ";  /// token at the end of string
-	else {
-
+	else
+	{
 		temp = temp->Substring(tokenindex, temp->Length - tokenindex); // get value after token
 		int i1 = 0;
 		while (temp->Substring(i1 + 1, 1) == " ")  /// count how many spaces
@@ -183,15 +230,15 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			if (i1 + 1 > input->Length) { break; } // if we reach the begin of the string
 			i1 += 1;
 		}
-		temp = temp->Trim(); /// remove all spaces before token like >>  55   + 10
-		int i = 1;
-		while (tokens_->IndexOf(tokens_, temp->Substring(i, 1)) < 0) /// should not be in this list
+		temp = temp->Trim(); /// remove all spaces after token like >>  55   + 10
+		int i = 0;
+		while (Array::IndexOf(tokens_, temp->Substring(i, 1)) < 0) /// should not be in this list
 		{
-			value_ = temp->Substring(i, 1) + value_;
-			if (i - 1 < 0) { break; } // if we reach the begin of the string
+			value_ = value_ + temp->Substring(i, 1);
 			i += 1;
+			if (i + 1 > temp->Length) { break; } // if we reach the begin of the string
 		}
-		VarString = value_ + VarString;		
+		VarString = value_ + VarString;
 		if (Information::IsNumeric(value_)) {   /// check it if it's number value 
 			return value_;
 		}
@@ -199,17 +246,17 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			return GetArgValueByType(value_, VarType::int_);
 		}
 	}
-	return "NULL/ ";	
+	return "NULL/ ";
 }
 
 String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 	String^ temp = input;
-	String^ value_ = "";	
+	String^ value_ = "";
 	array <String^>^ tokens_ = { "*" ,"/" ,"+" ,"-" ,"$" ," " ,"(",")" };
 	if (tokenindex - 1 < 0)
 		return "NULL/ ";  /// token at the begin of string
-	else {
-
+	else
+	{
 		temp = temp->Substring(0, tokenindex); // get value before token
 		int i1 = temp->Length;
 		while (temp->Substring(i1 - 1, 1) == " ")  /// count how many spaces
@@ -218,13 +265,13 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 			if (i1 - 1 < 0) { break; } // if we reach the begin of the string
 			i1 -= 1;
 		}
-		temp = (temp->Substring(0, tokenindex))->Trim(); /// remove all spaces before token like >>  55   + 10
-		int i = temp->Length - 1;
-		while (tokens_->IndexOf(tokens_, temp->Substring(i, 1)) < 0) /// should not be in this list
+		temp = temp->Trim(); /// remove all spaces
+		int i = temp->Length;
+		while (Array::IndexOf(tokens_, temp->Substring(i - 1, 1)) < 0) /// should not be in this list
 		{
-			value_ = temp->Substring(i, 1) + value_;
-			if (i - 1 < 0) { break; } // if we reach the begin of the string
+			value_ = temp->Substring(i - 1, 1) + value_;
 			i -= 1;
+			if (i - 1 < 0) { break; } // if we reach the begin of the string
 		}
 		VarString = value_ + VarString;
 		String^ intValue;
@@ -235,7 +282,7 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 			return GetArgValueByType(value_, VarType::int_);
 		}
 	}
-	return "NULL/ ";	
+	return "NULL/ ";
 }
 
 String^ tokens(String^ input, String^% VarString) {
@@ -255,7 +302,7 @@ String^ tokens(String^ input, String^% VarString) {
 	}
 	if (input->IndexOf("*") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("*"), VarString1);
-		para2 = ForWard(input, input->IndexOf("*") + 1, VarString2);  // we begin after token		
+		para2 = ForWard(input, input->IndexOf("*"), VarString2);  // we begin after token		
 		VarString = VarString1 + "*" + VarString2;
 		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
 			return "NULL/ ";
@@ -266,7 +313,7 @@ String^ tokens(String^ input, String^% VarString) {
 
 	if (input->IndexOf("/") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("/"), VarString1);
-		para2 = ForWard(input, input->IndexOf("/") + 1, VarString2);
+		para2 = ForWard(input, input->IndexOf("/"), VarString2);
 		VarString = VarString1 + "/" + VarString2;
 		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
 			return "NULL/ ";
@@ -277,7 +324,7 @@ String^ tokens(String^ input, String^% VarString) {
 
 	if (input->IndexOf("+") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("+"), VarString1);
-		para2 = ForWard(input, input->IndexOf("+") + 1, VarString2);
+		para2 = ForWard(input, input->IndexOf("+"), VarString2);
 		VarString = VarString1 + "+" + VarString2;
 		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2)) {
 			_plugin_logprint("one of this arguments are not numeric");
@@ -290,7 +337,7 @@ String^ tokens(String^ input, String^% VarString) {
 
 	if (input->IndexOf("-") > 0) { /// should be bigger than 0 , token should not be at the begining of the exprsion 		
 		para1 = BackWard(input, input->IndexOf("-"), VarString1);
-		para2 = ForWard(input, input->IndexOf("-") + 1, VarString2);
+		para2 = ForWard(input, input->IndexOf("-"), VarString2);
 		VarString = VarString1 + "-" + VarString2;
 		if ((!Information::IsNumeric(para1)) || !Information::IsNumeric(para2))
 			return "NULL/ ";
@@ -488,7 +535,7 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 		{
 			String^ oldValue = "";
 			tempInput = argument->Substring(argument->IndexOf("$"), argument->Length - argument->IndexOf("$"));
-			tempInput = findVarValue(tempInput, oldValue);
+			tempInput = findVarValue(tempInput, VarType::int_, oldValue);
 			int isNumOrHex1 = 0; String^ intValue1;
 			if (CheckHexIsValid(tempInput, intValue1) > 0) {  // <<< need to know if it's number or hex 
 				tempInput = intValue1;
@@ -536,10 +583,10 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 
 	switch (type_)
 	{
-	case int_: 
+	case int_:
 	{
-		int isNumOrHex = 0; String^ intValue;
-		if ((argument->Contains("\"")) || (argument->Contains("\\"))) {
+		String^ intValue;
+		if ((argument->Contains("\"")) || (argument->Contains("\\"))) {  /// int value should not contain " or "\\"
 			return "NULL/ ";
 		}
 		if (CheckHexIsValid(argument, intValue) > 0) {
@@ -579,12 +626,8 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 			while (argument->IndexOf("$") >= 0) {
 				String^ oldValue = "";
 				tempInput = argument->Substring(argument->IndexOf("$"), argument->Length - argument->IndexOf("$"));
-				tempInput = findVarValue(tempInput, oldValue);
-				int isNumOrHex1 = 0; String^ intValue1;
-				if (CheckHexIsValid(tempInput, intValue1) > 0) {
-					tempInput = intValue1;
-				}
-				if (tempInput->StartsWith("NULL/")) {
+				tempInput = findVarValue(tempInput, VarType::int_, oldValue);
+				if (!Information::IsNumeric(tempInput)) {
 					_plugin_logprint(Str2ConstChar(Environment::NewLine + tempInput));
 					return "NULL/ ";
 				}
@@ -613,17 +656,12 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 				else {
 					argument = ReplaceAtIndex(argument, oldValue, tempInput);
 				}
-				/*if (Information::IsNumeric(argument)) {  /// in case it back negtive value
-					if (Str2Int(argument) < 0) {
-						break;
-					}
-				}*/
 			}
 		}
 		break;
 	}
-		////////////			////////////			////////////
-	case str: 
+	////////////			////////////			////////////
+	case str:
 	{
 		if (argument->StartsWith("\"") && (argument->EndsWith("\""))) {  /// that mean all string is commaed 
 			return argument;
@@ -634,9 +672,6 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 				String^ oldvalue = argument->Substring(argument->IndexOf("{"), argument->IndexOf("}") + 1);
 				replaceValue = findScriptSystemVarValue(oldvalue);
 				String^ inValue;
-				/*if (CheckHexIsValid(replaceValue, inValue) > 0) {   /// no need to check it
-					replaceValue = inValue;
-				}*/
 				if (!replaceValue->StartsWith("NULL/")) {
 					argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
 				}
@@ -649,23 +684,24 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 			{
 				String^ oldValue = "";
 				tempInput = argument->Substring(argument->IndexOf("$"), argument->Length - argument->IndexOf("$"));
-				tempInput = findVarValue(tempInput, oldValue);
-				/*int isNumOrHex1 = 0; String^ intValue1;
-				if (CheckHexIsValid(tempInput, intValue1) > 0) {
-					tempInput = intValue1;
-				}*/
+				tempInput = findVarValue(tempInput, VarType::str, oldValue);
 				if (tempInput->StartsWith("NULL/")) {
 					_plugin_logprint(Str2ConstChar(tempInput));
 					return "NULL/ ";
 				}
 				else {
+					/// as it's str we return the int value to hex value 
+					tempInput = duint2Hex(Str2Int(tempInput));
+					if (!tempInput->StartsWith("0x")) {
+						tempInput = "0x" + tempInput;
+					}						
 					argument = ReplaceAtIndex(argument, oldValue, tempInput);
 				}
 			}
-		}	
+		}
 		break;
 	}
-		////////////			////////////			////////////
+	////////////			////////////			////////////
 	default:
 		break;
 	}
@@ -845,16 +881,17 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 		}
 	}
 	////////////// now we work on evaluate StrHolderList array
-	String^ StrHolder = "";	
+	String^ StrHolder = "";
 	switch (type_)
 	{
-	case int_:		
+	case int_:
+	{
 		for (size_t i = 0; i < StrHolderList->Count; i++)
 		{
 			if ((StrHolderList[i] != "") || (StrHolderList[i] != " ")) {
 				if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
 					StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::int_);
-					StrHolder = StrHolder + StrHolderList[i];
+					StrHolder = StrHolder + StrHolderList[i]->Trim(); // as it's int we can clean unneeded spaces
 				}
 				else
 				{
@@ -866,13 +903,23 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 			StrHolder = GetArgValueByType(StrHolder, VarType::int_);
 		}
 		break;
+	}
 	case str:
-
-
-
-
+	{
+		for (size_t i = 0; i < StrHolderList->Count; i++)
+		{			
+				if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
+					StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::str);
+					StrHolder = StrHolder + StrHolderList[i]; 
+				}
+				else
+				{
+					StrHolder = StrHolder + StrHolderList[i];
+				}
+			
+		}
 		break;
-
+	}
 	default:
 		break;
 	}

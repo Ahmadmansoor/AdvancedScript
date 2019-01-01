@@ -135,7 +135,7 @@ int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is
 #ifdef _WIN64
 	//if ((input_->Length < 5) || (input_->Length > 16)) {		
 	if (Information::IsNumeric(input_)) {		
-		intValue = int2Str(Hex2duint(input_));
+		intValue = (int2Str(Hex2duint(input_)))->Trim();
 		return 1;
 	}	
 #else
@@ -158,7 +158,7 @@ int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is
 		}
 
 	}	
-	intValue = int2Str(Hex2duint(input_));
+	intValue = (int2Str(Hex2duint(input_)))->Trim();
 	return 2;
 }
 
