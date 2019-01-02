@@ -1,6 +1,6 @@
 # AdvancedScript
 
-It's just Functions which will help Plugin Coder , maybe in the future It will be as name it have :)
+just a try to add more feature's to x64dbg script system
 
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
