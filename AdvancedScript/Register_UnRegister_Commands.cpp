@@ -70,8 +70,8 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
-	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 1.8] || Coded By AhmadMansoor /exetools "));
-	_plugin_logprint(Str2ConstChar(Environment::NewLine));
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.0] || Coded By AhmadMansoor /exetools "));
+	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 
 	/*if (!_plugin_registercommand(pluginHandle, "AdvancedScript", cbMainForm, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");*/
@@ -141,9 +141,12 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	if (!_plugin_registercommand(pluginHandle, "findallmemx", findallmemx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 	////
-	
+	if (!_plugin_registercommand(pluginHandle, "VarxClear", VarxClear, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "memdump", memdump, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 
-
+	_plugin_logputs(Str2ConstChar(Environment::NewLine));	
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
@@ -913,3 +916,37 @@ static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, 
 	return false;
 }
 
+
+static bool VarxClear(int argc, char* argv[]) {  /// clear all variables 
+	VarListClear();
+	return true;
+}
+
+static bool memdump(int argc, char* argv[]) {  /// dump memory to log window like windbg style
+	//00007ff8`02f42280  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
+	//00007ff8`02f42290  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	String^ addr = StrAnalyze(arguments[0], VarType::str);
+	String^ Size_ = StrAnalyze(arguments[1], VarType::str);
+	if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
+		_plugin_logprint("wrong arguments for memdump command");
+		return false;
+	}
+	switch (arguments->Count)
+	{
+	case 2: {
+		dumpmem(addr, Size_);
+		return true;
+	}
+	case 3: {
+		dumpmem(addr, Size_, arguments[2]);
+		return true;
+	}
+	default:
+		_plugin_logprint("wrong arguments for memdump command");
+		return false;
+	}
+	return true;
+}

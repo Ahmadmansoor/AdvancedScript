@@ -1,7 +1,7 @@
 #include "ScriptFun.h"
 #include "LogWindow.h"
 #include "Parser.h"
-static void VarListClear() {
+void VarListClear() {
 	ScriptFunList::VarList->Clear();
 }
 VarPara_temp^ GetVarx_byIndex(String^ varname, int index_) {
@@ -511,6 +511,8 @@ String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	}else
 		return "NULL/ ";
 }
+
+
 
 bool dumpmem(String^ addr , String^ size,String^ para) {
 	String^ mem = StringFormatInline_Str("{mem;" + size + "@" + addr + "}");

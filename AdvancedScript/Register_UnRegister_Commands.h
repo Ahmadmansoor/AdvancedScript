@@ -10,6 +10,7 @@ static bool logx(int argc, char* argv[]);
 static bool logx_window(int argc, char* argv[]);
 static bool logxTrace(int argc, char* argv[]);
 static void StrComp_BP();
+static bool VarxClear(int argc, char* argv[]);
 static bool StrCompx(int argc, char* argv[]);
 //Script Functions 
 static bool Varx(int argc, char* argv[]);
@@ -33,6 +34,7 @@ static bool findx(int argc, char* argv[]);
 static bool findallx(int argc, char* argv[]);
 static bool findallmemx(int argc, char* argv[]);
 
+static bool memdump(int argc, char* argv[]);
 ///////////////////////
 System::Void LoadTemplateFiles_();
 

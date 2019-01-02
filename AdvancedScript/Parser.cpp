@@ -432,7 +432,7 @@ bool CheckexcutedCmd(String^ cmd_) {
 	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
 	String^ OldValue_;
 
-	if (cmd_->StartsWith("mem(") || cmd_->StartsWith("mem (")) {
+	if (cmd_->StartsWith("memdump(") || cmd_->StartsWith("memdump (")) {
 		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
 		String^ addr = StrAnalyze(arguments[0], VarType::str);
 		String^ Size_ = StrAnalyze(arguments[1], VarType::str);

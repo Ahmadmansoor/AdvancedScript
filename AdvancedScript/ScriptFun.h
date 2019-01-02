@@ -105,7 +105,7 @@ public:
 };
 
 
-static void VarListClear();
+void VarListClear();
 bool Varexist(String^ varname, String^% vartype_, int% index);
 /////
 void Varx_(String^ vartype, String^ varname, String^ varvalue = "");
