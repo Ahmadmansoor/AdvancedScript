@@ -135,15 +135,15 @@ it's collection of edit functions from x64dbg system, but it accept variables in
 sample :
      - again:
       varx str,base,{rax}
-      cmpx {rax},$base   >>> cmpx analyzed both parameters so we can write like this
+      cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
       jne done
       jmp again 
       done:
      - varx int,x,20
        varx int,y,0xFF
-       var z     >>> this var from x64dbg system
-       addx rax,$x+$y              rax =rax + 0x32+ 0x255 = rax + 0x287 
-       addx z,$x+$y                z=z+0x287
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
 
          
 ```
@@ -166,9 +166,10 @@ SetVarx P1, P2, P3
 ```
 ### 5- memdump : 
 dump memory to log window like windbg style
+```
 	//00007ff8`02f42280  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
 	//00007ff8`02f42290  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
-```
+
 Parameter:
 SetVarx P1, P2, P3 
       P1: The address to start dump.
