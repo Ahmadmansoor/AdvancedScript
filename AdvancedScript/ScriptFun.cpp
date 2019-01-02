@@ -211,7 +211,7 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 	if (Varexist(varname, retvartype, indexofVar)) {
 		if (Arrayindex_ > 0 && retvartype == "array") {
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[Arrayindex_], indexofVar);
-			_plugin_logputs (Str2ConstChar(Environment::NewLine + x->varname + "[" + int2Str(Arrayindex_) + "]" + "= " + x->varvalue));
+			_plugin_logputs (Str2ConstChar(Environment::NewLine + x->varname + "[" + (int2Str(Arrayindex_))->Trim() + "]= " + x->varvalue));
 			return;
 		}
 		if (Arrayindex_ > 0 && retvartype != "array") {  // that's mean it's int or str  // so we will make Arrayindex_=0 as it'not array
@@ -228,7 +228,7 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 		if (Arrayindex_ == 0) {  // this mean it's str or int
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
 			if (x->vartype=="array")
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "[" + int2Str(Arrayindex_) + "]" + "= " + x->varvalue));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "[" + (int2Str(Arrayindex_))->Trim() + "]= " + x->varvalue));
 			else {
 				if (x->vartype == "int") {
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue + "\\" + str2Hex(x->varvalue)));
@@ -254,9 +254,11 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 String^ Movx_(String^ p1, String^ p2) {
 	String^ cmd_ = "mov " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -265,9 +267,11 @@ String^ Movx_(String^ p1, String^ p2) {
 String^ addx_(String^ p1, String^ p2) {
 	String^ cmd_ = "add " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -276,9 +280,11 @@ String^ addx_(String^ p1, String^ p2) {
 String^ subx_(String^ p1, String^ p2) {
 	String^ cmd_ = "sub " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -287,9 +293,11 @@ String^ subx_(String^ p1, String^ p2) {
 String^ mulx_(String^ p1, String^ p2) {
 	String^ cmd_ = "mul " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -298,9 +306,11 @@ String^ mulx_(String^ p1, String^ p2) {
 String^ divx_(String^ p1, String^ p2) {
 	String^ cmd_ = "div " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -309,9 +319,11 @@ String^ divx_(String^ p1, String^ p2) {
 String^ andx_(String^ p1, String^ p2) {
 	String^ cmd_ = "and " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -320,9 +332,11 @@ String^ andx_(String^ p1, String^ p2) {
 String^ orx_(String^ p1, String^ p2) {
 	String^ cmd_ = "or " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -331,9 +345,11 @@ String^ orx_(String^ p1, String^ p2) {
 String^ xorx_(String^ p1, String^ p2) {
 	String^ cmd_ = "xor " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -342,9 +358,11 @@ String^ xorx_(String^ p1, String^ p2) {
 String^ shlx_(String^ p1, String^ p2) {
 	String^ cmd_ = "shl " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -353,9 +371,11 @@ String^ shlx_(String^ p1, String^ p2) {
 String^ pushx_(String^ p1) {
 	String^ cmd_ = "push ";
 	String^ oldvalue = "";
-	p1 = argumentValue(p1, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p1 = argumentValue(p1, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p1 = StrAnalyze(p1, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p1);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
@@ -364,55 +384,46 @@ String^ pushx_(String^ p1) {
 String^ popx_(String^ p1) {
 	String^ cmd_ = "pop ";
 	String^ oldvalue = "";
-	p1 = argumentValue(p1, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p1 = argumentValue(p1, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p1 = StrAnalyze(p1, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p1);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
 }
 
 String^ cmpx_(String^ p1, String^ p2) {
+	p1 = StrAnalyze(p1, VarType::str);
 	String^ cmd_ = "cmp " + p1 + ",";
 	String^ oldvalue = "";
-	p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
+	p2 = StrAnalyze(p2, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
 }
 
 String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
-	String^ cmd_ = "find ";
-	String^ OldValue_;
-	String^ base_s = argumentValue(base_, OldValue_);
-
-	if (!Information::IsNumeric(base_s)) {
-		_plugin_logputs(Str2ConstChar(base_s + " is not a hex"));
-		return "NULL/ ";
-	}
-	if (Str2Int(base_s) < 0) {    /// in case the value less than 0 so no need to get the hex we just get the entered first time
-		base_s = base_;
-	}
-	else
-	{
-		base_s = duint2Hex(Str2Int(base_s));
-	}
-
-	if (!base_s->StartsWith("NULL/")) {
-		//duint base_x = Hex2duint(base_s);
-		//if (base_x != -1) {  /// check base
-		//cmd_ = cmd_ + duint2Hex(base_x) + ",";
-		cmd_ = cmd_ + base_s + ",";
-		String^ OldValue_;
-		String^ Searchvalue_x = argumentValue(Searchvalue_, OldValue_);
+	String^ cmd_ = "find ";	
+	String^ base_s = StrAnalyze(base_,VarType::str);
+	if (!base_s->StartsWith("NULL/")) {		
+		cmd_ = cmd_ + base_s + ",";			
+		String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
+		if (Searchvalue_x->StartsWith("0x")) {
+			Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
+		}
 		if (!Searchvalue_x->StartsWith("NULL/")) {
 			cmd_ = cmd_ + Searchvalue_x;
 			if (Size_ != "") {    /// if user define the size
-				duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
-				if (Size_x != -1) {
-					cmd_ = cmd_ + "," + duint2Hex(Size_x);
+				//duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
+				String^ Size_x = StrAnalyze(Size_, VarType::str);
+				if (!Size_x->StartsWith("NULL/")) {
+					cmd_ = cmd_ + "," + Size_x;
 					return cmd_;
 				}
 				else
@@ -423,10 +434,7 @@ String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 			}
 		}
 		else
-			return "NULL/ ";
-		/*}
-		else
-		return "NULL/ ";*/
+			return "NULL/ ";		
 	}
 	else
 		return "NULL/ ";
@@ -435,33 +443,20 @@ String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findall ";
 	String^ OldValue_;
-	String^ base_s = argumentValue(base_, OldValue_);
-
-	if (!Information::IsNumeric(base_s)) {
-		_plugin_logputs(Str2ConstChar(base_s + " is not a hex"));
-		return "NULL/ ";
-	}
-	if (Str2Int(base_s) < 0) {    /// in case the value less than 0 so no need to get the hex we just get the entered first time
-		base_s = base_;
-	}
-	else
-	{
-		base_s = duint2Hex(Str2Int(base_s));
-	}
-
-	if (!base_s->StartsWith("NULL/")) {
-		//duint base_x = Hex2duint(base_s);
-		//if (base_x != -1) {  /// check base
-		//cmd_ = cmd_ + duint2Hex(base_x) + ",";
-		cmd_ = cmd_ + base_s + ",";
-		String^ OldValue_;
-		String^ Searchvalue_x = argumentValue(Searchvalue_, OldValue_);
+	String^ base_s = StrAnalyze(base_, VarType::str);
+	if (!base_s->StartsWith("NULL/")) {		
+		cmd_ = cmd_ + base_s + ",";		
+		String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
+		if (Searchvalue_x->StartsWith("0x")) {
+			Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
+		}
 		if (!Searchvalue_x->StartsWith("NULL/")) {
 			cmd_ = cmd_ + Searchvalue_x;
 			if (Size_ != "") {    /// if user define the size
-				duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
-				if (Size_x != -1) {
-					cmd_ = cmd_ + "," + duint2Hex(Size_x);
+				//duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
+				String^ Size_x = StrAnalyze(Size_, VarType::str);
+				if (!Size_x->StartsWith("NULL/")) {
+					cmd_ = cmd_ + "," + Size_x;
 					return cmd_;
 				}
 				else
@@ -484,37 +479,21 @@ String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findallmem ";
 	String^ OldValue_;
-	String^ base_s = argumentValue(base_, OldValue_);
-	String^ dd = Microsoft::VisualBasic::Conversion::Hex(base_s);
-	/*if (!Information::IsNumeric(base_s)) {
-		_plugin_logputs(Str2ConstChar(base_s + " is not a hex"));
-		return "NULL/ ";
-	}*/
-	String^ inValue;
-	int hexOrInt = CheckHexIsValid(base_s, inValue);
-	if (hexOrInt < 0) {    /// in case the value less than 0 so no need to get the hex we just get the entered first time
-		base_s = "NULL/";
-	}
-	if (hexOrInt == 1) {
-		base_s = inValue;
-	}
-	if ( (hexOrInt == 2) && (base_s->StartsWith("0x")) ) {
-		base_s =  base_s;
-	}
-	
-	if (!base_s->StartsWith("NULL/")) {
-		//duint base_x = Hex2duint(base_s);
-		//if (base_x != -1) {  /// check base
-			//cmd_ = cmd_ + duint2Hex(base_x) + ",";
+	String^ base_s = StrAnalyze(base_, VarType::str);	
+	if (!base_s->StartsWith("NULL/")) {		
 		cmd_ = cmd_ + base_s + ",";
 			String^ OldValue_;
-			String^ Searchvalue_x = argumentValue(Searchvalue_, OldValue_);
+			String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
+			if (Searchvalue_x->StartsWith("0x")) {
+				Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
+			}
 			if (!Searchvalue_x->StartsWith("NULL/")) {
 				cmd_ = cmd_ + Searchvalue_x;
 				if (Size_ != "") {    /// if user define the size
-					duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
-					if (Size_x != -1) {
-						cmd_ = cmd_ + "," + duint2Hex(Size_x);
+					//duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
+					String^ Size_x = StrAnalyze(Size_, VarType::str);
+					if (!Size_x->StartsWith("NULL/")) {
+						cmd_ = cmd_ + "," + Size_x;
 						return cmd_;
 					}
 					else

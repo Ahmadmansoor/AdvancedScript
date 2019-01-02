@@ -127,6 +127,8 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 	if (!_plugin_registercommand(pluginHandle, "shlx", shlx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	if (!_plugin_registercommand(pluginHandle, "pushx", pushx, false))
+		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");	
 	if (!_plugin_registercommand(pluginHandle, "popx", popx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 	if (!_plugin_registercommand(pluginHandle, "cmpx", cmpx, false))
@@ -138,6 +140,9 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
 	if (!_plugin_registercommand(pluginHandle, "findallmemx", findallmemx, false))
 		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	////
+	
+
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -461,7 +466,9 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 	{
 	case 2: {
 		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) { // this is array var
-			arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("]") - 1));
+			//arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("]") - 1));
+			arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("[") + 1));
+			arrayIndex = arrayIndex->Substring(0, arrayIndex->IndexOf("]"));
 			//arrayIndex = argumentValue(arguments[1], OldValue_);
 			arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
 			if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex))) {
@@ -498,8 +505,17 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 			GetVarx_(arguments[0], 0);
 		}
 		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) {  /// this mean it's array
-			//String^ ArrayIndex = argumentValue
-
+			String^  arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("[") + 1));
+			arrayIndex = arrayIndex->Substring(0, arrayIndex->IndexOf("]"));
+			arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
+			if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex))) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng index of array"));
+				return false;
+			}
+			else
+			{  /// we checkd that array index is int, need to check the value of the array
+				GetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("[")),Str2Int(arrayIndex));
+			}
 		}
 		else {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "missing []"));
@@ -896,3 +912,4 @@ static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, 
 	}
 	return false;
 }
+

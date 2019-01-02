@@ -32,6 +32,7 @@ static bool cmpx(int argc, char* argv[]);
 static bool findx(int argc, char* argv[]);
 static bool findallx(int argc, char* argv[]);
 static bool findallmemx(int argc, char* argv[]);
+
 ///////////////////////
 System::Void LoadTemplateFiles_();
 

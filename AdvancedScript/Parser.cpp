@@ -238,6 +238,10 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			i += 1;
 			if (i + 1 > temp->Length) { break; } // if we reach the begin of the string
 		}
+		if (value_ == "") {
+			value_ = temp;				
+		}
+
 		VarString = value_ + VarString;
 		if (Information::IsNumeric(value_)) {   /// check it if it's number value 
 			return value_;
@@ -272,6 +276,9 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 			value_ = temp->Substring(i - 1, 1) + value_;
 			i -= 1;
 			if (i - 1 < 0) { break; } // if we reach the begin of the string
+		}
+		if (value_ == "") {
+			value_ = temp;
 		}
 		VarString = value_ + VarString;
 		String^ intValue;
@@ -427,8 +434,8 @@ bool CheckexcutedCmd(String^ cmd_) {
 
 	if (cmd_->StartsWith("mem(") || cmd_->StartsWith("mem (")) {
 		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
-		String^ addr = argumentValue(arguments[0], OldValue_);
-		String^ Size_ = argumentValue(arguments[1], OldValue_);
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ Size_ = StrAnalyze(arguments[1], VarType::str);
 		if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
 			_plugin_logprint("wrong arguments for memdump command");
 			return false;
@@ -590,7 +597,7 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 			return "NULL/ ";
 		}
 		if (CheckHexIsValid(argument, intValue) > 0) {
-			argument = intValue; /// if the value is number we get the int value form the hex value
+			argument = (intValue)->Trim(); /// if the value is number we get the int value form the hex value
 			return argument;
 		}
 		if (argument->IndexOf("0x") >= 0) {  /// check if we have a hex value in the string
@@ -600,7 +607,7 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 				String^ tempinput = argument->Substring(argument->IndexOf("0x"), argument->Length - argument->IndexOf("0x"));  // we take the part which have hex value
 				replaceValue = findHexValue(tempinput, oldvalue);	  /// return as int		
 				if (!replaceValue->StartsWith("NULL/")) {
-					argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
+					argument = (ReplaceAtIndex(argument, oldvalue, replaceValue))->Trim();
 				}
 				else { return "NULL/ "; }
 			}
@@ -615,7 +622,7 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 					replaceValue = inValue;
 				}
 				if (!inValue->StartsWith("NULL/")) {
-					argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
+					argument = (ReplaceAtIndex(argument, oldvalue, replaceValue))->Trim();
 				}
 				else { return "NULL/ "; }
 			}
@@ -632,7 +639,7 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 					return "NULL/ ";
 				}
 				else {
-					argument = ReplaceAtIndex(argument, oldValue, tempInput);
+					argument = (ReplaceAtIndex(argument, oldValue, tempInput))->Trim();
 				}
 			}
 		}
@@ -654,7 +661,7 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 					return "NULL/ ";
 				}
 				else {
-					argument = ReplaceAtIndex(argument, oldValue, tempInput);
+					argument = (ReplaceAtIndex(argument, oldValue, tempInput))->Trim();
 				}
 			}
 		}
@@ -691,10 +698,12 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 				}
 				else {
 					/// as it's str we return the int value to hex value 
-					tempInput = duint2Hex(Str2Int(tempInput));
-					if (!tempInput->StartsWith("0x")) {
-						tempInput = "0x" + tempInput;
-					}						
+					String^ oldv="";
+					if (CheckHexIsValid(tempInput, oldv)) {						
+						if (!tempInput->StartsWith("0x")) {
+							tempInput = "0x" + tempInput;
+						}
+					}
 					argument = ReplaceAtIndex(argument, oldValue, tempInput);
 				}
 			}
@@ -715,7 +724,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 	array <String^>^ token_ = { "*" ,"/" ,"+" ,"-" };
 	array <String^>^ vars_ = { "$" ," " , "{" , "\"" };
 	Generic::List <String^>^ StrHolderList = gcnew Generic::List <String^>;
-	String^ temp;
+	String^ temp ="";
 	int begin_ = 0;
 	if (Array::IndexOf(vars_, input->Substring(0, 1)) >= 0) {/// if (i=0) begin with vars defenations this we need to add it 
 
@@ -780,6 +789,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 		}
 
 	}
+	
 	for (size_t i = begin_; i < input->Length; i++)
 	{
 		if (Array::IndexOf(breaks, input->Substring(i, 1)) < 0) {
@@ -867,7 +877,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 				}
 			}
 			if (Array::IndexOf(token_, input->Substring(i, 1)) >= 0) {
-				if (temp != "") {
+				if ((temp != "")|| ((temp == nullptr)) ) {
 					StrHolderList->Add(temp);
 				}
 				StrHolderList->Add(input->Substring(i, 1));
@@ -879,6 +889,10 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 			StrHolderList->Add(temp);
 			temp = "";
 		}
+	}
+	if (temp->Length ==1) {  // case enter 1 special char
+		StrHolderList->Add(temp);
+		temp = "";   /// rest temp	
 	}
 	////////////// now we work on evaluate StrHolderList array
 	String^ StrHolder = "";
