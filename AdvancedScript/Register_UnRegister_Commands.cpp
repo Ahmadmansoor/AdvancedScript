@@ -504,8 +504,13 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 	switch ((arguments->Count))
 	{
 	case 1: {  // case the var is int or str so the value at index=0
+		if (!arguments[0]->StartsWith("$")) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "wrong variable name"));
+			return false;
+		}
 		if (!arguments[0]->Contains("[")) {  /// this mean it's int or str
 			GetVarx_(arguments[0], 0);
+			return true;
 		}
 		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) {  /// this mean it's array
 			String^  arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("[") + 1));
@@ -522,22 +527,10 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 		}
 		else {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "missing []"));
+			return false;
 		}
 		break;
-	}
-			//case 2: { // case the var is Array so we need the index of this array 
-			//	String^ arguments1 = argumentValue(arguments[1], OldValue_);
-			//	//////////////////////////////////////////////////
-			//	if (!arguments1->StartsWith("NULL/")) {
-			//		GetVarx_(arguments[0], Str2Int(arguments1));			
-			//	}
-			//	else {
-			//		_plugin_logputs(Str2ConstChar(Environment::NewLine + arguments[1] + " :This value is wrong"));
-			//	}
-			//	break;
-
-			//	//////////////////////////////////////////////////
-			//}
+	}			
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		break;

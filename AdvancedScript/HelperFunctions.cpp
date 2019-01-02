@@ -333,6 +333,9 @@ String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newVal
 }
 
 String^ AddZero2Addr(String^ input) {
+	if (input->Trim()->StartsWith("0x")) {
+		input = input->Substring(2, input->Length - 2);
+	}
 #ifdef _WIN64
 	int len_ = 16;
 #else
@@ -345,6 +348,7 @@ String^ AddZero2Addr(String^ input) {
 	{
 		input = "0" + input;
 	}
+	//input = "0x" + input;
 	return input;
 }
 

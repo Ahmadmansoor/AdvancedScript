@@ -17,7 +17,7 @@ HelperFunctions.cpp(214): warning C4267: 'argument': conversion from 'size_t' to
 HelperFunctions.cpp(295): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
 HelperFunctions.cpp(310): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 HelperFunctions.cpp(314): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-HelperFunctions.cpp(361): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+HelperFunctions.cpp(365): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   LogTemplate.cpp
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: 'typedef ': ignored on left of '' when no variable is declared
@@ -165,7 +165,7 @@ ScriptFun.cpp(522): warning C4267: 'argument': conversion from 'size_t' to 'int'
 d:\code\advancedscript\advancedscript\scriptfun.cpp(206): warning C4715: 'SetVarx_': not all control paths return a value
 d:\code\advancedscript\advancedscript\parser.cpp(356): warning C4715: 'tokens': not all control paths return a value
 d:\code\advancedscript\advancedscript\helperfunctions.cpp(281): warning C4715: 'Str2bool': not all control paths return a value
-d:\code\advancedscript\advancedscript\helperfunctions.cpp(379): warning C4715: 'GetVarType': not all control paths return a value
+d:\code\advancedscript\advancedscript\helperfunctions.cpp(383): warning C4715: 'GetVarType': not all control paths return a value
 d:\code\advancedscript\advancedscript\helperfunctions.cpp(104): warning C4700: uninitialized local variable 'segment' used
   .NETFramework,Version=v4.5.2.AssemblyAttributes.cpp
   AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL

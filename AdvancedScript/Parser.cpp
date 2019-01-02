@@ -154,7 +154,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 			else //// but if the ret value of the var is int so we need to resolve it as int
 			{
 				/// now we need to check the var type to ret the value of int and checkValue of the str
-				if (vartype_ = "int") {  /// in case it is int no need to check Hex 
+				if (vartype_ == "int") {  /// in case it is int no need to check Hex 
 					return ScriptFunList::VarList[indexofVar]->varvalue[0]; // return the value of the int var as it
 				}
 				else {  /// in case it str we need to check for hex validation and convert to int
@@ -181,7 +181,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 			else //// but if the ret value of the var is int so we need to resolve it as int
 			{
 				/// now we need to check the var type to ret the value of int and checkValue of the str
-				if (vartype_ = "int") {  /// in case it is int no need to check Hex 
+				if (vartype_ == "int") {  /// in case it is int no need to check Hex 
 					return ScriptFunList::VarList[indexofVar]->varvalue[0]; // return the value of the int var as it
 				}
 				else {  /// in case it str we need to check for hex validation and convert to int

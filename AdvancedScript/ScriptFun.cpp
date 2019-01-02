@@ -211,7 +211,7 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 	if (Varexist(varname, retvartype, indexofVar)) {
 		if (Arrayindex_ > 0 && retvartype == "array") {
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[Arrayindex_], indexofVar);
-			_plugin_logputs (Str2ConstChar(Environment::NewLine + x->varname + "[" + (int2Str(Arrayindex_))->Trim() + "]= " + x->varvalue));
+			_plugin_logputs (Str2ConstChar(Environment::NewLine + x->varname + "[" + (duint2Hex(Arrayindex_))->Trim() + "]= " + x->varvalue));
 			return;
 		}
 		if (Arrayindex_ > 0 && retvartype != "array") {  // that's mean it's int or str  // so we will make Arrayindex_=0 as it'not array
@@ -228,7 +228,7 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 		if (Arrayindex_ == 0) {  // this mean it's str or int
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
 			if (x->vartype=="array")
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "[" + (int2Str(Arrayindex_))->Trim() + "]= " + x->varvalue));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "[" + (duint2Hex(Arrayindex_))->Trim() + "]= " + x->varvalue));
 			else {
 				if (x->vartype == "int") {
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue + "\\" + str2Hex(x->varvalue)));
