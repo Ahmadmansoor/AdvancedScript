@@ -5,6 +5,13 @@ It's just Functions which will help Plugin Coder , maybe in the future It will b
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 2.0:
+      1-all numbers are hex numbers.
+      2-more nested in arguments.
+      3-Build bridge to make plugin system Compatible with x64dbg script system.
+      4-create parallel Functions to x64dbg Functions, like ( cmp >> cmpx ).
+      5-rename new name (Varx Getx Setx) and fix array index entry.
+      6-add VarxClear ( clear all variable to help user in test's ) , memdump with print style.
 - version 1.6:
       1- add Parser system to recognize arguments.
       2- begin build Script system.
@@ -23,14 +30,17 @@ It's just Functions which will help Plugin Coder , maybe in the future It will b
 ## Script Section:
 ```
 -arguments value system (AVS): all argument pass through Parser system recognizer,how it work:
-      1- search for all {} which is releated x64dbg system and try to resolve it.
-      2- search for all $ which it's related to defined variables of AdvancedScript and resolve it. 
-      3- search for all tokens by order ( * / + -) and resolve it. 
- sample :
-      - $x +4/2 -1
-      - {x} + $y +2
-      - {rax} + 5       // all numbera are decimal , hexadecimal not support yet .
-      - {rax +2*rcx} + $x
+      1- all numbers are in hex shape ( setx $x,50  == setx $x,0x50). 
+      2- search for all {} which is releated x64dbg system and try to resolve it.
+      3- search for all $ which it's related to defined variables of AdvancedScript and resolve it. 
+      4- search for all tokens by order ( * / + -) and resolve it.
+      5- all numbers in int variables are saved as decimal, put when it printed it print with 
+            two way hex and decimal.
+      6- all numbers which stored in str or array var are heximal.
+      7- when define variables no need to use $, but wher ever you use this var you should add $ first.
+      8- when calulate int value all arguments will converted to int and make the formula exist.
+      9- when calulate str or array all arguments are set to gather after it calculate it's value's.
+      10- when we define array it will create array with 0x500 elements.
 ```
 ### 1- Varx: 
 it's Like Var in x64dbg system, for defining variable's which can used in Script commands.
@@ -44,80 +54,100 @@ Varx P1, P2 , P3(optional)
             for int type it should be have a value and must be int 
             note : you can use variable for this arguments like $x or {rax}.
             no need to use ""
+ Variable type is :
+ - int: all value will saved as int value.
+ - str.
+ - array with 0x500 string elements ( it's just string).
   sample :
          - varx int, x, 90
          - varx array, y, 1
          - varx str, x, {rax}
          - varx array, y
          - varx str, x
+         //////////
+         - varx int, x, 0x45fa
+         - varx int,x1,25+30     /// 0x55 /85
+         - varx array, z,30
+         - setx $z[10],test
+         - varx int,x2,$x +$x1+$z[0]
 ```
-### 2- SetVarx / MovVarx : 
-set value to the virables in AdvancedScript vriable system.
-```
-Parameter:
-SetVarx P1, P2 , P3
-      P1: variable name, it must (not) begin with $, because we need to assigned new value .
-      P2: element index of the array , no need for int and str or value=0
-      P3: the value of the variable can used AVS, no need to use "".
-      
-   sample :
-         - varx int, x, 90   >>>> x=90
-           SetVarx x,10    >>>> x=10
-         
-         - varx str, x, {rax}     >>> x=rax value
-           SetVarx x,test    >>> x=test
-         
-         - varx array, y
-           SetVarx y,0,test1   >>>  y[0]=test1 
-           SetVarx y,100,testx >>>  y[100]=testx
-           SetVarx y,100,testx >>>  y[100]=testx
-           SetVarx y,200,10 >>>  y[200]=10
-```
-### 3- SetVarx / MovVarx : 
-set value to the virables in AdvancedScript vriable system.
+### 2- Setx : 
+set value to the virables in AdvancedScript vriable system or x64dbg system.
+you can make add sub or multi or divide and you can nested arguments as you like.
+
 ```
 Parameter:
-SetVarx P1, P2 , P3
+Setx P1, P2 
       P1: variable name, it must (not) begin with $, because we need to assigned new value .
-      P2: element index of the array , no need for int and str or value=0
-      P3: the value of the variable can used AVS, no need to use "".
+      for the array variable we use [Array_index] , no need this for int and str or Array_index=0
+       array_index can accept variable's value
+      P2: the value of the variable can used AVS, no need to use "".
       
    sample :
-         - varx int, x, 90   >>>> x=90
-           SetVarx x,10    >>>> x=10
-         
-         - varx str, x, {rax}     >>> x=rax value
-           SetVarx x,test    >>> x=test
-         
-         - varx array, y
-           SetVarx y,0,test1   >>>  y[0]=test1 
-           SetVarx y,100,testx >>>  y[100]=testx
-           SetVarx y,100,testx >>>  y[100]=testx
-           SetVarx y,200,10 >>>  y[200]=10
+         - varx int, x, 90                x=0x90
+           Setx x,10                      x=0x10
+           
+         - varx str, x, {rax}             x=rax value
+           Setx $x,test                   x=test
+           varx array,z,10                z[0]=10     because all elements are string       
+           setx $z[5],$x$z[0]             z[5]=test10
+           setx $z[5],$x $z[0]            z[5]=test 10
+           setx $z[5],$x+$z[0]            z[5]=test+10
+           setx $x,$z[0]                  x=0x10
+           setx $x,$z[5]                  wrong value can't converted to int
+           
+         - varx int, x, 0x45fa            int x= 0x45FA\17914 :has been added
+           varx str, z, 0xaa              str z= 0xaa :has been added
+           setx $x, $z + 0x33 - 25        x= 0xB8\184
+           varx array, y, 0x10            array y[0]= 0x10 :has been added
+           setx $x, $x + $y[0]            x= 0xC8\200
 ```
-### 3- GetVarx / PrintVarx : 
-set value to the virables in AdvancedScript vriables system.
+### 3- Getx / Printx : 
+print the value of the virables .
 ```
 Parameter:
 SetVarx P1, P2 
       P1: variable name, it must begin with $, because we need to get the value .
-      P2: element index of the array , no need for int and str or value=0
-          the value of the variable can used AVS, no need to use "".
+            for the array we put [array_index] if not used then it will print first 
+            element in the array.
+            array_index can accept variable's value
+          the value of the variable can used AVS, no need to use comma "".
       
    sample :
-         - varx int, x, 90   >>>> x=90
-           SetVarx x,10    >>>> x=10
+         - varx int, x, 90          x=0x90
+           SetVarx $x,10            x=0x10
+           getx $x                  x=0x10
+         - varx str, x, {rax}       x=rax value
+           getx $x                  x=rax value
          
-         - varx str, x, {rax}     >>> x=rax value
-           SetVarx x,test    >>> x=test
-         
-         - varx array, y
-           SetVarx y,0,test1   >>>  y[0]=test1 
-           SetVarx y,100,testx >>>  y[100]=testx
-           SetVarx y,100,testx >>>  y[100]=testx
-           SetVarx y,200,10 >>>  y[200]=10
+         -varx int, x, 10           int x= 0x10\16 :has been added
+          varx array, y, 1          array y[0]= 1 :has been added
+          setx $y[$x], 110          y[10]= 110
+          getx $y                   y[0]= 1
+          getx $y[$x]               y[10]= 110
 ```
-### 3- findallmemx : 
+### 3- commands parallel of x64dbg  : 
+it's collection of edit functions from x64dbg system, but it accept variables in the parameter.
+- (Movx , addx , subx , mulx , divx , andx , orx , xorx , shlx ) : first parameter will not analyzed, just the second one.
+- (pushx , popx):parameter will analyzed
+- cmpx : both parameter will analyzed
+```
+sample :
+     - again:
+      varx str,base,{rax}
+      cmpx {rax},$base   >>> cmpx analyzed both parameters so we can write like this
+      jne done
+      jmp again 
+      done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     >>> this var from x64dbg system
+       addx rax,$x+$y              rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                z=z+0x287
+
+         
+```
+### 4- findallmemx : 
 it's same findallmem in x64dbg system, but it accept variables in the parameter.
 ```
 Parameter:
@@ -128,13 +158,43 @@ SetVarx P1, P2, P3
       P3: The size of the data to search in. Default is the entire memory map..
                   >>all variable can used AVS<<
    sample :
-         - varx str, search, "4533C94533C033"
+         - varx str, search, "4533C94533C033"  << or >> varx str, search, 4533C94533C033
            varx str, base, { rdx }
            findallmemx $base, $search
            mov rdi, ref.addr(0)
-
-         - findallmem 0x10000, "4533C94533C033"
-           mov rdi, ref.addr(0)
+         
+```
+### 5- memdump : 
+dump memory to log window like windbg style
+	//00007ff8`02f42280  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
+	//00007ff8`02f42290  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
+```
+Parameter:
+SetVarx P1, P2, P3 
+      P1: The address to start dump.
+      P2: size of data   
+   sample :
+         - memdump 00000000FF613570,50
+                        
+                  00000000FF613570         4883EC28E807FEFFFF4883C428EB1190        H?�(����H?�(�.
+                  00000000FF613580         90909090909090909090909090909090        ................ 
+                  00000000FF613590         488974240848897C241041544881ECB0        H?t$H?|$ATH��� 
+                  00000000FF6135A0         0000008364242000488D4C2440FF157D        ...?d$ .H�L$@�} 
+                  00000000FF6135B0         8C00009065488B042530000000488B78        ?...eH?%0...H?x
+        
+        - memdump {cip},50         {cip}= rip address
+         
+        -varx str,address,{cip}
+         varx str,size,20
+         memdump $address,$size
+         
+```
+### 6- VarxClear : 
+clear all variable's rest variables list , so we can add again same var 
+Good for maintenance.
+``` 
+   sample :
+         - VarxClear           
 ```
 ////////////////////////////////////////////////////////////////////////////
 ## Log Section:
