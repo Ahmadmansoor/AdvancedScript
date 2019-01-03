@@ -281,7 +281,6 @@ String^ BackWard(String^ input, int tokenindex, String^% VarString) {
 			value_ = temp;
 		}
 		VarString = value_ + VarString;
-		String^ intValue;
 		if (Information::IsNumeric(value_)) {   /// check it if it's hex(number) value 
 			return value_;
 		}
@@ -429,7 +428,6 @@ String^ resolveString(String^ input, int% commaCount) {   //// used to resolve s
 
 bool CheckexcutedCmd(String^ cmd_) {
 	Generic::List<String^>^ arguments;
-	AdvancedScript::LogTemplate::TemplateClass^ TemplateClassFound;
 	String^ OldValue_;
 
 	if (cmd_->StartsWith("memdump(") || cmd_->StartsWith("memdump (")) {
@@ -565,7 +563,6 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 		{
 			String^ tempInput = argument;
 			String^ oldValue = "";
-			int commaCount;
 			tempInput = tokens(tempInput, oldValue);  /// we will get them as int value			
 			if (tempInput->StartsWith("NULL/")) {
 				OldValue_ = argument;
@@ -678,7 +675,6 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 				String^ replaceValue = "";
 				String^ oldvalue = argument->Substring(argument->IndexOf("{"), argument->IndexOf("}") + 1);
 				replaceValue = findScriptSystemVarValue(oldvalue);
-				String^ inValue;
 				if (!replaceValue->StartsWith("NULL/")) {
 					argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
 				}

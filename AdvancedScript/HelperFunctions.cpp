@@ -97,7 +97,7 @@ String^ StringFormatInline_Str(String^ format) {
 }
 
 String^ GetAPIName_LableWay(duint Addr_) {
-	SEGMENTREG segment;
+	SEGMENTREG segment = SEG_DEFAULT;
 	char* text = new char[MAX_STRING_SIZE];
 	char* ModuleName = new char[MAX_STRING_SIZE]();
 	DbgGetModuleAt(Addr_, ModuleName);

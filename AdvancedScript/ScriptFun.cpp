@@ -128,7 +128,6 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 		}
 		if (index_ > 0 && retvartype != "array") {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
-			String^ OldValue_;
 			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int				
 				//String^ varValue_Int = argumentValue(value_, OldValue_); ////// argumentValue used to resolve as int numbers 
 				String^ varValue_Int = StrAnalyze(value_, VarType::int_);
@@ -162,7 +161,6 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 		}
 		if (index_ == 0) {
 			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {
-				String^ OldValue_;
 				//String^ varValue_Int = argumentValue(value_, OldValue_); ////// argumentValue used to resolve as int numbers 		 
 				String^ varValue_Int = StrAnalyze(value_, VarType::int_);
 				if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
@@ -442,7 +440,6 @@ String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 
 String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findall ";
-	String^ OldValue_;
 	String^ base_s = StrAnalyze(base_, VarType::str);
 	if (!base_s->StartsWith("NULL/")) {		
 		cmd_ = cmd_ + base_s + ",";		
@@ -478,11 +475,9 @@ String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 
 String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findallmem ";
-	String^ OldValue_;
 	String^ base_s = StrAnalyze(base_, VarType::str);	
 	if (!base_s->StartsWith("NULL/")) {		
 		cmd_ = cmd_ + base_s + ",";
-			String^ OldValue_;
 			String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
 			if (Searchvalue_x->StartsWith("0x")) {
 				Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);

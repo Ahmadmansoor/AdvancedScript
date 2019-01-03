@@ -463,7 +463,6 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int index_,String^ value_)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	String^ OldValue_;
 	String^ arrayIndex;
 	switch ((arguments->Count))
 	{
@@ -500,7 +499,6 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int index)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	String^ OldValue_;
 	switch ((arguments->Count))
 	{
 	case 1: {  // case the var is int or str so the value at index=0
