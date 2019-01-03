@@ -67,86 +67,63 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 	}
 	return false;
 }
+void registerCommand(const char* command, CBPLUGINCOMMAND cbCommand, bool debugonly)
+{
+	if (!_plugin_registercommand(pluginHandle, command, cbCommand, debugonly))
+		_plugin_logprintf("[AdvancedScript] error registering the \"%s\" command!\n", command);
+}
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
 	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.0] || Coded By AhmadMansoor /exetools "));
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 
-	/*if (!_plugin_registercommand(pluginHandle, "AdvancedScript", cbMainForm, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");*/
-	if (!_plugin_registercommand(pluginHandle, "test_", test, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	/*registerCommand("AdvancedScript", cbMainForm, false);*/
+	registerCommand("test_", test, false);
 
 	/////////Logx....
-	if (!_plugin_registercommand(pluginHandle, "LogxJustAtBP", cbLogxJustAtBP, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("LogxJustAtBP", cbLogxJustAtBP, false);
 
-	if (!_plugin_registercommand(pluginHandle, "LogxTemplateManager", LogxTemplateManager, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("LogxTemplateManager", LogxTemplateManager, false);
 
-	if (!_plugin_registercommand(pluginHandle, "logxwindow", logx_window, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("logxwindow", logx_window, false);
 
-	if (!_plugin_registercommand(pluginHandle, "logx", logx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("logx", logx, false);
 
-	if (!_plugin_registercommand(pluginHandle, "logxTrace", logxTrace, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("logxTrace", logxTrace, false);
 	/////////Logx....//////////
-	if (!_plugin_registercommand(pluginHandle, "StrCompx", StrCompx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("StrCompx", StrCompx, false);
 
 	/////////Script Commands....//////////
-	if (!_plugin_registercommand(pluginHandle, "Varx", Varx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("Varx", Varx, false);
 
-	if (!_plugin_registercommand(pluginHandle, "Getx", GetVarx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "Printx", GetVarx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("Getx", GetVarx, false);
+	registerCommand("Printx", GetVarx, false);
 
 
-	if (!_plugin_registercommand(pluginHandle, "Setx", SetVarx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("Setx", SetVarx, false);
 
 	/// Script instruments equivalent in x64dbg 
-	if (!_plugin_registercommand(pluginHandle, "Movx", Movx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "addx", addx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "subx", subx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "mulx", mulx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "andx", andx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "orx", orx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "xorx", xorx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "shlx", shlx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "pushx", pushx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");	
-	if (!_plugin_registercommand(pluginHandle, "popx", popx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "cmpx", cmpx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("Movx", Movx, false);
+	registerCommand("addx", addx, false);
+	registerCommand("subx", subx, false);
+	registerCommand("mulx", mulx, false);
+	registerCommand("andx", andx, false);
+	registerCommand("orx", orx, false);
+	registerCommand("xorx", xorx, false);
+	registerCommand("shlx", shlx, false);
+	registerCommand("pushx", pushx, false);
+	registerCommand("popx", popx, false);
+	registerCommand("cmpx", cmpx, false);
 	////
-	if (!_plugin_registercommand(pluginHandle, "findx", findx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "findallx", findallx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "findallmemx", findallmemx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("findx", findx, false);
+	registerCommand("findallx", findallx, false);
+	registerCommand("findallmemx", findallmemx, false);
 	////
-	if (!_plugin_registercommand(pluginHandle, "VarxClear", VarxClear, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "memdump", memdump, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("VarxClear", VarxClear, false);
+	registerCommand("memdump", memdump, false);
 
-	_plugin_logputs(Str2ConstChar(Environment::NewLine));	
+	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
