@@ -25,7 +25,7 @@ bool cx = false;
 //attempted to declare a member of type TcpClient in an native class (i.e.a class definition
 //that does not include the "ref" keyword).You can only use native types as globals.
 //https://stackoverflow.com/questions/11419459/c-declaring-a-managed-variable-in-a-native-code
-static ref class ManagedGlobals {
+ref class ManagedGlobals {
 public:
 	static Generic::List<AdvancedScript::LogTemplate::TemplateClass^>^ TemplateClassList_ = gcnew Generic::List<AdvancedScript::LogTemplate::TemplateClass^>;
 	static String^ TraceFilePath = "";
