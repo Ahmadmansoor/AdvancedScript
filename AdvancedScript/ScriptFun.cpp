@@ -91,14 +91,14 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varValue_Int, 0);  // we store varvalue as int 
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\"+ varValue_Int + " :has been added"));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\"+ varValue_Int + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
 				return;
 			}
 			else {
@@ -137,7 +137,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 					return false;
 				}else {  
 					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int ));
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int ));
 				}
 			}else {  /// case str
 				//int commaCount = 0;
@@ -170,7 +170,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 				}
 				else {
 					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int));
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int));
 				}
 			}else {  /// case str
 				//int commaCount = 0;

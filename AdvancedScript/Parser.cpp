@@ -101,12 +101,12 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 				}
 				if (Information::IsNumeric(ArrayIndexValue)) {  /// if it's resolved as int value then we used it 
 					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
-						return ScriptFunList::VarList[indexofVar]->varvalue[Str2Int(ArrayIndexValue)];
+						return ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)];
 					}
 					else //// but if the ret value of the var is int so we need to resolve it as int
 					{
 						String^ intValue;  /// we ret the int value from the array 
-						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[Str2Int(ArrayIndexValue)], intValue) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
+						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)], intValue) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
 							return "NULL/ array value is not Numeric";/// that something wrong in the index of the array 
 						}
 						else {
@@ -120,12 +120,12 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 				}
 				else {
 					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
-						return ScriptFunList::VarList[indexofVar]->varvalue[Str2Int(intValue)];
+						return ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(intValue)];
 					}
 					else //// but if the ret value of the var is int so we need to resolve it as int
 					{
 						String^ intValue1;  /// we ret the int value from the array 
-						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[Str2Int(intValue)], intValue1) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
+						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(intValue)], intValue1) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
 							return "NULL/ array value is not Numeric";/// that something wrong in the index of the array 
 						}
 						else {
@@ -573,7 +573,7 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 				argument = ReplaceAtIndex(argument, oldValue, tempInput);
 			}
 			if (Information::IsNumeric(argument)) {  /// in case it back negtive value
-				if (Str2Int(argument) < 0) {
+				if (Str2duint(argument) < 0) {
 					break;
 				}
 			}

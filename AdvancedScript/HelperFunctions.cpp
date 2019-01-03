@@ -196,7 +196,7 @@ String^ str2Hex(String^ input) {
 	else
 	{
 		if (Information::IsNumeric(input)) {
-			return duint2Hex(Str2Int((input)));
+			return duint2Hex(Str2duint((input)));
 		}
 	}
 	return "NULL/ ";
@@ -291,15 +291,15 @@ String^ reMoveSpaces(String^ input_) {
 	return temp;
 }
 
-int Str2Int(String^ input_) {
-	if (Information::IsNumeric(input_)) {
-		return Conversion::Val(input_);
+duint Str2duint(String^ input_) {
+	duint result;
+	if (duint::TryParse(input_, result)) {
+		return result;
 	}
 	else {
 		_plugin_logprintf("can't get int from argument");
 		return -1;
 	}
-
 }
 
 String^ str2Asci(String^ input) {

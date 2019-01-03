@@ -479,7 +479,7 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 			}
 			else
 			{  /// we checkd that array index is int, need to check the value of the array
-				SetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("["))->Trim(), Str2Int(arrayIndex->Trim()), arguments[1]);
+				SetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("["))->Trim(), (int)Str2duint(arrayIndex->Trim()), arguments[1]);
 			}
 
 		}
@@ -520,7 +520,7 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 			}
 			else
 			{  /// we checkd that array index is int, need to check the value of the array
-				GetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("[")),Str2Int(arrayIndex));
+				GetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("[")),(int)Str2duint(arrayIndex));
 			}
 		}
 		else {
