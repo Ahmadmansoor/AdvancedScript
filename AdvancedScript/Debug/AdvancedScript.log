@@ -1,5 +1,0 @@
-﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  AdvancedScript.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
-     Creating library ..\..\x32\plugins\AdvancedScript.lib and object ..\..\x32\plugins\AdvancedScript.exp
-  AdvancedScript.vcxproj -> D:\Code\AdvancedScript\AdvancedScript\..\..\x32\plugins\AdvancedScript.dll
-  AdvancedScript.vcxproj -> ..\..\x32\plugins\AdvancedScript.pdb (Partial PDB)
