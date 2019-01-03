@@ -353,13 +353,6 @@ String^ AddZero2Addr(String^ input) {
 	return input;
 }
 
-String^ int2Str(int input_) {
-	if (Information::IsNumeric(input_)) {
-		return Conversion::Str(input_);
-	}
-	return "NULL/ ";
-}
-
 bool IsAllSpaces(String^ input_) {
 	for (int i = 0; i < input_->Length; i++)
 	{
