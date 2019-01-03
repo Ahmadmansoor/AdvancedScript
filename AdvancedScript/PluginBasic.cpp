@@ -96,7 +96,7 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
 	initStruct->sdkVersion = plugin_version;
 	initStruct->sdkVersion = PLUG_SDKVERSION;
-	strcpy(initStruct->pluginName, plugin_name);
+	strcpy_s(initStruct->pluginName, plugin_name);
 	pluginHandle = initStruct->pluginHandle;
 	RegisterCommands(initStruct);
 

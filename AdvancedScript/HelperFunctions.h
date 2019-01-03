@@ -13,17 +13,22 @@ String^ duint2Hex(duint input_);
 String^ charPTR2String(char* input);
 String^ ClearSlash_etc(String^ input);
 String^ GetAPIName_LableWay(duint Addr_);
-int Str2Int(String^ input_);
+duint Str2duint(String^ input_);
 duint Hex2duint(String^ input_);
 String^ str2Asci(String^ input);
 String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newValue);
 String^ AddZero2Addr(String^ input);
-String^ int2Str(int input_);
+
 String^ str2Hex(String^ input);
 bool IsAllSpaces(String^ input_);
 
-
-
+template<class T>
+String^ int2Str(T input_) {
+	if (Information::IsNumeric(input_)) {
+		return Conversion::Str(input_);
+	}
+	return "NULL/ ";
+}
 
 const char* Str2ConstChar(System::String^ string_);
 bool Str2bool(String^ input_);

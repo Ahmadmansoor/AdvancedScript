@@ -91,14 +91,14 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varValue_Int, 0);  // we store varvalue as int 
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\"+ varValue_Int + " :has been added"));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\"+ varValue_Int + " :has been added"));
 			return;
 		}
 		else {
 			int indexofVar = 0;
 			if (!Varexist(varname, retvartype, indexofVar)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
 				return;
 			}
 			else {
@@ -128,7 +128,6 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 		}
 		if (index_ > 0 && retvartype != "array") {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
-			String^ OldValue_;
 			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int				
 				//String^ varValue_Int = argumentValue(value_, OldValue_); ////// argumentValue used to resolve as int numbers 
 				String^ varValue_Int = StrAnalyze(value_, VarType::int_);
@@ -138,7 +137,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 					return false;
 				}else {  
 					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int ));
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int ));
 				}
 			}else {  /// case str
 				//int commaCount = 0;
@@ -162,7 +161,6 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 		}
 		if (index_ == 0) {
 			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {
-				String^ OldValue_;
 				//String^ varValue_Int = argumentValue(value_, OldValue_); ////// argumentValue used to resolve as int numbers 		 
 				String^ varValue_Int = StrAnalyze(value_, VarType::int_);
 				if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
@@ -172,7 +170,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 				}
 				else {
 					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2Int(varValue_Int)) + "\\" + varValue_Int));
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int));
 				}
 			}else {  /// case str
 				//int commaCount = 0;
@@ -203,6 +201,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
 		return false;
 	}
+	return false;
 }
 
 Void GetVarx_(String^ varname, int Arrayindex_) {
@@ -442,7 +441,6 @@ String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 
 String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findall ";
-	String^ OldValue_;
 	String^ base_s = StrAnalyze(base_, VarType::str);
 	if (!base_s->StartsWith("NULL/")) {		
 		cmd_ = cmd_ + base_s + ",";		
@@ -478,11 +476,9 @@ String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 
 String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findallmem ";
-	String^ OldValue_;
 	String^ base_s = StrAnalyze(base_, VarType::str);	
 	if (!base_s->StartsWith("NULL/")) {		
 		cmd_ = cmd_ + base_s + ",";
-			String^ OldValue_;
 			String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
 			if (Searchvalue_x->StartsWith("0x")) {
 				Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
@@ -517,7 +513,7 @@ String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 bool dumpmem(String^ addr , String^ size,String^ para) {
 	String^ mem = StringFormatInline_Str("{mem;" + size + "@" + addr + "}");
 	String^ addr_ = AddZero2Addr(addr);
-	for (size_t i = 0; i < mem->Length; i+=32)
+	for (int i = 0; i < mem->Length; i+=32)
 	{
 		String^ temp = Environment::NewLine + addr_ + "         "+ mem->Substring(i, 32) + "        " + str2Asci(mem->Substring(i, 32)) ;
 		AdvancedScript::LogWindow::LogWindow_->Log_Str = AdvancedScript::LogWindow::Log_Str + Environment::NewLine + temp;

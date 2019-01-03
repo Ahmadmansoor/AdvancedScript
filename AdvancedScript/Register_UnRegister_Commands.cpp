@@ -25,7 +25,7 @@ bool cx = false;
 //attempted to declare a member of type TcpClient in an native class (i.e.a class definition
 //that does not include the "ref" keyword).You can only use native types as globals.
 //https://stackoverflow.com/questions/11419459/c-declaring-a-managed-variable-in-a-native-code
-static ref class ManagedGlobals {
+ref class ManagedGlobals {
 public:
 	static Generic::List<AdvancedScript::LogTemplate::TemplateClass^>^ TemplateClassList_ = gcnew Generic::List<AdvancedScript::LogTemplate::TemplateClass^>;
 	static String^ TraceFilePath = "";
@@ -58,7 +58,7 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 	if (ManagedGlobals::TemplateClassList_->Count == 0) {
 		LoadTemplateFiles_();
 	}
-	for (size_t i = 0; i < ManagedGlobals::TemplateClassList_->Count; i++)
+	for (int i = 0; i < ManagedGlobals::TemplateClassList_->Count; i++)
 	{
 		if (ManagedGlobals::TemplateClassList_[i]->TemplateName->ToLower() == TemplateName->ToLower()) {
 			TemplateClassFound = ManagedGlobals::TemplateClassList_[i];
@@ -67,86 +67,63 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 	}
 	return false;
 }
+void registerCommand(const char* command, CBPLUGINCOMMAND cbCommand, bool debugonly)
+{
+	if (!_plugin_registercommand(pluginHandle, command, cbCommand, debugonly))
+		_plugin_logprintf("[AdvancedScript] error registering the \"%s\" command!\n", command);
+}
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
 	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.0] || Coded By AhmadMansoor /exetools "));
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 
-	/*if (!_plugin_registercommand(pluginHandle, "AdvancedScript", cbMainForm, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");*/
-	if (!_plugin_registercommand(pluginHandle, "test_", test, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	/*registerCommand("AdvancedScript", cbMainForm, false);*/
+	registerCommand("test_", test, false);
 
 	/////////Logx....
-	if (!_plugin_registercommand(pluginHandle, "LogxJustAtBP", cbLogxJustAtBP, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("LogxJustAtBP", cbLogxJustAtBP, false);
 
-	if (!_plugin_registercommand(pluginHandle, "LogxTemplateManager", LogxTemplateManager, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("LogxTemplateManager", LogxTemplateManager, false);
 
-	if (!_plugin_registercommand(pluginHandle, "logxwindow", logx_window, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("logxwindow", logx_window, false);
 
-	if (!_plugin_registercommand(pluginHandle, "logx", logx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("logx", logx, false);
 
-	if (!_plugin_registercommand(pluginHandle, "logxTrace", logxTrace, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("logxTrace", logxTrace, false);
 	/////////Logx....//////////
-	if (!_plugin_registercommand(pluginHandle, "StrCompx", StrCompx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("StrCompx", StrCompx, false);
 
 	/////////Script Commands....//////////
-	if (!_plugin_registercommand(pluginHandle, "Varx", Varx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("Varx", Varx, false);
 
-	if (!_plugin_registercommand(pluginHandle, "Getx", GetVarx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "Printx", GetVarx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("Getx", GetVarx, false);
+	registerCommand("Printx", GetVarx, false);
 
 
-	if (!_plugin_registercommand(pluginHandle, "Setx", SetVarx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("Setx", SetVarx, false);
 
 	/// Script instruments equivalent in x64dbg 
-	if (!_plugin_registercommand(pluginHandle, "Movx", Movx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "addx", addx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "subx", subx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "mulx", mulx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "andx", andx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "orx", orx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "xorx", xorx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "shlx", shlx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "pushx", pushx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");	
-	if (!_plugin_registercommand(pluginHandle, "popx", popx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "cmpx", cmpx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("Movx", Movx, false);
+	registerCommand("addx", addx, false);
+	registerCommand("subx", subx, false);
+	registerCommand("mulx", mulx, false);
+	registerCommand("andx", andx, false);
+	registerCommand("orx", orx, false);
+	registerCommand("xorx", xorx, false);
+	registerCommand("shlx", shlx, false);
+	registerCommand("pushx", pushx, false);
+	registerCommand("popx", popx, false);
+	registerCommand("cmpx", cmpx, false);
 	////
-	if (!_plugin_registercommand(pluginHandle, "findx", findx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "findallx", findallx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "findallmemx", findallmemx, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("findx", findx, false);
+	registerCommand("findallx", findallx, false);
+	registerCommand("findallmemx", findallmemx, false);
 	////
-	if (!_plugin_registercommand(pluginHandle, "VarxClear", VarxClear, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
-	if (!_plugin_registercommand(pluginHandle, "memdump", memdump, false))
-		_plugin_logputs("[AdvancedScript] error registering the \AdvancedScript\ command!");
+	registerCommand("VarxClear", VarxClear, false);
+	registerCommand("memdump", memdump, false);
 
-	_plugin_logputs(Str2ConstChar(Environment::NewLine));	
+	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
@@ -463,7 +440,6 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int index_,String^ value_)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	String^ OldValue_;
 	String^ arrayIndex;
 	switch ((arguments->Count))
 	{
@@ -480,7 +456,7 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 			}
 			else
 			{  /// we checkd that array index is int, need to check the value of the array
-				SetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("["))->Trim(), Str2Int(arrayIndex->Trim()), arguments[1]);
+				SetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("["))->Trim(), (int)Str2duint(arrayIndex->Trim()), arguments[1]);
 			}
 
 		}
@@ -500,7 +476,6 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int index)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	String^ OldValue_;
 	switch ((arguments->Count))
 	{
 	case 1: {  // case the var is int or str so the value at index=0
@@ -522,7 +497,7 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 			}
 			else
 			{  /// we checkd that array index is int, need to check the value of the array
-				GetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("[")),Str2Int(arrayIndex));
+				GetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("[")),(int)Str2duint(arrayIndex));
 			}
 		}
 		else {

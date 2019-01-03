@@ -40,7 +40,7 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 	}
 	String^ temp;
 	//bool notfound = false;
-	for (size_t i = 0; i <= input->Length; i++)
+	for (int i = 0; i <= input->Length; i++)
 	{
 		if (i == input->Length) {
 			if (temp->Trim() != "") {
@@ -97,7 +97,7 @@ String^ StringFormatInline_Str(String^ format) {
 }
 
 String^ GetAPIName_LableWay(duint Addr_) {
-	SEGMENTREG segment;
+	SEGMENTREG segment = SEG_DEFAULT;
 	char* text = new char[MAX_STRING_SIZE];
 	char* ModuleName = new char[MAX_STRING_SIZE]();
 	DbgGetModuleAt(Addr_, ModuleName);
@@ -150,7 +150,7 @@ int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is
 			input_ = input_->Substring(2, input_->Length - 2);
 		}
 	}
-	for (size_t i = 0; i < input_->Length; i++)
+	for (int i = 0; i < input_->Length; i++)
 	{
 		if (Array::IndexOf(c, input_->Substring(i, 1)) < 0) {
 			intValue = "NULL/ ";
@@ -196,7 +196,7 @@ String^ str2Hex(String^ input) {
 	else
 	{
 		if (Information::IsNumeric(input)) {
-			return duint2Hex(Str2Int((input)));
+			return duint2Hex(Str2duint((input)));
 		}
 	}
 	return "NULL/ ";
@@ -209,7 +209,7 @@ duint Hex2duint(String^ input_) {
 		}
 	}
 	String^ input_temp = input_->Trim();
-	for (size_t i = 0; i < input_temp->Length; i++)
+	for (int i = 0; i < input_temp->Length; i++)
 	{		
 		if (!Information::IsNumeric(input_temp->Substring(i, 1)) && !Char::IsLetter(input_temp->Substring(i, 1), 0)) {
 			return -1;
@@ -278,6 +278,7 @@ bool Str2bool(String^ input_) {
 	{
 		Script::Gui::Message("error in arrgaments can't convert to bool");
 	}
+	return false;
 }
 
 String^ reMoveSpaces(String^ input_) {
@@ -290,22 +291,22 @@ String^ reMoveSpaces(String^ input_) {
 	return temp;
 }
 
-int Str2Int(String^ input_) {
-	if (Information::IsNumeric(input_)) {
-		return Conversion::Val(input_);
+duint Str2duint(String^ input_) {
+	duint result;
+	if (duint::TryParse(input_, result)) {
+		return result;
 	}
 	else {
 		_plugin_logprintf("can't get int from argument");
 		return -1;
 	}
-
 }
 
 String^ str2Asci(String^ input) {
 	String^ temp;
 	if (input->Length < 2)
 		return "NULL/ ";
-	for (size_t i = 0; i < input->Length; i += 2)
+	for (int i = 0; i < input->Length; i += 2)
 	{
 		if ((input->Substring(i, 2) == "90") || (input->Substring(i, 2) == "00")) {
 			temp = temp + ".";
@@ -344,7 +345,7 @@ String^ AddZero2Addr(String^ input) {
 	if (input->Length >= len_)
 		return input;
 	int rest_ = len_ - input->Length;
-	for (size_t i = 0; i < rest_; i++)
+	for (int i = 0; i < rest_; i++)
 	{
 		input = "0" + input;
 	}
@@ -352,15 +353,8 @@ String^ AddZero2Addr(String^ input) {
 	return input;
 }
 
-String^ int2Str(int input_) {
-	if (Information::IsNumeric(input_)) {
-		return Conversion::Str(input_);
-	}
-	return "NULL/ ";
-}
-
 bool IsAllSpaces(String^ input_) {
-	for (size_t i = 0; i < input_->Length; i++)
+	for (int i = 0; i < input_->Length; i++)
 	{
 		if (input_->Substring(i, 1) != " ") {
 			return false;
@@ -379,5 +373,5 @@ VarType GetVarType(String^ vartype) {
 	if (vartype == "array") {
 		return VarType::array_;
 	}
-
+	return VarType::int_;
 }

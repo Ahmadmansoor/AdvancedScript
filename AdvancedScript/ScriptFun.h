@@ -3,7 +3,7 @@
 #include "HelperFunctions.h"
 
 
-static ref class VarPara_temp
+ref class VarPara_temp
 {
 public:
 	VarPara_temp(String^ vartype_, String^ varname_, String^ varvalue_, int i) {
@@ -62,7 +62,7 @@ public:
 };
 
 
-static public ref class VarPara
+public ref class VarPara
 {
 public:
 	VarPara(String^ vartype_, String^ varname_, String^ varvalue_, int i) {
@@ -98,7 +98,7 @@ public:
 	array <String^>^ varvalue;
 };
 
-static public ref class ScriptFunList {
+public ref class ScriptFunList {
 public:
 	static Generic::List<VarPara^>^ VarList = gcnew Generic::List<VarPara^>;
 
