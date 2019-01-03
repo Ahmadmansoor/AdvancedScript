@@ -351,7 +351,7 @@ String^ tokens(String^ input, String^% VarString) {
 			return Conversion::Str(Conversion::Val(para1) - Conversion::Val(para2));
 		}
 	}
-
+	return "NULL/ ";
 }
 
 String^ findHexValue(String^ input, String^% oldvalue_) {

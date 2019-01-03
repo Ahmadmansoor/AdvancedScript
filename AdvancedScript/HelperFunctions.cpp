@@ -278,6 +278,7 @@ bool Str2bool(String^ input_) {
 	{
 		Script::Gui::Message("error in arrgaments can't convert to bool");
 	}
+	return false;
 }
 
 String^ reMoveSpaces(String^ input_) {
@@ -379,5 +380,5 @@ VarType GetVarType(String^ vartype) {
 	if (vartype == "array") {
 		return VarType::array_;
 	}
-
+	return VarType::int_;
 }

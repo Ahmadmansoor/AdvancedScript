@@ -201,6 +201,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
 		return false;
 	}
+	return false;
 }
 
 Void GetVarx_(String^ varname, int Arrayindex_) {
