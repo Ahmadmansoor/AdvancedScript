@@ -40,7 +40,7 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 	}
 	String^ temp;
 	//bool notfound = false;
-	for (size_t i = 0; i <= input->Length; i++)
+	for (int i = 0; i <= input->Length; i++)
 	{
 		if (i == input->Length) {
 			if (temp->Trim() != "") {
@@ -150,7 +150,7 @@ int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is
 			input_ = input_->Substring(2, input_->Length - 2);
 		}
 	}
-	for (size_t i = 0; i < input_->Length; i++)
+	for (int i = 0; i < input_->Length; i++)
 	{
 		if (Array::IndexOf(c, input_->Substring(i, 1)) < 0) {
 			intValue = "NULL/ ";
@@ -209,7 +209,7 @@ duint Hex2duint(String^ input_) {
 		}
 	}
 	String^ input_temp = input_->Trim();
-	for (size_t i = 0; i < input_temp->Length; i++)
+	for (int i = 0; i < input_temp->Length; i++)
 	{		
 		if (!Information::IsNumeric(input_temp->Substring(i, 1)) && !Char::IsLetter(input_temp->Substring(i, 1), 0)) {
 			return -1;
@@ -305,7 +305,7 @@ String^ str2Asci(String^ input) {
 	String^ temp;
 	if (input->Length < 2)
 		return "NULL/ ";
-	for (size_t i = 0; i < input->Length; i += 2)
+	for (int i = 0; i < input->Length; i += 2)
 	{
 		if ((input->Substring(i, 2) == "90") || (input->Substring(i, 2) == "00")) {
 			temp = temp + ".";
@@ -344,7 +344,7 @@ String^ AddZero2Addr(String^ input) {
 	if (input->Length >= len_)
 		return input;
 	int rest_ = len_ - input->Length;
-	for (size_t i = 0; i < rest_; i++)
+	for (int i = 0; i < rest_; i++)
 	{
 		input = "0" + input;
 	}
@@ -360,7 +360,7 @@ String^ int2Str(int input_) {
 }
 
 bool IsAllSpaces(String^ input_) {
-	for (size_t i = 0; i < input_->Length; i++)
+	for (int i = 0; i < input_->Length; i++)
 	{
 		if (input_->Substring(i, 1) != " ") {
 			return false;

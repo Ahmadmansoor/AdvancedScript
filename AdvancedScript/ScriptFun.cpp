@@ -517,7 +517,7 @@ String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 bool dumpmem(String^ addr , String^ size,String^ para) {
 	String^ mem = StringFormatInline_Str("{mem;" + size + "@" + addr + "}");
 	String^ addr_ = AddZero2Addr(addr);
-	for (size_t i = 0; i < mem->Length; i+=32)
+	for (int i = 0; i < mem->Length; i+=32)
 	{
 		String^ temp = Environment::NewLine + addr_ + "         "+ mem->Substring(i, 32) + "        " + str2Asci(mem->Substring(i, 32)) ;
 		AdvancedScript::LogWindow::LogWindow_->Log_Str = AdvancedScript::LogWindow::Log_Str + Environment::NewLine + temp;

@@ -32,7 +32,7 @@ String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace) {
 	String^ vartype = "";
 	int index_ = 0;
 	int index_t = 0;
-	for (size_t i = 0; i < temp->Length; i++)
+	for (int i = 0; i < temp->Length; i++)
 	{
 		value_ = value_ + temp->Substring(i, 1);
 		if (i + 1 == temp->Length) {	/// if this later is the end of string 
@@ -85,7 +85,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 		var_name = input->Substring(0, input->IndexOf("["));  // get Var name			
 		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist  // we clear space here just , because we need to build VarString
 			if (vartype_ == "array" && input->IndexOf("]") > 0) { // var type must be array and the rest of string must have close ]
-				for (size_t i = input->IndexOf("[") + 1; i < input->Length; i++) //get index of var
+				for (int i = input->IndexOf("[") + 1; i < input->Length; i++) //get index of var
 				{
 					if (input->Substring(i, 1) != "]") {
 						ArrayIndexValue = ArrayIndexValue + input->Substring(i, 1);
@@ -365,7 +365,7 @@ String^ findHexValue(String^ input, String^% oldvalue_) {
 	{
 		return "NULL/ ";
 	}
-	for (size_t i = 0; i < input->Length; i++)
+	for (int i = 0; i < input->Length; i++)
 	{
 		String^ intValue1; String^ intValue2;
 		if (CheckHexIsValid(input->Substring(i, 1), intValue1)  > 0) {  // if the char not hex or numeric 
@@ -388,7 +388,7 @@ String^ resolveString(String^ input, int% commaCount) {   //// used to resolve s
 		commaCount = 2;
 		return input->Substring(1, input->LastIndexOf("\"") - 1);
 	}
-	for (size_t i = 0; i < input->Length; i++)
+	for (int i = 0; i < input->Length; i++)
 	{
 		if (input->Substring(i, 1) == "\"") {
 			commaCount += 1;
@@ -403,7 +403,7 @@ String^ resolveString(String^ input, int% commaCount) {   //// used to resolve s
 		return argumentValue(input, OldValue_);
 
 	}
-	for (size_t i = 0; i < input->Length; i++)
+	for (int i = 0; i < input->Length; i++)
 	{
 		if (input->Substring(i, 1) != "\"") {
 			temp = temp + input->Substring(i, 1);
@@ -790,7 +790,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 
 	}
 	
-	for (size_t i = begin_; i < input->Length; i++)
+	for (int i = begin_; i < input->Length; i++)
 	{
 		if (Array::IndexOf(breaks, input->Substring(i, 1)) < 0) {
 			temp = temp + input->Substring(i, 1);
@@ -900,7 +900,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 	{
 	case int_:
 	{
-		for (size_t i = 0; i < StrHolderList->Count; i++)
+		for (int i = 0; i < StrHolderList->Count; i++)
 		{
 			if ((StrHolderList[i] != "") || (StrHolderList[i] != " ")) {
 				if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
@@ -920,7 +920,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 	}
 	case str:
 	{
-		for (size_t i = 0; i < StrHolderList->Count; i++)
+		for (int i = 0; i < StrHolderList->Count; i++)
 		{			
 				if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
 					StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::str);

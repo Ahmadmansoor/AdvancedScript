@@ -58,7 +58,7 @@ bool  GetTemplate(String^ TemplateName, AdvancedScript::LogTemplate::TemplateCla
 	if (ManagedGlobals::TemplateClassList_->Count == 0) {
 		LoadTemplateFiles_();
 	}
-	for (size_t i = 0; i < ManagedGlobals::TemplateClassList_->Count; i++)
+	for (int i = 0; i < ManagedGlobals::TemplateClassList_->Count; i++)
 	{
 		if (ManagedGlobals::TemplateClassList_[i]->TemplateName->ToLower() == TemplateName->ToLower()) {
 			TemplateClassFound = ManagedGlobals::TemplateClassList_[i];
