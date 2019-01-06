@@ -24,10 +24,10 @@ bool IsAllSpaces(String^ input_);
 
 template<class T>
 String^ int2Str(T input_) {
-	if (Information::IsNumeric(input_)) {
+	//if (Information::IsNumeric(input_)) {
 		return Conversion::Str(input_);
-	}
-	return "NULL/ ";
+	//}
+	//return "NULL/ ";
 }
 
 const char* Str2ConstChar(System::String^ string_);

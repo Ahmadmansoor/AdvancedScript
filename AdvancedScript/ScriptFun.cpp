@@ -525,3 +525,38 @@ bool dumpmem(String^ addr , String^ size,String^ para) {
 	}
 	return true;
 }
+
+
+bool WriteStr_(duint address, String^ text, bool replace) {
+	String^ intValue;
+	const char* text_ = Str2ConstChar(text);
+	if (CheckHexIsValid(duint2Hex(address), intValue)>0) {
+		if (!replace) {
+			return Script::Memory::Write(address, text_, sizeof(text_),&address);
+		}
+		else
+		{
+			char* temptext = new char[MAX_STRING_SIZE];
+			if (DbgGetStringAt(address, temptext)) {				
+				String^ temptext_ = CharArr2Str(temptext);
+				if (temptext_->StartsWith("L\"")) {
+					for (int i = 0; i < temptext_->Length *2; i++)
+					{
+						duint v = address + i;
+						unsigned char* zero = ".";
+						Script::Memory::Write(v + i, zero, 1, &v);	//temptext[i] = 0;
+					}
+					//memcpy(&address, 0, sizeof(temptext));
+					//if (Script::Memory::Write(address, 0, sizeof(temptext), &address)) {
+						//return Script::Memory::Write(address, text_, sizeof(text_), &address);
+					//}					
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}

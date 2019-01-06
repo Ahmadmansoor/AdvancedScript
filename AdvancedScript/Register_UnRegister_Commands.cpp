@@ -122,6 +122,8 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	////
 	registerCommand("VarxClear", VarxClear, false);
 	registerCommand("memdump", memdump, false);
+	////
+	registerCommand("writeStr",WriteStr , false);
 
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 }
@@ -150,12 +152,27 @@ static bool test(int argc, char* argv[]) {
 	// for script goto line
 	//DbgScriptSetIp(3);
 
-	SELECTIONDATA sel;
+	/*SELECTIONDATA sel;
 	GuiSelectionGet(GUI_DUMP, &sel);
 	unsigned char* x = new unsigned char[255];
 	DbgMemRead(sel.start, x, 16);
 	const char f = x[5];
+	return true;*/
+
+	char* text_ = new char[MAX_STRING_SIZE];
+	DbgGetStringAt(Script::Register::Get(Script::Register::RSI), text_);
+	_plugin_logputs(text_);
+	DbgGetStringAt(Script::Register::Get(Script::Register::RDI), text_);
+	_plugin_logputs(text_);
+	DbgGetStringAt(Script::Register::Get(Script::Register::R8), text_);
+	_plugin_logputs(text_);
+	unsigned char* xc=new unsigned char[MAX_STRING_SIZE] ;
+	const char* l = "test";
+	memcpy(xc, l, sizeof(l));
+	Script::Memory::WriteByte(Script::Register::Get(Script::Register::R8), xc[0]);
+
 	return true;
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static void ShowDialog_IATFixer()
@@ -915,6 +932,34 @@ static bool memdump(int argc, char* argv[]) {  /// dump memory to log window lik
 	default:
 		_plugin_logprint("wrong arguments for memdump command");
 		return false;
+	}
+	return true;
+}
+
+
+
+static bool WriteStr(int argc, char* argv[]) { //WriteStr(duint address, String^ text, bool replace)
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 3: {
+			String^ addr = StrAnalyze(arguments[0], VarType::str);
+			String^ intValue;
+			
+			if (CheckHexIsValid(addr, intValue) == 0) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng address"));
+				return false;
+			}
+			String^ text_ = StrAnalyze(arguments[1], VarType::str);
+			bool replace_ = Str2bool(arguments[2]);
+			WriteStr_(Str2duint(intValue), text_, replace_);
+			break;			
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		break;
 	}
 	return true;
 }
