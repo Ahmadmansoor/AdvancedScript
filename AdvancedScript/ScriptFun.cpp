@@ -536,24 +536,37 @@ bool WriteStr_(duint address, String^ text, bool replace) {
 		}
 		else
 		{
-			char* temptext = new char[MAX_STRING_SIZE];
-			if (DbgGetStringAt(address, temptext)) {				
-				String^ temptext_ = CharArr2Str(temptext);
+			char* temptext = new char[MAX_STRING_SIZE];			
+			if (DbgGetStringAt(address, temptext)) {
+				int dd = strlen(temptext);
+				String^ temptext_ = CharArr2Str(temptext);				
 				if (temptext_->StartsWith("L\"")) {
-					for (int i = 0; i < temptext_->Length *2; i++)
+					temptext_ = temptext_->Substring(2, temptext_->Length - 2);  // remove L"
+					temptext_ = temptext_->Substring(0, temptext_->Length - 1);	 // remove last "				 
+					for (int i = 0; i < (temptext_->Length * 2) + 1; i++)  // 0 terminate
 					{
 						duint v = address + i;
-						unsigned char* zero = ".";
-						Script::Memory::Write(v + i, zero, 1, &v);	//temptext[i] = 0;
+						byte zero = Convert::ToChar(0);						
+						Script::Memory::Write(v , &zero, 1, &v);	//temptext[i] = 0;
+					}					
+					return Script::Memory::Write(address, text_, sizeof(text_), &address);									
+				}
+				else
+				{
+					temptext_ = temptext_->Substring(1, temptext_->Length - 1); // remove "
+					temptext_ = temptext_->Substring(0, temptext_->Length - 1); // remove last "
+					for (int i = 0; i < (temptext_->Length + 1); i++)  // 0 terminate
+					{
+						duint v = address + i;
+						byte zero = Convert::ToChar(0);
+						Script::Memory::Write(v, &zero, 1, &v);	//temptext[i] = 0;
 					}
-					//memcpy(&address, 0, sizeof(temptext));
-					//if (Script::Memory::Write(address, 0, sizeof(temptext), &address)) {
-						//return Script::Memory::Write(address, text_, sizeof(text_), &address);
-					//}					
+					return Script::Memory::Write(address, text_, sizeof(text_), &address);
 				}
 			}
 			else
 			{
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Can't read the address:" + duint2Hex(address)));
 				return false;
 			}
 		}
