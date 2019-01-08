@@ -78,7 +78,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.0] || Coded By AhmadMansoor /exetools "));
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 
-	/*registerCommand("AdvancedScript", cbMainForm, false);*/
+	registerCommand("Scriptw", cbMainForm, false);
 	registerCommand("test_", test, false);
 
 	/////////Logx....
@@ -175,10 +175,10 @@ static bool test(int argc, char* argv[]) {
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-static void ShowDialog_IATFixer()
+static void ShowDialog_Script()
 {
-	AdvancedScript::MainForm IATFixer;
-	IATFixer.ShowDialog();
+	AdvancedScript::MainForm ScriptWindow;
+	ScriptWindow.ShowDialog();
 }
 
 static bool cbMainForm(int argc, char* argv[])
@@ -192,7 +192,7 @@ static bool cbMainForm(int argc, char* argv[])
 
 	// we used this (New Thread) to Create our Form in new Thread so we able to comunicated with x64dbg
 	// and be able to send command let go to address or do some  other commands 
-	System::Threading::Thread^ thread_ = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(&ShowDialog_IATFixer));
+	System::Threading::Thread^ thread_ = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(&ShowDialog_Script));
 	thread_->Start();
 
 	return true;
