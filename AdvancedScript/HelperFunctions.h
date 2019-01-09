@@ -31,6 +31,7 @@ String^ int2Str(T input_) {
 }
 
 const char* Str2ConstChar(System::String^ string_);
+char* Str2CharPTR(System::String^ string_);
 bool Str2bool(String^ input_);
 int CheckHexIsValid(String^ input_, String^% intValue);
 char* StringFormatInline_(String^ format);

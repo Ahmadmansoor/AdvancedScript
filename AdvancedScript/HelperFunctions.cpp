@@ -111,6 +111,10 @@ const char* Str2ConstChar(System::String^ string_) {
 	return linkStr;
 }
 
+char* Str2CharPTR(System::String^ string_) {	
+	char* str2 = (char*)(void*)Marshal::StringToHGlobalAnsi(string_);	
+	return str2;
+}
 
 //bool OnlyHexInString(String^ test) {  // it will remove 0x if it's at the beganing of the string
 //	try

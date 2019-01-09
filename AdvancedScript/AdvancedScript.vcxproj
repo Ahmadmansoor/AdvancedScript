@@ -182,6 +182,7 @@
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Register_UnRegister_Commands.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ScriptArgumentWindow.h" />
     <ClInclude Include="ScriptFun.h" />
   </ItemGroup>
   <ItemGroup>

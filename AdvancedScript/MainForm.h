@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ScriptArgumentWindow.h"
 namespace AdvancedScript {
 
 	using namespace System;
@@ -7,9 +7,8 @@ namespace AdvancedScript {
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
-	using namespace System::Drawing;
-
-	
+	using namespace System::Drawing;	
+	using namespace ScriptWindowArg;
 	/// <summary>
 	/// Summary for MainForm
 	/// </summary>
@@ -137,7 +136,9 @@ namespace AdvancedScript {
 		}
 #pragma endregion
 	private: System::Void dataGridView1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-		
+		if (e->KeyCode == Keys::Down) {			
+			readLine(dataGridView1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), dataGridView1->Rows->Count);
+		}
 	}
 };
 }
