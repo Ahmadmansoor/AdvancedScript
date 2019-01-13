@@ -1,5 +1,6 @@
 #pragma once
 #include "HelperFunctions.h"
+#include "Register_UnRegister_Commands.h"
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
@@ -95,75 +96,107 @@ namespace ScriptWindowArg {
 
 
 	void readLine(String^ Line_, int MaxLine) {
-		if (Line_->Trim()->IndexOf(" ") > 0) {  /// >0 it mean it has command at the begining
+		if (Line_->Trim()->IndexOf(" ") > 0) {  /// >0 it mean it has command at the begining			
 			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));
-			int ret = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
-			//Generic::List<String^>^ arguments;
-			//GetArg(Line_, arguments); // this function use by refrence so the list will fill direct	
-			char* argv[] = { " " };
-			argv[1] = Str2CharPTR(Line_);
-			switch (ret)
+			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
+			if (CmdExist >= 0) {
+				char* argv = new char[50] ;
+				//argv[1] = Str2CharPTR(Line_);
+				strcpy(argv, Str2CharPTR(Line_));
+				//_plugin_logputs(argv);
+				switch (CmdExist)
+				{
+				case ScriptWindowArg::scriptw:
+					break;
+				case ScriptWindowArg::logxjustatbp:
+					break;
+				case ScriptWindowArg::logxtemplatemanager:
+					break;
+				case ScriptWindowArg::logxwindow:
+					break;
+				case ScriptWindowArg::logx:
+					break;
+				case ScriptWindowArg::logxtrace:
+					break;
+				case ScriptWindowArg::strcompx:
+					break;
+				case ScriptWindowArg::varx:
+					Varx(0, &argv);
+					break;
+				case ScriptWindowArg::getx:
+					GetVarx(0, &argv);
+					break;
+				case ScriptWindowArg::printx:
+					GetVarx(0, &argv);
+					break;
+				case ScriptWindowArg::setx:
+					SetVarx(0, &argv);
+					break;
+				case ScriptWindowArg::movx:
+					SetVarx(0, &argv);
+					break;
+				case ScriptWindowArg::addx:
+					::addx(0, &argv);
+					break;
+				case ScriptWindowArg::subx:
+					::subx(0, &argv);
+					break;
+				case ScriptWindowArg::mulx:
+					::mulx(0, &argv);
+					break;
+				case ScriptWindowArg::andx:
+					::andx(0, &argv);
+					break;
+				case ScriptWindowArg::orx:
+					::orx(0, &argv);
+					break;
+				case ScriptWindowArg::xorx:
+					::xorx(0, &argv);
+					break;
+				case ScriptWindowArg::shlx:
+					::shlx(0, &argv);
+					break;
+				case ScriptWindowArg::pushx:
+					::pushx(0, &argv);
+					break;
+				case ScriptWindowArg::popx:
+					::popx(0, &argv);
+					break;
+				case ScriptWindowArg::cmpx:
+					::cmpx(0, &argv);
+					break;
+				case ScriptWindowArg::findx:
+					::findx(0, &argv);
+					break;
+				case ScriptWindowArg::findallx:
+					::findallx(0, &argv);
+					break;
+				case ScriptWindowArg::findallmemx:
+					::findallmemx(0, &argv);
+					break;
+				case ScriptWindowArg::varxclear:
+					::VarxClear(0, &argv);
+					break;
+				case ScriptWindowArg::memdump:
+					::memdump(0, &argv);
+					break;
+				case ScriptWindowArg::writestr:
+					::WriteStr(0, &argv);
+					break;
+				default: // case non of them begin with command
+					DbgCmdExecDirect(Str2ConstChar(Line_));
+					break;
+				}
+				ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+				return;
+			}
+			else
 			{
-			case ScriptWindowArg::scriptw:
-				break;
-			case ScriptWindowArg::logxjustatbp:
-				break;
-			case ScriptWindowArg::logxtemplatemanager:
-				break;
-			case ScriptWindowArg::logxwindow:
-				break;
-			case ScriptWindowArg::logx:
-				break;
-			case ScriptWindowArg::logxtrace:
-				break;
-			case ScriptWindowArg::strcompx:
-				break;
-			case ScriptWindowArg::varx:
-				break;
-			case ScriptWindowArg::getx:
-				break;
-			case ScriptWindowArg::printx:
-				break;
-			case ScriptWindowArg::setx:
-				break;
-			case ScriptWindowArg::movx:
-				break;
-			case ScriptWindowArg::addx:
-				break;
-			case ScriptWindowArg::subx:
-				break;
-			case ScriptWindowArg::mulx:
-				break;
-			case ScriptWindowArg::andx:
-				break;
-			case ScriptWindowArg::orx:
-				break;
-			case ScriptWindowArg::xorx:
-				break;
-			case ScriptWindowArg::shlx:
-				break;
-			case ScriptWindowArg::pushx:
-				break;
-			case ScriptWindowArg::popx:
-				break;
-			case ScriptWindowArg::cmpx:
-				break;
-			case ScriptWindowArg::findx:
-				break;
-			case ScriptWindowArg::findallx:
-				break;
-			case ScriptWindowArg::findallmemx:
-				break;
-			case ScriptWindowArg::varxclear:
-				break;
-			case ScriptWindowArg::memdump:
-				break;
-			case ScriptWindowArg::writestr:
-				break;
-			default:
-				break;
-			}		
+				ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+				DbgCmdExecDirect(Str2ConstChar(Line_));
+				return;
 
+			}
 		}
 
 	}

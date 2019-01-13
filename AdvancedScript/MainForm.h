@@ -7,7 +7,7 @@ namespace AdvancedScript {
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
-	using namespace System::Drawing;	
+	using namespace System::Drawing;
 	using namespace ScriptWindowArg;
 	/// <summary>
 	/// Summary for MainForm
@@ -22,8 +22,8 @@ namespace AdvancedScript {
 			//TODO: Add the constructor code here
 			//
 		}
-	 
-		
+
+
 	protected:
 		/// <summary>
 		/// Clean up any resources being used.
@@ -35,10 +35,18 @@ namespace AdvancedScript {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::DataGridView^  dataGridView1;
+	private: System::Windows::Forms::DataGridView^  DGV1;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  ID;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Command;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  describe;
+
+
+
+	protected:
+
+
+
+
 	protected:
 
 
@@ -58,20 +66,21 @@ namespace AdvancedScript {
 		void InitializeComponent(void)
 		{
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle3 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
+			this->DGV1 = (gcnew System::Windows::Forms::DataGridView());
 			this->ID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Command = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->describe = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->SuspendLayout();
 			// 
-			// dataGridView1
+			// DGV1
 			// 
-			this->dataGridView1->AllowUserToOrderColumns = true;
-			this->dataGridView1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
+			this->DGV1->AllowUserToOrderColumns = true;
+			this->DGV1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->dataGridView1->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::Fill;
+			this->DGV1->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::Fill;
 			dataGridViewCellStyle1->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
 			dataGridViewCellStyle1->BackColor = System::Drawing::SystemColors::Control;
 			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
@@ -80,29 +89,33 @@ namespace AdvancedScript {
 			dataGridViewCellStyle1->SelectionBackColor = System::Drawing::SystemColors::Highlight;
 			dataGridViewCellStyle1->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
 			dataGridViewCellStyle1->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
-			this->dataGridView1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {
+			this->DGV1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			this->DGV1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
+			this->DGV1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {
 				this->ID, this->Command,
 					this->describe
 			});
-			dataGridViewCellStyle2->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle2->BackColor = System::Drawing::SystemColors::Window;
-			dataGridViewCellStyle2->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			dataGridViewCellStyle3->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle3->BackColor = System::Drawing::SystemColors::Window;
+			dataGridViewCellStyle3->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			dataGridViewCellStyle2->ForeColor = System::Drawing::SystemColors::ControlText;
-			dataGridViewCellStyle2->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle2->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle2->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
-			this->dataGridView1->DefaultCellStyle = dataGridViewCellStyle2;
-			this->dataGridView1->Location = System::Drawing::Point(1, 1);
-			this->dataGridView1->Name = L"dataGridView1";
-			this->dataGridView1->Size = System::Drawing::Size(1042, 454);
-			this->dataGridView1->TabIndex = 0;
-			this->dataGridView1->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::dataGridView1_KeyUp);
+			dataGridViewCellStyle3->ForeColor = System::Drawing::SystemColors::ControlText;
+			dataGridViewCellStyle3->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle3->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle3->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
+			this->DGV1->DefaultCellStyle = dataGridViewCellStyle3;
+			this->DGV1->Location = System::Drawing::Point(1, 1);
+			this->DGV1->Name = L"DGV1";
+			this->DGV1->Size = System::Drawing::Size(1042, 454);
+			this->DGV1->TabIndex = 0;
+			this->DGV1->RowsAdded += gcnew System::Windows::Forms::DataGridViewRowsAddedEventHandler(this, &MainForm::DGV1_RowsAdded);
+			this->DGV1->RowsRemoved += gcnew System::Windows::Forms::DataGridViewRowsRemovedEventHandler(this, &MainForm::DGV1_RowsRemoved);
+			this->DGV1->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::DGV1_KeyUp);
 			// 
 			// ID
 			// 
+			dataGridViewCellStyle2->NullValue = L"0";
+			this->ID->DefaultCellStyle = dataGridViewCellStyle2;
 			this->ID->FillWeight = 25;
 			this->ID->HeaderText = L"ID";
 			this->ID->Name = L"ID";
@@ -119,25 +132,46 @@ namespace AdvancedScript {
 			this->describe->FillWeight = 200;
 			this->describe->HeaderText = L"describe";
 			this->describe->Name = L"describe";
-			this->describe->ReadOnly = true;
 			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1044, 596);
-			this->Controls->Add(this->dataGridView1);
+			this->Controls->Add(this->DGV1);
 			this->KeyPreview = true;
 			this->Name = L"MainForm";
 			this->Text = L"MainForm";
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->EndInit();
 			this->ResumeLayout(false);
 
 		}
 #pragma endregion
-	private: System::Void dataGridView1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-		if (e->KeyCode == Keys::Down) {			
-			readLine(dataGridView1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), dataGridView1->Rows->Count);
+	private: System::Void DGV1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+		if (e->KeyCode == Keys::F12) {
+			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount-1) {
+				if (ScriptargumentClass::Scriptargument_->GetLineNumber() != 0) {
+					DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()-1]->Selected = false;
+				}
+				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
+				readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
+			}
+			else
+			{
+				ScriptargumentClass::Scriptargument_->setLineNumber(0);
+			}
+		}
+	}
+	private: System::Void DGV1_RowsAdded(System::Object^  sender, System::Windows::Forms::DataGridViewRowsAddedEventArgs^  e) {
+		for (int i = 0; i < DGV1->RowCount - 1; i++)
+		{
+			DGV1->Rows[i]->Cells[0]->Value = i;
+		}
+	}
+	private: System::Void DGV1_RowsRemoved(System::Object^  sender, System::Windows::Forms::DataGridViewRowsRemovedEventArgs^  e) {
+		for (int i = 0; i < DGV1->RowCount - 1; i++)
+		{
+			DGV1->Rows[i]->Cells[0]->Value = i;
 		}
 	}
 };
