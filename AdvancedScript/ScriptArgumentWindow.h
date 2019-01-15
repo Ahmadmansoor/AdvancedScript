@@ -95,12 +95,14 @@ namespace ScriptWindowArg {
 	};
 
 
-	void readLine(String^ Line_, int MaxLine) {
+	bool readLine(String^ Line_, int MaxLine) {
+		bool ret_ = false;
 		if (Line_->Trim()->IndexOf(" ") > 0) {  /// >0 it mean it has command at the begining			
 			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));
+
 			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
 			if (CmdExist >= 0) {
-				char* argv = new char[50] ;
+				char* argv = new char[50];
 				//argv[1] = Str2CharPTR(Line_);
 				strcpy(argv, Str2CharPTR(Line_));
 				//_plugin_logputs(argv);
@@ -109,6 +111,7 @@ namespace ScriptWindowArg {
 				case ScriptWindowArg::scriptw:
 					break;
 				case ScriptWindowArg::logxjustatbp:
+					ret_ = ::cbLogxJustAtBP(0, &argv);
 					break;
 				case ScriptWindowArg::logxtemplatemanager:
 					break;
@@ -121,83 +124,97 @@ namespace ScriptWindowArg {
 				case ScriptWindowArg::strcompx:
 					break;
 				case ScriptWindowArg::varx:
-					Varx(0, &argv);
+					ret_ = Varx(0, &argv);
 					break;
 				case ScriptWindowArg::getx:
-					GetVarx(0, &argv);
+					ret_ = GetVarx(0, &argv);
 					break;
 				case ScriptWindowArg::printx:
-					GetVarx(0, &argv);
+					ret_ = GetVarx(0, &argv);
 					break;
 				case ScriptWindowArg::setx:
-					SetVarx(0, &argv);
+					ret_ = SetVarx(0, &argv);
 					break;
 				case ScriptWindowArg::movx:
-					SetVarx(0, &argv);
+					ret_ = ::Movx(0, &argv);
 					break;
 				case ScriptWindowArg::addx:
-					::addx(0, &argv);
+					ret_ = ::addx(0, &argv);
 					break;
 				case ScriptWindowArg::subx:
-					::subx(0, &argv);
+					ret_ = ::subx(0, &argv);
 					break;
 				case ScriptWindowArg::mulx:
-					::mulx(0, &argv);
+					ret_ = ::mulx(0, &argv);
 					break;
 				case ScriptWindowArg::andx:
-					::andx(0, &argv);
+					ret_ = ::andx(0, &argv);
 					break;
 				case ScriptWindowArg::orx:
-					::orx(0, &argv);
+					ret_ = ::orx(0, &argv);
 					break;
 				case ScriptWindowArg::xorx:
-					::xorx(0, &argv);
+					ret_ = ::xorx(0, &argv);
 					break;
 				case ScriptWindowArg::shlx:
-					::shlx(0, &argv);
+					ret_ = ::shlx(0, &argv);
 					break;
 				case ScriptWindowArg::pushx:
-					::pushx(0, &argv);
+					ret_ = ::pushx(0, &argv);
 					break;
 				case ScriptWindowArg::popx:
-					::popx(0, &argv);
+					ret_ = ::popx(0, &argv);
 					break;
 				case ScriptWindowArg::cmpx:
-					::cmpx(0, &argv);
+					ret_ = ::cmpx(0, &argv);
 					break;
 				case ScriptWindowArg::findx:
-					::findx(0, &argv);
+					ret_ = ::findx(0, &argv);
 					break;
 				case ScriptWindowArg::findallx:
-					::findallx(0, &argv);
+					ret_ = ::findallx(0, &argv);
 					break;
 				case ScriptWindowArg::findallmemx:
-					::findallmemx(0, &argv);
+					ret_ = ::findallmemx(0, &argv);
 					break;
 				case ScriptWindowArg::varxclear:
-					::VarxClear(0, &argv);
+					ret_ = ::VarxClear(0, &argv);
 					break;
 				case ScriptWindowArg::memdump:
-					::memdump(0, &argv);
+					ret_ = ::memdump(0, &argv);
 					break;
 				case ScriptWindowArg::writestr:
-					::WriteStr(0, &argv);
+					ret_ = ::WriteStr(0, &argv);
 					break;
 				default: // case non of them begin with command
-					DbgCmdExecDirect(Str2ConstChar(Line_));
+					ret_= DbgCmdExecDirect(Str2ConstChar(Line_));
 					break;
 				}
-				ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
-				return;
+				if (ret_) {
+					ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+					return ret_;
+				}
+				else
+				{
+					Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+				}
 			}
 			else
 			{
-				ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
-				DbgCmdExecDirect(Str2ConstChar(Line_));
-				return;
+				ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
+				if (ret_) {
+					ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+					return ret_;
+				}
+				else
+				{
+					Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+				}
+				return ret_;
 
 			}
 		}
+		return ret_;
 
 	}
 

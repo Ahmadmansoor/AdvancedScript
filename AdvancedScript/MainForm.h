@@ -149,15 +149,16 @@ namespace AdvancedScript {
 #pragma endregion
 	private: System::Void DGV1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::F12) {
-			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount-1) {
-				if (ScriptargumentClass::Scriptargument_->GetLineNumber() != 0) {
-					DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()-1]->Selected = false;
-				}
+			DGV1->ClearSelection();
+			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount-1) {				
+				DGV1->ClearSelection();
 				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
 				readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
 			}
 			else
 			{
+				DGV1->ClearSelection();
+				DGV1->Rows[0]->Selected = true;
 				ScriptargumentClass::Scriptargument_->setLineNumber(0);
 			}
 		}

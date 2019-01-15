@@ -183,7 +183,7 @@ static void ShowDialog_Script()
 
 static bool cbMainForm(int argc, char* argv[])
 {
-	_plugin_logputs("[MainForm] Loading Form!");
+	_plugin_logputs("[Script Window] Loading Form!");
 	///////////////////////////////////////////////////////////////////////////////////////
 	// this will keep form activate and x64dbg unable to do it's work by excuted commands 
 	//ScriptS::IATFixer IATFixer;
@@ -449,7 +449,7 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -485,7 +485,7 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -547,12 +547,12 @@ static bool Movx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -572,12 +572,12 @@ static bool addx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -597,12 +597,12 @@ static bool subx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -622,12 +622,12 @@ static bool mulx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -647,12 +647,12 @@ static bool divx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -672,12 +672,12 @@ static bool cmpx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -697,12 +697,12 @@ static bool andx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -722,12 +722,12 @@ static bool orx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varna
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -747,12 +747,12 @@ static bool xorx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -772,12 +772,12 @@ static bool shlx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -797,12 +797,12 @@ static bool pushx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ var
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -822,12 +822,12 @@ static bool popx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		else
 		{
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't read argument 2"));
-			break;
+			return false;
 		}
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
@@ -959,7 +959,7 @@ static bool WriteStr(int argc, char* argv[]) { //WriteStr(duint address, String^
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
-		break;
+		return false;
 	}
 	return true;
 }
