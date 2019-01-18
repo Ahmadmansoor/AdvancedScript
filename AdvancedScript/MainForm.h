@@ -12,9 +12,11 @@ namespace AdvancedScript {
 	/// <summary>
 	/// Summary for MainForm
 	/// </summary>
+	
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
+		
 		MainForm(void)
 		{
 			InitializeComponent();
@@ -22,7 +24,6 @@ namespace AdvancedScript {
 			//TODO: Add the constructor code here
 			//
 		}
-
 
 	protected:
 		/// <summary>
@@ -39,8 +40,11 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  ID;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Command;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^  describe;
-
-
+	private: System::Windows::Forms::ContextMenuStrip^  CMT1;
+	private: System::Windows::Forms::ToolStripMenuItem^  startHereToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  pasteToolStripMenuItem;
+	private: System::ComponentModel::IContainer^  components;
+	
 
 	protected:
 
@@ -56,7 +60,7 @@ namespace AdvancedScript {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -65,6 +69,7 @@ namespace AdvancedScript {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle3 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
@@ -72,7 +77,11 @@ namespace AdvancedScript {
 			this->ID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Command = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->describe = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->CMT1 = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->startHereToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->pasteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
+			this->CMT1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// DGV1
@@ -95,6 +104,7 @@ namespace AdvancedScript {
 				this->ID, this->Command,
 					this->describe
 			});
+			this->DGV1->ContextMenuStrip = this->CMT1;
 			dataGridViewCellStyle3->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
 			dataGridViewCellStyle3->BackColor = System::Drawing::SystemColors::Window;
 			dataGridViewCellStyle3->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
@@ -133,6 +143,29 @@ namespace AdvancedScript {
 			this->describe->HeaderText = L"describe";
 			this->describe->Name = L"describe";
 			// 
+			// CMT1
+			// 
+			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+				this->startHereToolStripMenuItem,
+					this->pasteToolStripMenuItem
+			});
+			this->CMT1->Name = L"CMT1";
+			this->CMT1->Size = System::Drawing::Size(158, 48);
+			// 
+			// startHereToolStripMenuItem
+			// 
+			this->startHereToolStripMenuItem->Name = L"startHereToolStripMenuItem";
+			this->startHereToolStripMenuItem->Size = System::Drawing::Size(157, 22);
+			this->startHereToolStripMenuItem->Text = L"Start Here";
+			this->startHereToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::startHereToolStripMenuItem_Click);
+			// 
+			// pasteToolStripMenuItem
+			// 
+			this->pasteToolStripMenuItem->Name = L"pasteToolStripMenuItem";
+			this->pasteToolStripMenuItem->Size = System::Drawing::Size(157, 22);
+			this->pasteToolStripMenuItem->Text = L"Paste Clipboard";
+			this->pasteToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::pasteToolStripMenuItem_Click);
+			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -143,6 +176,7 @@ namespace AdvancedScript {
 			this->Name = L"MainForm";
 			this->Text = L"MainForm";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->EndInit();
+			this->CMT1->ResumeLayout(false);
 			this->ResumeLayout(false);
 
 		}
@@ -175,5 +209,22 @@ namespace AdvancedScript {
 			DGV1->Rows[i]->Cells[0]->Value = i;
 		}
 	}
+private: System::Void startHereToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	ScriptargumentClass::Scriptargument_->setLineNumber(DGV1->CurrentRow->Index - 1);
+}		 
+private: System::Void pasteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	DGV1->Rows->Clear();		
+	char* line=GetClipBoard(); 
+	int i = 0;
+	/*while ((line = MyClassScriptArray::ScriptArray->ReadLine()) != nullptr)
+	{
+		DGV1->Rows->Add();
+		DGV1->Rows[i]->Cells[0]->Value = i;
+		DGV1->Rows[i]->Cells[1]->Value = line;
+		i += 1;
+	}*/
+	
+}
+
 };
 }

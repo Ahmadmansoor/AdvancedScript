@@ -45,6 +45,7 @@ enum VarType
 };
 
 VarType GetVarType(String^ vartype);
+char* GetClipBoard();
 
 System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brackets=false);
 

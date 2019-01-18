@@ -2,6 +2,8 @@
 #include <msclr/marshal.h>
 #include "LogTemplate.h"
 
+
+
 //C and C++ deal with backslashes as escape sequences by default.
 //You got to tell C to not use your backslash as an escape sequence by adding an extra backslash to your string.
 //These are the common escape sequences :
@@ -378,4 +380,15 @@ VarType GetVarType(String^ vartype) {
 		return VarType::array_;
 	}
 	return VarType::int_;
+}
+
+char* GetClipBoard() {
+	HANDLE clip;
+	if (!std::OpenClipboard(NULL))
+		Script::Gui::Message("Can't open clipboard");
+
+	//clip = ::GetClipboardData(CF_TEXT);
+	char* clip_text = (char*)clip;
+	//::CloseClipboard();
+	return clip_text;
 }

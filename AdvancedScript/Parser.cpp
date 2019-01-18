@@ -103,9 +103,9 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
 						return ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)];
 					}
-					else //// but if the ret value of the var is int so we need to resolve it as int
+					else //// but if the retAsVartype (ret value of the var) is int so we need to resolve it as int because array hold string
 					{
-						String^ intValue;  /// we ret the int value from the array 
+						String^ intValue;  /// we ret the int value from the array item
 						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)], intValue) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
 							return "NULL/ array value is not Numeric";/// that something wrong in the index of the array 
 						}
@@ -149,9 +149,15 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 			VarString = "$" + var_name; // this is the end index of var we will used later to replace string
 
 			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
-				return ScriptFunList::VarList[indexofVar]->varvalue[0];
+				//return ScriptFunList::VarList[indexofVar]->varvalue[0];
+				if (vartype_ == "int") {  /// if retAsVartype is string and vartype_ is int then we convert it to hex value
+					return  int2Str((int)Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
+				}
+				else { /// case str 
+					return  ScriptFunList::VarList[indexofVar]->varvalue[0]; // return var string as it
+				}
 			}
-			else //// but if the ret value of the var is int so we need to resolve it as int
+			else //// but if the retAsVartype( ret value of the var) is int so we need to resolve it as int
 			{
 				/// now we need to check the var type to ret the value of int and checkValue of the str
 				if (vartype_ == "int") {  /// in case it is int no need to check Hex 
@@ -175,10 +181,16 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist	
 			VarString = "$" + var_name; // this is the end index of var we will used later to replace string
 
-			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
-				return ScriptFunList::VarList[indexofVar]->varvalue[0];
+			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value				
+				//return ScriptFunList::VarList[indexofVar]->varvalue[0];
+				if (vartype_ == "int") {  /// if retAsVartype is string and vartype_ is int then we convert it to hex value
+					return  int2Str((int)Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
+				}
+				else { /// case str 
+					return  ScriptFunList::VarList[indexofVar]->varvalue[0]; // return var string as it
+				}
 			}
-			else //// but if the ret value of the var is int so we need to resolve it as int
+			else //// but if the retAsVartype( ret value of the var) is int so we need to resolve it as int
 			{
 				/// now we need to check the var type to ret the value of int and checkValue of the str
 				if (vartype_ == "int") {  /// in case it is int no need to check Hex 
