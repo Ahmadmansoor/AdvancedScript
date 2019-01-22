@@ -183,7 +183,7 @@ static void ShowDialog_Script()
 
 static bool cbMainForm(int argc, char* argv[])
 {
-	_plugin_logputs("[Script Window] Loading Form!");
+	_plugin_logputs("[Script Window] Loading.......!");
 	///////////////////////////////////////////////////////////////////////////////////////
 	// this will keep form activate and x64dbg unable to do it's work by excuted commands 
 	//ScriptS::IATFixer IATFixer;
@@ -440,12 +440,10 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 	switch ((arguments->Count))
 	{
 	case 2: {
-		Varx_(arguments[0], arguments[1]); // varvalue will make it ""
-		break;
+		return Varx_(arguments[0], arguments[1]); // varvalue will make it ""		
 	}
 	case 3: {
-		Varx_(arguments[0], arguments[1], arguments[2]);
-		break;
+		return Varx_(arguments[0], arguments[1], arguments[2]);
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
@@ -454,7 +452,7 @@ static bool Varx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 	return true;
 }
 
-static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int index_,String^ value_)
+static bool SetVarx(int argc, char* argv[]) {			//Setx_(String^ varname, int index_,String^ value_)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
 	String^ arrayIndex;
@@ -473,21 +471,19 @@ static bool SetVarx(int argc, char* argv[]) {			//SetVarx_(String^ varname, int 
 			}
 			else
 			{  /// we checkd that array index is int, need to check the value of the array
-				SetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("["))->Trim(), (int)Str2duint(arrayIndex->Trim()), arguments[1]);
+				return SetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("["))->Trim(), (int)Str2duint(arrayIndex->Trim()), arguments[1]);
 			}
 
 		}
 		else  /// var is str or int
 		{
-			SetVarx_(arguments[0], 0, arguments[1]);
-		}
-		break;
+			return SetVarx_(arguments[0], 0, arguments[1]);
+		}				
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		return false;
-	}
-	return true;
+	}	
 }
 
 static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int index)

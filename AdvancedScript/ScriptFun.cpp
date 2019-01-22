@@ -8,7 +8,7 @@ VarPara_temp^ GetVarx_byIndex(String^ varname, int index_) {
 	VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[index_]->vartype, ScriptFunList::VarList[index_]->varname, ScriptFunList::VarList[index_]->varvalue[index_], index_);
 	return x;
 }
-bool Varexist(String^ varname, String^% vartype_, int% index) {	// true there is variable with same name
+bool Varexist(String^ varname, String^% vartype_, int% index,int% arrayLength) {	// true there is variable with same name
 	if (varname->StartsWith("$")) {  // in case we pass variable with $ like $x
 		varname = varname->Substring(1, varname->Length - 1);
 	}
@@ -17,6 +17,7 @@ bool Varexist(String^ varname, String^% vartype_, int% index) {	// true there is
 	{
 		if (var->varname == varname) {
 			vartype_ = var->vartype;
+			arrayLength = var->arrayLength;
 			return true;
 		}
 		index += 1;
@@ -25,57 +26,74 @@ bool Varexist(String^ varname, String^% vartype_, int% index) {	// true there is
 }
 
 // defealt value for varvalue="" and will chnaged later to "0" when var is int
-void Varx_(String^ vartype, String^ varname, String^ varvalue) {
-	vartype = vartype->ToLower();
-	String^ oldValue="";
-	
+bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
+	vartype = vartype->ToLower();		
 	if ( (varname->Contains(" ")) || (varname->Contains("$")) ) {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
-		return;
+		return false;
 	}		
+	// in case var type is not array so the name of variable should not have [array index]
+	if ((vartype != "array") && (varname->Contains("[")) && (varname->Contains("]"))) {
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + vartype + ":is not array to have [ or ]"));
+		return false;
+	}
+	if ( (vartype == "array") && (!varname->Contains("[")) && (!varname->Contains("]")) ) {
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "array should have [ ]"));
+		return false;
+	}
 	String^ retvartype = "";
+	
 	if (vartype == "str") {
 		String^ resolveVarValue = StrAnalyze(varvalue, VarType::str);		
-		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue, 0);
+		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue,1);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
 			_plugin_logprint(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "= " + resolveVarValue + " :has been added"));
-			return;
+			return true;
 		}
 		else {
-			int indexofVar = 0;
-			if (!Varexist(varname, retvartype, indexofVar)) {
+			int indexofVar = 0;	int arrayLength;
+			if (!Varexist(varname, retvartype, indexofVar, arrayLength)) {
 				ScriptFunList::VarList->Add(VarPara_);
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " +VarPara_->varname  + "= " + resolveVarValue + " :has been added"));
-				return;
+				return true;
 			}
 			else {
-				Script::Gui::Message("Variable already defined, it will not defined");
+				//Script::Gui::Message("Variable already defined, it will not defined");
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->varname + " not been added"));
-				return;
+				return false;
 			}
 		}
 	};
 	/////////////////////////////
 	if (vartype == "array") {		
+		///find array length
+		String^ arrayLen = varname->Substring(varname->IndexOf("[") + 1, varname->Length - (varname->IndexOf("[") + 1));  /// extrect array length
+		arrayLen = arrayLen->Substring(0, arrayLen->IndexOf("]"));
+		arrayLen = StrAnalyze(arrayLen, VarType::int_);
+		if (arrayLen == "NULL/") {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Array Length not valid"));
+			return false;
+		}
+		varname = varname->Substring(0, varname->IndexOf("[")); /// extrect array name
 		String^ resolveVarValue = StrAnalyze(varvalue, VarType::str);		
-		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue, 0);
+		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue,Str2duint(arrayLen));
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[0]" + "= " + resolveVarValue + " :has been added"));
-			return;
+			return true;
 		}
 		else {
-			int indexofVar = 0;
-			if (!Varexist(varname, retvartype, indexofVar)) {
+			int indexofVar = 0; int arrayLength;
+			if (!Varexist(varname, retvartype, indexofVar, arrayLength)) {
 				ScriptFunList::VarList->Add(VarPara_);
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[0]" + "= " + resolveVarValue + " :has been added"));
-				return;
+				return true;
 			}
 			else {
-				Script::Gui::Message("Variable already defined, it will not defined");
+				//Script::Gui::Message("Variable already defined, it will not defined");
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :not been added"));
-				return;
+				return false;
 			}
 		}
 	};
@@ -84,43 +102,44 @@ void Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		/// varValue_Int : resolve vriable value as Int we will used to store it in Int variable 					 
 		String^ varValue_Int = StrAnalyze(varvalue, VarType::int_);  		 
 		if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
-			Script::Gui::Message("This value can't resolve as int, it will not defined");
+			//Script::Gui::Message("This value can't resolve as int, it will not defined");
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));			
-			return;			
+			return false;
 		}		
-		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varValue_Int, 0);  // we store varvalue as int 
+		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varValue_Int, 1);  // we store varvalue as int 
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\"+ varValue_Int + " :has been added"));
-			return;
+			return true;
 		}
 		else {
-			int indexofVar = 0;
-			if (!Varexist(varname, retvartype, indexofVar)) {
+			int indexofVar = 0; int arrayLength;
+			if (!Varexist(varname, retvartype, indexofVar, arrayLength)) {
 				ScriptFunList::VarList->Add(VarPara_);
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
-				return;
+				return true;
 			}
 			else {
-				Script::Gui::Message("Variable already defined, it will not defined");
+				//Script::Gui::Message("Variable already defined, it will not defined");
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->varname + " :not been added"));
-				return;
+				return false;
 			}
 		}
 	};	
 	/////////////////////////////
 	_plugin_logputs(Str2ConstChar(Environment::NewLine + "No variable type "));
-
+	return false;
 }
 
 bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is index of element at array
-	int indexofVar = 0;
-	String^ retvartype = "";
-	/*String^ ss = StrAnalyze(value_, VarType::str);
-	return true;*/
-	if ( (Varexist(varname, retvartype, indexofVar)) && (varname->StartsWith("$")) ) {
+	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+	if ( (Varexist(varname, retvartype, indexofVar, arrayLength)) && (varname->StartsWith("$")) ) {
 		varname = varname->Substring(1, varname->Length - 1);
-		if (index_ > 0 && retvartype == "array") {  // is it is array then all elements are string 			
+		if (index_ > 0 && retvartype == "array") {  // it is a array then all elements are string 			
+			if (index_ > arrayLength) {  /// check if the requested index beyond array length
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "index out of the boundary"));
+				return false;
+			}
 			String^ resolveVarValue = StrAnalyze(value_, VarType::str);
 			ScriptFunList::VarList[indexofVar]->varvalue[index_] = resolveVarValue;
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "[" + duint2Hex(index_) + "]= " + resolveVarValue));
@@ -128,11 +147,10 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 		}
 		if (index_ > 0 && retvartype != "array") {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
-			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int				
-				//String^ varValue_Int = argumentValue(value_, OldValue_); ////// argumentValue used to resolve as int numbers 
+			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {  /// case it's int								
 				String^ varValue_Int = StrAnalyze(value_, VarType::int_);
 				if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
-					Script::Gui::Message("This value can't resolve as int, it will not defined");
+					//Script::Gui::Message("This value can't resolve as int, it will not defined");
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));
 					return false;
 				}else {  
@@ -160,11 +178,10 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 			return true;
 		}
 		if (index_ == 0) {
-			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {
-				//String^ varValue_Int = argumentValue(value_, OldValue_); ////// argumentValue used to resolve as int numbers 		 
+			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {				
 				String^ varValue_Int = StrAnalyze(value_, VarType::int_);
 				if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
-					Script::Gui::Message("This value can't resolve as int, it will not defined");
+					//Script::Gui::Message("This value can't resolve as int, it will not defined");
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));
 					return false;
 				}
@@ -187,8 +204,8 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 				//	}
 				//}
 				String^ resolveVarValue = StrAnalyze(value_, VarType::str);
-				ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + value_));
+				ScriptFunList::VarList[indexofVar]->varvalue[0] = resolveVarValue;
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + resolveVarValue));
 			}
 			return true;
 		}
@@ -204,25 +221,29 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 	return false;
 }
 
-Void GetVarx_(String^ varname, int Arrayindex_) {
-	int indexofVar = 0;
-	String^ retvartype = "";
-	if (Varexist(varname, retvartype, indexofVar)) {
+bool GetVarx_(String^ varname, int Arrayindex_) {
+	int indexofVar = 0;	String^ retvartype = ""; int arrayLength;
+	if (Varexist(varname, retvartype, indexofVar, arrayLength)) {
 		if (Arrayindex_ > 0 && retvartype == "array") {
+			if (Arrayindex_ > arrayLength) {  /// check if the requested index beyond array length
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "index out of the boundary"));
+				return false;
+			}
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[Arrayindex_], indexofVar);
 			_plugin_logputs (Str2ConstChar(Environment::NewLine + x->varname + "[" + (duint2Hex(Arrayindex_))->Trim() + "]= " + x->varvalue));
-			return;
+			return true;
 		}
 		if (Arrayindex_ > 0 && retvartype != "array") {  // that's mean it's int or str  // so we will make Arrayindex_=0 as it'not array
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));			
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
 			//_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
 			if (x->vartype == "int") {
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue + "\\" + str2Hex(x->varvalue)));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= 0x" + str2Hex(x->varvalue) + "\\" + x->varvalue )) ;
 			}
-			else  /// it mean str
+			else { /// it mean str
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
-			return;
+				}
+			return true;
 		}
 		if (Arrayindex_ == 0) {  // this mean it's str or int
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
@@ -230,21 +251,22 @@ Void GetVarx_(String^ varname, int Arrayindex_) {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "[" + (duint2Hex(Arrayindex_))->Trim() + "]= " + x->varvalue));
 			else {
 				if (x->vartype == "int") {
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue + "\\" + str2Hex(x->varvalue)));
+					//_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue + "\\" + str2Hex(x->varvalue)));
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= 0x" + str2Hex(x->varvalue) + "\\" + x->varvalue));
 				}
 				else  /// it mean str
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
 			}
-			return ;
+			return true;
 		}
 		if (Arrayindex_ < 0) {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));			
-			return ;
+			return false;
 		}
 	}
 	else {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));		
-		return ;
+		return false;
 	}
 }
 

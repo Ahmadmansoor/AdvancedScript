@@ -12,11 +12,11 @@ namespace AdvancedScript {
 	/// <summary>
 	/// Summary for MainForm
 	/// </summary>
-	
+
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
-		
+
 		MainForm(void)
 		{
 			InitializeComponent();
@@ -43,8 +43,9 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::ContextMenuStrip^  CMT1;
 	private: System::Windows::Forms::ToolStripMenuItem^  startHereToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  pasteToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  copySelectedLineToolStripMenuItem;
 	private: System::ComponentModel::IContainer^  components;
-	
+
 
 	protected:
 
@@ -80,13 +81,13 @@ namespace AdvancedScript {
 			this->CMT1 = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->startHereToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pasteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->copySelectedLineToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// DGV1
 			// 
-			this->DGV1->AllowUserToOrderColumns = true;
 			this->DGV1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->DGV1->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::Fill;
@@ -145,26 +146,33 @@ namespace AdvancedScript {
 			// 
 			// CMT1
 			// 
-			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
 				this->startHereToolStripMenuItem,
-					this->pasteToolStripMenuItem
+					this->pasteToolStripMenuItem, this->copySelectedLineToolStripMenuItem
 			});
 			this->CMT1->Name = L"CMT1";
-			this->CMT1->Size = System::Drawing::Size(158, 48);
+			this->CMT1->Size = System::Drawing::Size(175, 92);
 			// 
 			// startHereToolStripMenuItem
 			// 
 			this->startHereToolStripMenuItem->Name = L"startHereToolStripMenuItem";
-			this->startHereToolStripMenuItem->Size = System::Drawing::Size(157, 22);
+			this->startHereToolStripMenuItem->Size = System::Drawing::Size(174, 22);
 			this->startHereToolStripMenuItem->Text = L"Start Here";
 			this->startHereToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::startHereToolStripMenuItem_Click);
 			// 
 			// pasteToolStripMenuItem
 			// 
 			this->pasteToolStripMenuItem->Name = L"pasteToolStripMenuItem";
-			this->pasteToolStripMenuItem->Size = System::Drawing::Size(157, 22);
+			this->pasteToolStripMenuItem->Size = System::Drawing::Size(174, 22);
 			this->pasteToolStripMenuItem->Text = L"Paste Clipboard";
 			this->pasteToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::pasteToolStripMenuItem_Click);
+			// 
+			// copySelectedLineToolStripMenuItem
+			// 
+			this->copySelectedLineToolStripMenuItem->Name = L"copySelectedLineToolStripMenuItem";
+			this->copySelectedLineToolStripMenuItem->Size = System::Drawing::Size(174, 22);
+			this->copySelectedLineToolStripMenuItem->Text = L"Copy Selected Line";
+			this->copySelectedLineToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::copySelectedLineToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -184,7 +192,7 @@ namespace AdvancedScript {
 	private: System::Void DGV1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::F12) {
 			DGV1->ClearSelection();
-			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount-1) {				
+			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
 				DGV1->ClearSelection();
 				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
 				readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
@@ -209,22 +217,46 @@ namespace AdvancedScript {
 			DGV1->Rows[i]->Cells[0]->Value = i;
 		}
 	}
-private: System::Void startHereToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	ScriptargumentClass::Scriptargument_->setLineNumber(DGV1->CurrentRow->Index - 1);
-}		 
-private: System::Void pasteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	DGV1->Rows->Clear();		
-	char* line=GetClipBoard(); 
-	int i = 0;
-	/*while ((line = MyClassScriptArray::ScriptArray->ReadLine()) != nullptr)
-	{
-		DGV1->Rows->Add();
-		DGV1->Rows[i]->Cells[0]->Value = i;
-		DGV1->Rows[i]->Cells[1]->Value = line;
-		i += 1;
-	}*/
-	
-}
+	private: System::Void startHereToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		ScriptargumentClass::Scriptargument_->setLineNumber(DGV1->CurrentRow->Index);
+	}
+	private: System::Void pasteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		DGV1->Rows->Clear();
+		Generic::List<String^>^ lines = GetClipBoard();
+		int i = 0;
+		for (int i = 0; i < lines->Count; i++)
+		{
+			DGV1->Rows->Add();
+			DGV1->Rows[i]->Cells[0]->Value = i;
+			if (lines[i]->Contains("//")) {
+				DGV1->Rows[i]->Cells[1]->Value = (lines[i]->Substring(0, lines[i]->IndexOf("//")))->Trim();
+				DGV1->Rows[i]->Cells[2]->Value = (lines[i]->Substring(lines[i]->IndexOf("//") + 2, lines[i]->Length - (lines[i]->IndexOf("//") + 2)))->Trim();
+			}
+			else {
+				DGV1->Rows[i]->Cells[1]->Value = lines[i]->Trim();
+			}
+		}
+	}
+	private: System::Void copySelectedLineToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		String^ HoldClipBoradStr = String::Empty;
+		DataGridViewSelectedRowCollection^ DGVRC = DGV1->SelectedRows;
+		//DGVRC= DGVRC->
+		for (int i = 0; i < DGVRC->Count; i++)
+		{			
 
-};
+			if (DGVRC[i]->Cells[1]->Value != nullptr) {
+				if (DGVRC[i]->Cells[2]->Value == nullptr) {
+					HoldClipBoradStr += DGVRC[i]->Cells[1]->Value->ToString() + Environment::NewLine;  //DGVRC[i]->Cells[2]->Value->ToString() +
+				}
+				else {
+					HoldClipBoradStr += DGVRC[i]->Cells[1]->Value->ToString() + "	//" + DGVRC[i]->Cells[2]->Value->ToString() + Environment::NewLine;  //
+				}
+			}
+
+		}
+
+		SetClipBoard(HoldClipBoradStr);
+
+	}
+	};
 }

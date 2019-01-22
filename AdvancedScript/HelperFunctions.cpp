@@ -382,13 +382,49 @@ VarType GetVarType(String^ vartype) {
 	return VarType::int_;
 }
 
-char* GetClipBoard() {
-	HANDLE clip;
-	if (!std::OpenClipboard(NULL))
+Generic::List<String^>^ GetClipBoard() {
+	//HANDLE clip;
+	if (!OpenClipboard(NULL))
 		Script::Gui::Message("Can't open clipboard");
+	char* clip =(char*) GetClipboardData(CF_TEXT);
+	CloseClipboard();
+	String^ text = CharArr2Str(clip);
+	String^ tem;
+	Generic::List<String^>^ temp = gcnew Generic::List<String^>;
 
-	//clip = ::GetClipboardData(CF_TEXT);
-	char* clip_text = (char*)clip;
-	//::CloseClipboard();
-	return clip_text;
+	for (int i = 0; i < text->Length; i++)
+	{
+		int dd = Microsoft::VisualBasic::Strings::Asc(text->Substring(i, 1));
+		if (( Microsoft::VisualBasic::Strings::Asc(text->Substring(i,1)) != 10) && (Microsoft::VisualBasic::Strings::Asc(text->Substring(i, 1)) != 13)) { //10 is new line char
+			tem += text->Substring(i, 1);
+		}
+		else
+		{
+			if (Microsoft::VisualBasic::Strings::Asc(text->Substring(i, 1)) != 13) { // just CR carriage return
+				if (tem->Trim() != "") {
+					temp->Add(tem);
+					tem = "";
+				}				
+			}			
+		}
+		if (i == text->Length - 1) {
+			if (tem->Trim() != "") {
+				temp->Add(tem);
+				tem = "";
+			}
+		}
+	}	
+	return temp;
+}
+
+void SetClipBoard(String^ input) {
+	const char* output = Str2ConstChar(input);
+	const size_t len = strlen(output) + 1;
+	HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
+	memcpy(GlobalLock(hMem), output, len);
+	GlobalUnlock(hMem);
+	OpenClipboard(0);
+	EmptyClipboard();
+	SetClipboardData(CF_TEXT, hMem);
+	CloseClipboard();
 }

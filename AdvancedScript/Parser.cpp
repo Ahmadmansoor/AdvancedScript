@@ -30,25 +30,26 @@ String^ readVarName(String^ input, int arrayIndex, String^% VarString2Replace) {
 	String^ value_ = "";
 	String^ value_1 = "";
 	String^ vartype = "";
+	int arrayLength;
 	int index_ = 0;
 	int index_t = 0;
 	for (int i = 0; i < temp->Length; i++)
 	{
 		value_ = value_ + temp->Substring(i, 1);
 		if (i + 1 == temp->Length) {	/// if this later is the end of string 
-			if (Varexist(value_, vartype, index_)) {
+			if (Varexist(value_, vartype, index_, arrayLength)) {
 				VarString2Replace = value_;
 				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
 			}
 			else { return "NULL/ "; }
 		}
 		if (temp->Substring(i + 1, 1) == " ") { /// if the next letter is space
-			if (Varexist(value_, vartype, index_)) {
+			if (Varexist(value_, vartype, index_, arrayLength)) {
 				VarString2Replace = value_;
 				return ScriptFunList::VarList[index_]->varvalue[arrayIndex];
 			}
 		}
-		while (Varexist(value_, vartype, index_))
+		while (Varexist(value_, vartype, index_, arrayLength))
 		{
 			if (i + 1 < temp->Length) {
 				i += 1;
@@ -72,7 +73,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 	// In case Var is int then no need to check for Hex validation 
 	// but if the Var is string we need to check for hex validation and shift it to int 	
 	String^ ArrayIndexValue = "";
-	String^ var_name = "";
+	String^ var_name = ""; int arrayLength;
 	String^ vartype_ = ""; int indexofVar = 0;
 	if (!input->Contains("$")) {
 		return "NULLx/ no Variable name";  // this mean there are no variable in this string
@@ -83,7 +84,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 	}
 	if ((input->IndexOf("[") > 0) && (input->IndexOf("$") < 0)) {  // variable is Array  /// we must check if there are another var ( contain $ ) so we not mix with other var's		
 		var_name = input->Substring(0, input->IndexOf("["));  // get Var name			
-		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist  // we clear space here just , because we need to build VarString
+		if (Varexist(var_name->Trim(), vartype_, indexofVar, arrayLength)) { /// check if var exist  // we clear space here just , because we need to build VarString
 			if (vartype_ == "array" && input->IndexOf("]") > 0) { // var type must be array and the rest of string must have close ]
 				for (int i = input->IndexOf("[") + 1; i < input->Length; i++) //get index of var
 				{
@@ -145,7 +146,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 	}
 	if (input->IndexOf(" ") > 0) {  /// var is int or str		
 		var_name = input->Substring(0, input->IndexOf(" "));  // get Var name	and clear spaces	
-		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist	
+		if (Varexist(var_name->Trim(), vartype_, indexofVar, arrayLength)) { /// check if var exist	
 			VarString = "$" + var_name; // this is the end index of var we will used later to replace string
 
 			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
@@ -178,7 +179,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 	else
 	{  /// there are no space at the end we need to search the rest of the string	  
 		var_name = input;   /// we didn't find it as array or didn't find space then we get all string as var name
-		if (Varexist(var_name->Trim(), vartype_, indexofVar)) { /// check if var exist	
+		if (Varexist(var_name->Trim(), vartype_, indexofVar, arrayLength)) { /// check if var exist	
 			VarString = "$" + var_name; // this is the end index of var we will used later to replace string
 
 			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value				

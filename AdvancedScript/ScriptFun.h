@@ -65,23 +65,25 @@ public:
 public ref class VarPara
 {
 public:
-	VarPara(String^ vartype_, String^ varname_, String^ varvalue_, int i) {
+	VarPara(String^ vartype_, String^ varname_, String^ varvalue_, int arrayLength_) { 
 		if ((vartype_ == "str") || (vartype_ == "int")) {
 			vartype = vartype_;
 			varname = varname_;
 			varvalue = gcnew array<String^>(1);
 			if (vartype_ == "str")
-				varvalue[i] = varvalue_;
+				varvalue[0] = varvalue_;
 			if (vartype_ == "int" && varvalue_ == "") {
-				varvalue[i] = "0";
+				varvalue[0] = "0";
 			}
-			else { varvalue[i] = varvalue_; }
+			else { varvalue[0] = varvalue_; }
 
 		}
 		if (vartype_ == "array") {
 			vartype = vartype_;
 			varname = varname_;
-			varvalue = gcnew array<String^>(0x500);			
+			//varvalue = gcnew array<String^>(0x500);
+			arrayLength = arrayLength_;
+			varvalue = gcnew array<String^>(arrayLength_);
 			varvalue[0] = varvalue_;
 		}
 		if ((vartype_ != "str") && (vartype_ != "int") && (vartype_ != "array")) {
@@ -96,6 +98,7 @@ public:
 	String^ vartype;
 	String^ varname;
 	array <String^>^ varvalue;
+	int arrayLength;
 };
 
 public ref class ScriptFunList {
@@ -106,10 +109,10 @@ public:
 
 
 void VarListClear();
-bool Varexist(String^ varname, String^% vartype_, int% index);
+bool Varexist(String^ varname, String^% vartype_, int% index, int% arrayLength);
 /////
-void Varx_(String^ vartype, String^ varname, String^ varvalue = "");
-Void GetVarx_(String^ varname, int Arrayindex_=0);
+bool Varx_(String^ vartype, String^ varname, String^ varvalue = "");
+bool GetVarx_(String^ varname, int Arrayindex_=0);
 bool SetVarx_(String^ varname, int index_, String^ value_);
 String^ Movx_(String^ p1, String^ p2);
 String^ addx_(String^ p1, String^ p2);
