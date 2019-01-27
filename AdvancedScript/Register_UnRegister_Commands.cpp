@@ -159,7 +159,7 @@ static bool test(int argc, char* argv[]) {
 	const char f = x[5];
 	return true;*/
 
-	char* text_ = new char[MAX_STRING_SIZE];
+	/*char* text_ = new char[MAX_STRING_SIZE];
 	DbgGetStringAt(Script::Register::Get(Script::Register::RSI), text_);
 	_plugin_logputs(text_);
 	DbgGetStringAt(Script::Register::Get(Script::Register::RDI), text_);
@@ -169,7 +169,7 @@ static bool test(int argc, char* argv[]) {
 	unsigned char* xc=new unsigned char[MAX_STRING_SIZE] ;
 	const char* l = "test";
 	memcpy(xc, l, sizeof(l));
-	Script::Memory::WriteByte(Script::Register::Get(Script::Register::R8), xc[0]);
+	Script::Memory::WriteByte(Script::Register::Get(Script::Register::R8), xc[0]);*/
 
 	return true;
 

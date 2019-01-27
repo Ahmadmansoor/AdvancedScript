@@ -44,6 +44,8 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::ToolStripMenuItem^  startHereToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  pasteToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  copySelectedLineToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  insertRowsToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  insertDataFromClipboardToolStripMenuItem;
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -54,7 +56,22 @@ namespace AdvancedScript {
 
 	protected:
 
+	public: ref class ArraySortAssist
+	{
+	public:
+		ArraySortAssist(int index_, String^ Cmd_, String^ disc_) {
+			index = index_;
+			Cmd = Cmd_;
+		}	
 
+	public:
+		int index;
+		String^ Cmd;
+		String^ disc;
+	};
+
+	/*public:
+		Generic::List<ArraySortAssist^>^ ArraySortAssist_ = gcnew Generic::List<ArraySortAssist^>;*/
 
 
 	private:
@@ -82,6 +99,8 @@ namespace AdvancedScript {
 			this->startHereToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pasteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->copySelectedLineToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->insertRowsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->insertDataFromClipboardToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
 			this->SuspendLayout();
@@ -146,33 +165,47 @@ namespace AdvancedScript {
 			// 
 			// CMT1
 			// 
-			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {
 				this->startHereToolStripMenuItem,
-					this->pasteToolStripMenuItem, this->copySelectedLineToolStripMenuItem
+					this->pasteToolStripMenuItem, this->copySelectedLineToolStripMenuItem, this->insertRowsToolStripMenuItem, this->insertDataFromClipboardToolStripMenuItem
 			});
 			this->CMT1->Name = L"CMT1";
-			this->CMT1->Size = System::Drawing::Size(175, 92);
+			this->CMT1->Size = System::Drawing::Size(243, 136);
 			// 
 			// startHereToolStripMenuItem
 			// 
 			this->startHereToolStripMenuItem->Name = L"startHereToolStripMenuItem";
-			this->startHereToolStripMenuItem->Size = System::Drawing::Size(174, 22);
+			this->startHereToolStripMenuItem->Size = System::Drawing::Size(242, 22);
 			this->startHereToolStripMenuItem->Text = L"Start Here";
 			this->startHereToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::startHereToolStripMenuItem_Click);
 			// 
 			// pasteToolStripMenuItem
 			// 
 			this->pasteToolStripMenuItem->Name = L"pasteToolStripMenuItem";
-			this->pasteToolStripMenuItem->Size = System::Drawing::Size(174, 22);
-			this->pasteToolStripMenuItem->Text = L"Paste Clipboard";
+			this->pasteToolStripMenuItem->Size = System::Drawing::Size(242, 22);
+			this->pasteToolStripMenuItem->Text = L"Paste Clipboard/replace all lines";
 			this->pasteToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::pasteToolStripMenuItem_Click);
 			// 
 			// copySelectedLineToolStripMenuItem
 			// 
 			this->copySelectedLineToolStripMenuItem->Name = L"copySelectedLineToolStripMenuItem";
-			this->copySelectedLineToolStripMenuItem->Size = System::Drawing::Size(174, 22);
+			this->copySelectedLineToolStripMenuItem->Size = System::Drawing::Size(242, 22);
 			this->copySelectedLineToolStripMenuItem->Text = L"Copy Selected Line";
 			this->copySelectedLineToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::copySelectedLineToolStripMenuItem_Click);
+			// 
+			// insertRowsToolStripMenuItem
+			// 
+			this->insertRowsToolStripMenuItem->Name = L"insertRowsToolStripMenuItem";
+			this->insertRowsToolStripMenuItem->Size = System::Drawing::Size(242, 22);
+			this->insertRowsToolStripMenuItem->Text = L"Insert /n/ rows Here";
+			this->insertRowsToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::insertRowsToolStripMenuItem_Click);
+			// 
+			// insertDataFromClipboardToolStripMenuItem
+			// 
+			this->insertDataFromClipboardToolStripMenuItem->Name = L"insertDataFromClipboardToolStripMenuItem";
+			this->insertDataFromClipboardToolStripMenuItem->Size = System::Drawing::Size(242, 22);
+			this->insertDataFromClipboardToolStripMenuItem->Text = L"Insert Data From Clipboard";
+			this->insertDataFromClipboardToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::insertDataFromClipboardToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -223,7 +256,7 @@ namespace AdvancedScript {
 	private: System::Void pasteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		DGV1->Rows->Clear();
 		Generic::List<String^>^ lines = GetClipBoard();
-		int i = 0;
+		//int i = 0;
 		for (int i = 0; i < lines->Count; i++)
 		{
 			DGV1->Rows->Add();
@@ -239,23 +272,69 @@ namespace AdvancedScript {
 	}
 	private: System::Void copySelectedLineToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		String^ HoldClipBoradStr = String::Empty;
-		DataGridViewSelectedRowCollection^ DGVRC = DGV1->SelectedRows;
-		//DGVRC= DGVRC->
+		DataGridViewSelectedRowCollection^ DGVRC = DGV1->SelectedRows;			
+		array<ArraySortAssist^>^ arrayRows = gcnew array<ArraySortAssist^>(DGVRC->Count);
+		array<int>^ arrayRowsindex = gcnew array<int>(DGVRC->Count);
 		for (int i = 0; i < DGVRC->Count; i++)
-		{			
-
+		{
 			if (DGVRC[i]->Cells[1]->Value != nullptr) {
 				if (DGVRC[i]->Cells[2]->Value == nullptr) {
-					HoldClipBoradStr += DGVRC[i]->Cells[1]->Value->ToString() + Environment::NewLine;  //DGVRC[i]->Cells[2]->Value->ToString() +
+					arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
+					//ArraySortAssist^ ArraySortAssist_ =gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), " ");
+					//arrayRows[i]=ArraySortAssist_;					
 				}
 				else {
-					HoldClipBoradStr += DGVRC[i]->Cells[1]->Value->ToString() + "	//" + DGVRC[i]->Cells[2]->Value->ToString() + Environment::NewLine;  //
+					arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
+					//ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), DGVRC[i]->Cells[2]->Value->ToString());
+					//arrayRows[i] = ArraySortAssist_;
 				}
 			}
 
 		}
+		Array::Sort(arrayRowsindex);
+		for (int i = 0; i < DGVRC->Count ; i++)
+		{
+			if (DGVRC[i]->Cells[1]->Value != nullptr) {
+				if (DGVRC[i]->Cells[2]->Value == nullptr) {
+					arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
+					ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), " ");
+					arrayRows[i] = ArraySortAssist_;
+				}
+				else {
+					arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
+					ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), DGVRC[i]->Cells[2]->Value->ToString());
+					arrayRows[i] = ArraySortAssist_;
+				}
+			}
 
+		}
+		
 		SetClipBoard(HoldClipBoradStr);
+
+	}
+	private: System::Void insertRowsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		String^ rowsCou = Interaction::InputBox("Please Enter how many rows you need", "info", "", this->Width / 2, this->Height / 2);
+		if (Information::IsNumeric(rowsCou))
+			DGV1->Rows->Insert(DGV1->CurrentRow->Index, Conversion::Val(rowsCou));
+		else
+			Script::Gui::Message(Str2ConstChar(rowsCou + " :is not int"));
+	}
+	private: System::Void insertDataFromClipboardToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		Generic::List<String^>^ lines = GetClipBoard();
+		int rowIndex = DGV1->CurrentRow->Index;
+		for (int i = 0; i < lines->Count; i++)
+		{
+			DGV1->Rows->Insert(rowIndex, 1);
+			//DGV1->Rows[i]->Cells[0]->Value = i;
+			if (lines[i]->Contains("//")) {
+				DGV1->Rows[rowIndex]->Cells[1]->Value = (lines[i]->Substring(0, lines[i]->IndexOf("//")))->Trim();
+				DGV1->Rows[rowIndex]->Cells[2]->Value = (lines[i]->Substring(lines[i]->IndexOf("//") + 2, lines[i]->Length - (lines[i]->IndexOf("//") + 2)))->Trim();
+			}
+			else {
+				DGV1->Rows[rowIndex]->Cells[1]->Value = lines[i]->Trim();
+			}
+			rowIndex += 1;
+		}
 
 	}
 	};

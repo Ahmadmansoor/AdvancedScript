@@ -298,6 +298,7 @@ String^ reMoveSpaces(String^ input_) {
 }
 
 duint Str2duint(String^ input_) {
+#ifdef _WIN64
 	duint result;
 	if (duint::TryParse(input_, result)) {
 		return result;
@@ -306,6 +307,18 @@ duint Str2duint(String^ input_) {
 		_plugin_logprintf("can't get int from argument");
 		return -1;
 	}
+#else
+	int result;
+	if (int::TryParse(input_, result)) {
+		return result;
+	}
+	else {
+		_plugin_logprintf("can't get int from argument");
+		return -1;
+	}
+#endif // _WIN64
+
+	
 }
 
 String^ str2Asci(String^ input) {
