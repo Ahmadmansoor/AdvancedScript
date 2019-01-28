@@ -62,6 +62,7 @@ namespace AdvancedScript {
 		ArraySortAssist(int index_, String^ Cmd_, String^ disc_) {
 			index = index_;
 			Cmd = Cmd_;
+			disc = disc_;
 		}	
 
 	public:
@@ -277,33 +278,23 @@ namespace AdvancedScript {
 		array<int>^ arrayRowsindex = gcnew array<int>(DGVRC->Count);
 		for (int i = 0; i < DGVRC->Count; i++)
 		{
-			if (DGVRC[i]->Cells[1]->Value != nullptr) {
-				if (DGVRC[i]->Cells[2]->Value == nullptr) {
-					arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
-					//ArraySortAssist^ ArraySortAssist_ =gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), " ");
-					//arrayRows[i]=ArraySortAssist_;					
-				}
-				else {
-					arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
-					//ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), DGVRC[i]->Cells[2]->Value->ToString());
-					//arrayRows[i] = ArraySortAssist_;
-				}
-			}
+			arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);			
 
 		}
 		Array::Sort(arrayRowsindex);
 		for (int i = 0; i < DGVRC->Count ; i++)
 		{
-			if (DGVRC[i]->Cells[1]->Value != nullptr) {
-				if (DGVRC[i]->Cells[2]->Value == nullptr) {
-					arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
-					ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), " ");
-					arrayRows[i] = ArraySortAssist_;
+			int xx = arrayRowsindex[i];
+			if (DGV1->Rows[xx]->Cells[1]->Value != nullptr) {
+				if (DGV1->Rows[xx]->Cells[2]->Value == nullptr) {
+					//ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), " ");
+					//arrayRows[i] = ArraySortAssist_;
+					HoldClipBoradStr += DGV1->Rows[xx]->Cells[1]->Value->ToString() + Environment::NewLine;
 				}
-				else {
-					arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
-					ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), DGVRC[i]->Cells[2]->Value->ToString());
-					arrayRows[i] = ArraySortAssist_;
+				else {					
+					//ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), DGVRC[i]->Cells[2]->Value->ToString());
+					//arrayRows[i] = ArraySortAssist_;
+					HoldClipBoradStr += DGV1->Rows[xx]->Cells[1]->Value->ToString()+ " //"+ DGV1->Rows[xx]->Cells[2]->Value->ToString() + Environment::NewLine;
 				}
 			}
 
