@@ -1,5 +1,7 @@
 #pragma once
 #include "ScriptArgumentWindow.h"
+#include "ScriptFun.h"
+
 namespace AdvancedScript {
 
 	using namespace System;
@@ -46,6 +48,18 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::ToolStripMenuItem^  copySelectedLineToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  insertRowsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  insertDataFromClipboardToolStripMenuItem;
+	private: System::Windows::Forms::TreeView^  TrViewScript;
+	private: System::Windows::Forms::Button^  bu_CreateCategory;
+	private: System::Windows::Forms::Button^  Bu_SaveScript;
+	private: System::Windows::Forms::GroupBox^  groupBox1;
+	private: System::Windows::Forms::ContextMenuStrip^  CMT_TreeView;
+	private: System::Windows::Forms::ToolStripMenuItem^  deletToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  saveScriptFileToolStripMenuItem;
+	private: System::Windows::Forms::CheckBox^  checkBox1;
+	private: System::Windows::Forms::TreeView^  TrViewVariable;
+
+
+
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -63,7 +77,7 @@ namespace AdvancedScript {
 			index = index_;
 			Cmd = Cmd_;
 			disc = disc_;
-		}	
+		}
 
 	public:
 		int index;
@@ -71,8 +85,8 @@ namespace AdvancedScript {
 		String^ disc;
 	};
 
-	/*public:
-		Generic::List<ArraySortAssist^>^ ArraySortAssist_ = gcnew Generic::List<ArraySortAssist^>;*/
+			/*public:
+				Generic::List<ArraySortAssist^>^ ArraySortAssist_ = gcnew Generic::List<ArraySortAssist^>;*/
 
 
 	private:
@@ -89,9 +103,9 @@ namespace AdvancedScript {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle3 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle4 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle6 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle5 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			this->DGV1 = (gcnew System::Windows::Forms::DataGridView());
 			this->ID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Command = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
@@ -102,42 +116,54 @@ namespace AdvancedScript {
 			this->copySelectedLineToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->insertRowsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->insertDataFromClipboardToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->saveScriptFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->TrViewScript = (gcnew System::Windows::Forms::TreeView());
+			this->CMT_TreeView = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->deletToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->bu_CreateCategory = (gcnew System::Windows::Forms::Button());
+			this->Bu_SaveScript = (gcnew System::Windows::Forms::Button());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+			this->TrViewVariable = (gcnew System::Windows::Forms::TreeView());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
+			this->CMT_TreeView->SuspendLayout();
+			this->groupBox1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// DGV1
 			// 
-			this->DGV1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
+			this->DGV1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->DGV1->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::Fill;
-			dataGridViewCellStyle1->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle1->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			dataGridViewCellStyle4->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle4->BackColor = System::Drawing::SystemColors::Control;
+			dataGridViewCellStyle4->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			dataGridViewCellStyle1->ForeColor = System::Drawing::SystemColors::WindowText;
-			dataGridViewCellStyle1->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle1->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle1->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
-			this->DGV1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle4->ForeColor = System::Drawing::SystemColors::WindowText;
+			dataGridViewCellStyle4->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle4->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle4->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
+			this->DGV1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this->DGV1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
 			this->DGV1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {
 				this->ID, this->Command,
 					this->describe
 			});
 			this->DGV1->ContextMenuStrip = this->CMT1;
-			dataGridViewCellStyle3->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle3->BackColor = System::Drawing::SystemColors::Window;
-			dataGridViewCellStyle3->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			dataGridViewCellStyle6->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle6->BackColor = System::Drawing::SystemColors::Window;
+			dataGridViewCellStyle6->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			dataGridViewCellStyle3->ForeColor = System::Drawing::SystemColors::ControlText;
-			dataGridViewCellStyle3->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle3->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle3->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
-			this->DGV1->DefaultCellStyle = dataGridViewCellStyle3;
-			this->DGV1->Location = System::Drawing::Point(1, 1);
+			dataGridViewCellStyle6->ForeColor = System::Drawing::SystemColors::ControlText;
+			dataGridViewCellStyle6->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle6->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle6->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
+			this->DGV1->DefaultCellStyle = dataGridViewCellStyle6;
+			this->DGV1->Location = System::Drawing::Point(231, 4);
 			this->DGV1->Name = L"DGV1";
-			this->DGV1->Size = System::Drawing::Size(1042, 454);
+			this->DGV1->Size = System::Drawing::Size(810, 526);
 			this->DGV1->TabIndex = 0;
 			this->DGV1->RowsAdded += gcnew System::Windows::Forms::DataGridViewRowsAddedEventHandler(this, &MainForm::DGV1_RowsAdded);
 			this->DGV1->RowsRemoved += gcnew System::Windows::Forms::DataGridViewRowsRemovedEventHandler(this, &MainForm::DGV1_RowsRemoved);
@@ -145,8 +171,8 @@ namespace AdvancedScript {
 			// 
 			// ID
 			// 
-			dataGridViewCellStyle2->NullValue = L"0";
-			this->ID->DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle5->NullValue = L"0";
+			this->ID->DefaultCellStyle = dataGridViewCellStyle5;
 			this->ID->FillWeight = 25;
 			this->ID->HeaderText = L"ID";
 			this->ID->Name = L"ID";
@@ -166,9 +192,10 @@ namespace AdvancedScript {
 			// 
 			// CMT1
 			// 
-			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {
+			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(6) {
 				this->startHereToolStripMenuItem,
-					this->pasteToolStripMenuItem, this->copySelectedLineToolStripMenuItem, this->insertRowsToolStripMenuItem, this->insertDataFromClipboardToolStripMenuItem
+					this->pasteToolStripMenuItem, this->copySelectedLineToolStripMenuItem, this->insertRowsToolStripMenuItem, this->insertDataFromClipboardToolStripMenuItem,
+					this->saveScriptFileToolStripMenuItem
 			});
 			this->CMT1->Name = L"CMT1";
 			this->CMT1->Size = System::Drawing::Size(243, 136);
@@ -208,17 +235,111 @@ namespace AdvancedScript {
 			this->insertDataFromClipboardToolStripMenuItem->Text = L"Insert Data From Clipboard";
 			this->insertDataFromClipboardToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::insertDataFromClipboardToolStripMenuItem_Click);
 			// 
+			// saveScriptFileToolStripMenuItem
+			// 
+			this->saveScriptFileToolStripMenuItem->Name = L"saveScriptFileToolStripMenuItem";
+			this->saveScriptFileToolStripMenuItem->Size = System::Drawing::Size(242, 22);
+			this->saveScriptFileToolStripMenuItem->Text = L"Save";
+			this->saveScriptFileToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::saveScriptFileToolStripMenuItem_Click);
+			// 
+			// TrViewScript
+			// 
+			this->TrViewScript->ContextMenuStrip = this->CMT_TreeView;
+			this->TrViewScript->Location = System::Drawing::Point(7, 57);
+			this->TrViewScript->Name = L"TrViewScript";
+			this->TrViewScript->Size = System::Drawing::Size(217, 140);
+			this->TrViewScript->TabIndex = 1;
+			this->TrViewScript->NodeMouseDoubleClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &MainForm::TrViewScript_NodeMouseDoubleClick);
+			// 
+			// CMT_TreeView
+			// 
+			this->CMT_TreeView->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->deletToolStripMenuItem });
+			this->CMT_TreeView->Name = L"CMT_TreeView";
+			this->CMT_TreeView->Size = System::Drawing::Size(102, 26);
+			// 
+			// deletToolStripMenuItem
+			// 
+			this->deletToolStripMenuItem->Name = L"deletToolStripMenuItem";
+			this->deletToolStripMenuItem->Size = System::Drawing::Size(101, 22);
+			this->deletToolStripMenuItem->Text = L"Delet";
+			this->deletToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::deletToolStripMenuItem_Click);
+			// 
+			// bu_CreateCategory
+			// 
+			this->bu_CreateCategory->Location = System::Drawing::Point(7, 12);
+			this->bu_CreateCategory->Name = L"bu_CreateCategory";
+			this->bu_CreateCategory->Size = System::Drawing::Size(61, 39);
+			this->bu_CreateCategory->TabIndex = 2;
+			this->bu_CreateCategory->Text = L"Create Category";
+			this->bu_CreateCategory->UseVisualStyleBackColor = true;
+			this->bu_CreateCategory->Click += gcnew System::EventHandler(this, &MainForm::bu_CreateCategory_Click);
+			// 
+			// Bu_SaveScript
+			// 
+			this->Bu_SaveScript->Location = System::Drawing::Point(74, 12);
+			this->Bu_SaveScript->Name = L"Bu_SaveScript";
+			this->Bu_SaveScript->Size = System::Drawing::Size(61, 39);
+			this->Bu_SaveScript->TabIndex = 3;
+			this->Bu_SaveScript->Text = L"Save";
+			this->Bu_SaveScript->UseVisualStyleBackColor = true;
+			this->Bu_SaveScript->Click += gcnew System::EventHandler(this, &MainForm::Bu_SaveScript_Click);
+			// 
+			// groupBox1
+			// 
+			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left));
+			this->groupBox1->Controls->Add(this->TrViewVariable);
+			this->groupBox1->Controls->Add(this->checkBox1);
+			this->groupBox1->Location = System::Drawing::Point(7, 203);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(216, 324);
+			this->groupBox1->TabIndex = 4;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"Options";
+			// 
+			// checkBox1
+			// 
+			this->checkBox1->AutoSize = true;
+			this->checkBox1->Checked = true;
+			this->checkBox1->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->checkBox1->Enabled = false;
+			this->checkBox1->Location = System::Drawing::Point(30, 19);
+			this->checkBox1->Name = L"checkBox1";
+			this->checkBox1->Size = System::Drawing::Size(133, 17);
+			this->checkBox1->TabIndex = 0;
+			this->checkBox1->Text = L"Update Script Window";
+			this->checkBox1->UseVisualStyleBackColor = true;
+			// 
+			// TrViewVariable
+			// 
+			this->TrViewVariable->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->TrViewVariable->Location = System::Drawing::Point(11, 40);
+			this->TrViewVariable->Name = L"TrViewVariable";
+			this->TrViewVariable->Size = System::Drawing::Size(190, 276);
+			this->TrViewVariable->TabIndex = 1;
+			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1044, 596);
+			this->BackColor = System::Drawing::Color::SlateGray;
+			this->ClientSize = System::Drawing::Size(1047, 534);
+			this->Controls->Add(this->groupBox1);
+			this->Controls->Add(this->Bu_SaveScript);
+			this->Controls->Add(this->bu_CreateCategory);
+			this->Controls->Add(this->TrViewScript);
 			this->Controls->Add(this->DGV1);
 			this->KeyPreview = true;
 			this->Name = L"MainForm";
 			this->Text = L"MainForm";
+			this->Load += gcnew System::EventHandler(this, &MainForm::MainForm_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->EndInit();
 			this->CMT1->ResumeLayout(false);
+			this->CMT_TreeView->ResumeLayout(false);
+			this->groupBox1->ResumeLayout(false);
+			this->groupBox1->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -237,6 +358,7 @@ namespace AdvancedScript {
 				DGV1->Rows[0]->Selected = true;
 				ScriptargumentClass::Scriptargument_->setLineNumber(0);
 			}
+			FileVariableTreeView();
 		}
 	}
 	private: System::Void DGV1_RowsAdded(System::Object^  sender, System::Windows::Forms::DataGridViewRowsAddedEventArgs^  e) {
@@ -273,33 +395,29 @@ namespace AdvancedScript {
 	}
 	private: System::Void copySelectedLineToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		String^ HoldClipBoradStr = String::Empty;
-		DataGridViewSelectedRowCollection^ DGVRC = DGV1->SelectedRows;			
-		array<ArraySortAssist^>^ arrayRows = gcnew array<ArraySortAssist^>(DGVRC->Count);
+		DataGridViewSelectedRowCollection^ DGVRC = DGV1->SelectedRows;
+		//array<ArraySortAssist^>^ arrayRows = gcnew array<ArraySortAssist^>(DGVRC->Count);
 		array<int>^ arrayRowsindex = gcnew array<int>(DGVRC->Count);
 		for (int i = 0; i < DGVRC->Count; i++)
 		{
-			arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);			
+			arrayRowsindex[i] = Conversion::Val(DGVRC[i]->Cells[0]->Value);
 
 		}
 		Array::Sort(arrayRowsindex);
-		for (int i = 0; i < DGVRC->Count ; i++)
+		for (int i = 0; i < DGVRC->Count; i++)
 		{
 			int xx = arrayRowsindex[i];
 			if (DGV1->Rows[xx]->Cells[1]->Value != nullptr) {
 				if (DGV1->Rows[xx]->Cells[2]->Value == nullptr) {
-					//ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), " ");
-					//arrayRows[i] = ArraySortAssist_;
 					HoldClipBoradStr += DGV1->Rows[xx]->Cells[1]->Value->ToString() + Environment::NewLine;
 				}
-				else {					
-					//ArraySortAssist^ ArraySortAssist_ = gcnew ArraySortAssist(Conversion::Val(DGVRC[i]->Cells[0]->Value), DGVRC[i]->Cells[1]->Value->ToString(), DGVRC[i]->Cells[2]->Value->ToString());
-					//arrayRows[i] = ArraySortAssist_;
-					HoldClipBoradStr += DGV1->Rows[xx]->Cells[1]->Value->ToString()+ " //"+ DGV1->Rows[xx]->Cells[2]->Value->ToString() + Environment::NewLine;
+				else {
+					HoldClipBoradStr += DGV1->Rows[xx]->Cells[1]->Value->ToString() + " //" + DGV1->Rows[xx]->Cells[2]->Value->ToString() + Environment::NewLine;
 				}
 			}
 
 		}
-		
+
 		SetClipBoard(HoldClipBoradStr);
 
 	}
@@ -328,5 +446,204 @@ namespace AdvancedScript {
 		}
 
 	}
+	private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e) {
+		/*if (!IO::Directory::Exists(Application::StartupPath + "\\Script")) {
+			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script");
+			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\temp");
+		}
+		if (!IO::Directory::Exists(Application::StartupPath + "\\Script\\temp")) {
+			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\temp");
+		}*/
+		FillTrView();  // fill tree on load 
+
+	}
+
+	private:System::Void FillTrView() {  /// tp fill treeiew with category and files
+		TrViewScript->Nodes->Clear();
+		int i = 0;
+		for each (String^ var in System::IO::Directory::GetDirectories(Application::StartupPath + "\\Script\\"))
+		{
+			TrViewScript->Nodes->Add(IO::Path::GetFileName(var));
+			for each (String^ filevar in IO::Directory::GetFiles(var))
+			{
+				TrViewScript->Nodes[i]->Nodes->Add(IO::Path::GetFileName(filevar));
+			}
+			i += 1;
+		}
+	}
+
+	private: System::Void LoadScriptFile(String^ filepath) {  /// load Script file in DataGridView
+		DGV1->Rows->Clear();
+		array<String^>^ lines = IO::File::ReadAllLines(filepath);
+		int i = 0;
+		for each (String^ var in lines) {
+			if (var != "") {
+				if (var->Contains("//")) {
+					DGV1->Rows->Add();
+					DGV1->Rows[i]->Cells[0]->Value = i;
+					DGV1->Rows[i]->Cells[1]->Value = (var->Substring(0, var->IndexOf("//")))->Trim();
+					DGV1->Rows[i]->Cells[2]->Value = (var->Substring(var->IndexOf("//") + 2, var->Length - (var->IndexOf("//") + 2)))->Trim();
+				}
+				else {
+					DGV1->Rows->Add();
+					DGV1->Rows[i]->Cells[0]->Value = i;
+					DGV1->Rows[i]->Cells[1]->Value = var->Trim();
+				}
+				i += 1;
+			}
+		}
+	}
+
+	private: System::Void SaveScriptFile(String^ filepath) {  /// Save Script file from DataGridView to Disk
+		String^ HoldClipBoradStr;
+		for (int i = 0; i < DGV1->RowCount; i++)
+		{
+			if (DGV1->Rows[i]->Cells[1]->Value != nullptr) {
+				if (DGV1->Rows[i]->Cells[2]->Value == nullptr) {
+					HoldClipBoradStr += DGV1->Rows[i]->Cells[1]->Value->ToString() + Environment::NewLine;
+				}
+				else {
+					HoldClipBoradStr += DGV1->Rows[i]->Cells[1]->Value->ToString() + " //" + DGV1->Rows[i]->Cells[2]->Value->ToString() + Environment::NewLine;
+				}
+			}
+		}
+		IO::File::WriteAllText(filepath, HoldClipBoradStr);
+		FillTrView();
+	}
+	private: System::Void TrViewScript_NodeMouseDoubleClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
+		if (TrViewScript->SelectedNode->Level != 0) {
+			LoadScriptFile(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text);
+		}
+	}
+	private: System::Void bu_CreateCategory_Click(System::Object^  sender, System::EventArgs^  e) {
+		String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", "Category" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
+		if (Category_ == "") {
+			Interaction::MsgBox("this Category name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+			return;
+		}
+		if (IO::Directory::Exists((Application::StartupPath + "\\Script\\" + Category_))) {
+			Interaction::MsgBox("this Category is Exist", MsgBoxStyle::DefaultButton1, "Error");
+			return;
+		}
+		else
+		{
+			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\" + Category_);
+			TrViewScript->Nodes->Add(Category_);
+		}
+	}
+	private: System::Void Bu_SaveScript_Click(System::Object^  sender, System::EventArgs^  e) {
+		String^ Filename = Interaction::InputBox("Enter Category Name", "Category Name", "File" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
+		if (Filename == "") {
+			Interaction::MsgBox("this Filename name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+			return;
+		}
+		if (Filename->EndsWith(".txt")) {
+			Filename = Filename->Substring(0, Filename->IndexOf(".txt"));
+		}
+		if (TrViewScript->SelectedNode == nullptr) {
+			Interaction::MsgBox("Please Select Category ", MsgBoxStyle::DefaultButton1, "Error");
+			return;
+		}
+		String^ Category_;
+
+		if (TrViewScript->SelectedNode->Level == 0) {
+			Category_ = TrViewScript->SelectedNode->Text;
+		}
+		else
+		{
+			Category_ = TrViewScript->SelectedNode->Parent->Text;
+		}
+
+		if (!IO::File::Exists((Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt"))) {
+			SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+		}
+		else
+		{
+			if (Interaction::MsgBox("this File is Exist,Over Write it ??!!", MsgBoxStyle::OkCancel, "Error") == MsgBoxResult::Ok) {
+				SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+			}
+			else {
+				return;
+			}
+		}
+
+	}
+	private: System::Void deletToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		if (Interaction::MsgBox("Are you sure??!!", MsgBoxStyle::OkCancel, "Delete") == MsgBoxResult::Ok) {
+			if (TrViewScript->SelectedNode->Level == 0) {
+				IO::Directory::Delete(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Text, true);
+				TrViewScript->SelectedNode->Remove();
+			}
+			else
+			{
+				IO::File::Delete(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text);
+				TrViewScript->SelectedNode->Remove();
+			}
+		}
+		else {
+			return;
+		}
+	}
+	private: System::Void saveScriptFileToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		String^ Filename = Interaction::InputBox("Enter Category Name", "Category Name", "File" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
+		if (Filename == "") {
+			Interaction::MsgBox("this Filename name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+			return;
+		}
+		if (Filename->EndsWith(".txt")) {
+			Filename = Filename->Substring(0, Filename->IndexOf(".txt"));
+		}
+		if (TrViewScript->SelectedNode == nullptr) {
+			Interaction::MsgBox("Please Select Category ", MsgBoxStyle::DefaultButton1, "Error");
+			return;
+		}
+		String^ Category_;
+
+		if (TrViewScript->SelectedNode->Level == 0) {
+			Category_ = TrViewScript->SelectedNode->Text;
+		}
+		else
+		{
+			Category_ = TrViewScript->SelectedNode->Parent->Text;
+		}
+
+		if (!IO::File::Exists((Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt"))) {
+			SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+		}
+		else
+		{
+			if (Interaction::MsgBox("this File is Exist,Over Write it ??!!", MsgBoxStyle::OkCancel, "Error") == MsgBoxResult::Ok) {
+				SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+			}
+			else {
+				return;
+			}
+		}
+	}
+
+	private: System::Void FileVariableTreeView() {
+		TrViewVariable->Nodes->Clear();
+		int i = 0;
+		for each (VarPara^ var in ScriptFunList::VarList)
+		{
+			if (var->vartype == "int") {
+				TrViewVariable->Nodes->Add(var->varname);
+				TrViewVariable->Nodes[i]->Nodes->Add(str2Hex(var->varvalue[0]));
+			}
+			if (var->vartype == "str") {
+				TrViewVariable->Nodes->Add(var->varname);
+				TrViewVariable->Nodes[i]->Nodes->Add(var->varvalue[0]);
+			}
+			if (var->vartype == "array") {
+				TrViewVariable->Nodes->Add(var->varname);
+				for (int i1 = 0; i1 < var->arrayLength; i1++)
+				{
+					TrViewVariable->Nodes[i]->Nodes->Add(var->varvalue[i1]);
+				}
+			}
+			i += 1;
+		}
+	}
+
 	};
 }
