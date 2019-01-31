@@ -1,6 +1,7 @@
 #pragma once
 #include "HelperFunctions.h"
 #include "Register_UnRegister_Commands.h"
+#include "ScriptFun.h"
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
@@ -13,6 +14,7 @@ namespace ScriptWindowArg {
 	{
 	private:
 		int lineNumber = 0;
+		int MaxLine = 0;
 	public:
 		int isCommandsExist(String^ input_) {
 			array <String^>^ CommandsArray_ = {
@@ -43,7 +45,8 @@ namespace ScriptWindowArg {
 				"findallmemx",
 				"varxclear",
 				"memdump",
-				"writestr"
+				"writestr",
+				"if"
 			};
 			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
 		};
@@ -51,6 +54,14 @@ namespace ScriptWindowArg {
 		void setLineNumber(int LineNum) {
 			lineNumber = LineNum;
 		};
+	public:
+		void setMaxLine(int MaxLine_) {
+			MaxLine = MaxLine_;
+		}
+	public:
+		int GetMaxLine() {
+			return MaxLine ;
+		}
 	public:
 		int GetLineNumber() {
 			return lineNumber;
@@ -92,6 +103,7 @@ namespace ScriptWindowArg {
 		varxclear,
 		memdump,
 		writestr,
+		ifx,
 	};
 
 
@@ -186,8 +198,22 @@ namespace ScriptWindowArg {
 				case ScriptWindowArg::writestr:
 					ret_ = ::WriteStr(0, &argv);
 					break;
+				case ScriptWindowArg::ifx:
+				{
+					String^ Line2Jmp_;
+					ret_ = ifCond(Line_, Line2Jmp_);
+					if (!ret_) {
+						break;
+					}
+					int Line2Jmp = Str2bool(Line2Jmp_);
+					int MaxLine = ScriptargumentClass::Scriptargument_->GetMaxLine();
+					if (Line2Jmp > MaxLine) {
+						ret_ = false;
+					}
+					break; 
+				}
 				default: // case non of them begin with command
-					ret_= DbgCmdExecDirect(Str2ConstChar(Line_));
+					ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
 					break;
 				}
 				if (ret_) {

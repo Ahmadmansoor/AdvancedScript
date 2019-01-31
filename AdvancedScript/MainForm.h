@@ -49,14 +49,17 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::ToolStripMenuItem^  insertRowsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  insertDataFromClipboardToolStripMenuItem;
 	private: System::Windows::Forms::TreeView^  TrViewScript;
-	private: System::Windows::Forms::Button^  bu_CreateCategory;
-	private: System::Windows::Forms::Button^  Bu_SaveScript;
+
+
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::ContextMenuStrip^  CMT_TreeView;
 	private: System::Windows::Forms::ToolStripMenuItem^  deletToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  saveScriptFileToolStripMenuItem;
 	private: System::Windows::Forms::CheckBox^  checkBox1;
 	private: System::Windows::Forms::TreeView^  TrViewVariable;
+	private: System::Windows::Forms::Button^  Bu_ClearVariable;
+	private: System::Windows::Forms::ToolStripMenuItem^  createCategoryToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  renameToolStripMenuItem;
 
 
 
@@ -103,9 +106,9 @@ namespace AdvancedScript {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle4 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle6 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle5 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle3 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			this->DGV1 = (gcnew System::Windows::Forms::DataGridView());
 			this->ID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Command = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
@@ -119,12 +122,13 @@ namespace AdvancedScript {
 			this->saveScriptFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->TrViewScript = (gcnew System::Windows::Forms::TreeView());
 			this->CMT_TreeView = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->createCategoryToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->deletToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->bu_CreateCategory = (gcnew System::Windows::Forms::Button());
-			this->Bu_SaveScript = (gcnew System::Windows::Forms::Button());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+			this->Bu_ClearVariable = (gcnew System::Windows::Forms::Button());
 			this->TrViewVariable = (gcnew System::Windows::Forms::TreeView());
+			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+			this->renameToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
 			this->CMT_TreeView->SuspendLayout();
@@ -137,33 +141,33 @@ namespace AdvancedScript {
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->DGV1->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::Fill;
-			dataGridViewCellStyle4->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle4->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle4->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			dataGridViewCellStyle1->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle1->BackColor = System::Drawing::SystemColors::Control;
+			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			dataGridViewCellStyle4->ForeColor = System::Drawing::SystemColors::WindowText;
-			dataGridViewCellStyle4->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle4->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle4->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
-			this->DGV1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle1->ForeColor = System::Drawing::SystemColors::WindowText;
+			dataGridViewCellStyle1->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle1->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle1->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
+			this->DGV1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this->DGV1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
 			this->DGV1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {
 				this->ID, this->Command,
 					this->describe
 			});
 			this->DGV1->ContextMenuStrip = this->CMT1;
-			dataGridViewCellStyle6->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle6->BackColor = System::Drawing::SystemColors::Window;
-			dataGridViewCellStyle6->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			dataGridViewCellStyle3->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle3->BackColor = System::Drawing::SystemColors::Window;
+			dataGridViewCellStyle3->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			dataGridViewCellStyle6->ForeColor = System::Drawing::SystemColors::ControlText;
-			dataGridViewCellStyle6->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle6->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle6->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
-			this->DGV1->DefaultCellStyle = dataGridViewCellStyle6;
-			this->DGV1->Location = System::Drawing::Point(231, 4);
+			dataGridViewCellStyle3->ForeColor = System::Drawing::SystemColors::ControlText;
+			dataGridViewCellStyle3->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle3->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle3->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
+			this->DGV1->DefaultCellStyle = dataGridViewCellStyle3;
+			this->DGV1->Location = System::Drawing::Point(231, 12);
 			this->DGV1->Name = L"DGV1";
-			this->DGV1->Size = System::Drawing::Size(810, 526);
+			this->DGV1->Size = System::Drawing::Size(810, 518);
 			this->DGV1->TabIndex = 0;
 			this->DGV1->RowsAdded += gcnew System::Windows::Forms::DataGridViewRowsAddedEventHandler(this, &MainForm::DGV1_RowsAdded);
 			this->DGV1->RowsRemoved += gcnew System::Windows::Forms::DataGridViewRowsRemovedEventHandler(this, &MainForm::DGV1_RowsRemoved);
@@ -171,8 +175,8 @@ namespace AdvancedScript {
 			// 
 			// ID
 			// 
-			dataGridViewCellStyle5->NullValue = L"0";
-			this->ID->DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle2->NullValue = L"0";
+			this->ID->DefaultCellStyle = dataGridViewCellStyle2;
 			this->ID->FillWeight = 25;
 			this->ID->HeaderText = L"ID";
 			this->ID->Name = L"ID";
@@ -245,80 +249,89 @@ namespace AdvancedScript {
 			// TrViewScript
 			// 
 			this->TrViewScript->ContextMenuStrip = this->CMT_TreeView;
-			this->TrViewScript->Location = System::Drawing::Point(7, 57);
+			this->TrViewScript->Location = System::Drawing::Point(11, 19);
 			this->TrViewScript->Name = L"TrViewScript";
-			this->TrViewScript->Size = System::Drawing::Size(217, 140);
+			this->TrViewScript->Size = System::Drawing::Size(199, 168);
 			this->TrViewScript->TabIndex = 1;
 			this->TrViewScript->NodeMouseDoubleClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &MainForm::TrViewScript_NodeMouseDoubleClick);
 			// 
 			// CMT_TreeView
 			// 
-			this->CMT_TreeView->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->deletToolStripMenuItem });
+			this->CMT_TreeView->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+				this->createCategoryToolStripMenuItem,
+					this->renameToolStripMenuItem, this->deletToolStripMenuItem
+			});
 			this->CMT_TreeView->Name = L"CMT_TreeView";
-			this->CMT_TreeView->Size = System::Drawing::Size(102, 26);
+			this->CMT_TreeView->Size = System::Drawing::Size(160, 92);
+			// 
+			// createCategoryToolStripMenuItem
+			// 
+			this->createCategoryToolStripMenuItem->Name = L"createCategoryToolStripMenuItem";
+			this->createCategoryToolStripMenuItem->Size = System::Drawing::Size(159, 22);
+			this->createCategoryToolStripMenuItem->Text = L"Create Category";
+			this->createCategoryToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::createCategoryToolStripMenuItem_Click);
 			// 
 			// deletToolStripMenuItem
 			// 
 			this->deletToolStripMenuItem->Name = L"deletToolStripMenuItem";
-			this->deletToolStripMenuItem->Size = System::Drawing::Size(101, 22);
+			this->deletToolStripMenuItem->Size = System::Drawing::Size(159, 22);
 			this->deletToolStripMenuItem->Text = L"Delet";
 			this->deletToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::deletToolStripMenuItem_Click);
-			// 
-			// bu_CreateCategory
-			// 
-			this->bu_CreateCategory->Location = System::Drawing::Point(7, 12);
-			this->bu_CreateCategory->Name = L"bu_CreateCategory";
-			this->bu_CreateCategory->Size = System::Drawing::Size(61, 39);
-			this->bu_CreateCategory->TabIndex = 2;
-			this->bu_CreateCategory->Text = L"Create Category";
-			this->bu_CreateCategory->UseVisualStyleBackColor = true;
-			this->bu_CreateCategory->Click += gcnew System::EventHandler(this, &MainForm::bu_CreateCategory_Click);
-			// 
-			// Bu_SaveScript
-			// 
-			this->Bu_SaveScript->Location = System::Drawing::Point(74, 12);
-			this->Bu_SaveScript->Name = L"Bu_SaveScript";
-			this->Bu_SaveScript->Size = System::Drawing::Size(61, 39);
-			this->Bu_SaveScript->TabIndex = 3;
-			this->Bu_SaveScript->Text = L"Save";
-			this->Bu_SaveScript->UseVisualStyleBackColor = true;
-			this->Bu_SaveScript->Click += gcnew System::EventHandler(this, &MainForm::Bu_SaveScript_Click);
 			// 
 			// groupBox1
 			// 
 			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left));
+			this->groupBox1->Controls->Add(this->Bu_ClearVariable);
 			this->groupBox1->Controls->Add(this->TrViewVariable);
-			this->groupBox1->Controls->Add(this->checkBox1);
-			this->groupBox1->Location = System::Drawing::Point(7, 203);
+			this->groupBox1->Controls->Add(this->TrViewScript);
+			this->groupBox1->Location = System::Drawing::Point(7, 3);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(216, 324);
+			this->groupBox1->Size = System::Drawing::Size(216, 524);
 			this->groupBox1->TabIndex = 4;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Options";
 			// 
-			// checkBox1
+			// Bu_ClearVariable
 			// 
-			this->checkBox1->AutoSize = true;
-			this->checkBox1->Checked = true;
-			this->checkBox1->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->checkBox1->Enabled = false;
-			this->checkBox1->Location = System::Drawing::Point(30, 19);
-			this->checkBox1->Name = L"checkBox1";
-			this->checkBox1->Size = System::Drawing::Size(133, 17);
-			this->checkBox1->TabIndex = 0;
-			this->checkBox1->Text = L"Update Script Window";
-			this->checkBox1->UseVisualStyleBackColor = true;
+			this->Bu_ClearVariable->Location = System::Drawing::Point(42, 193);
+			this->Bu_ClearVariable->Name = L"Bu_ClearVariable";
+			this->Bu_ClearVariable->Size = System::Drawing::Size(119, 26);
+			this->Bu_ClearVariable->TabIndex = 5;
+			this->Bu_ClearVariable->Text = L"Clear Variable";
+			this->Bu_ClearVariable->UseVisualStyleBackColor = true;
+			this->Bu_ClearVariable->Click += gcnew System::EventHandler(this, &MainForm::Bu_ClearVariable_Click);
 			// 
 			// TrViewVariable
 			// 
 			this->TrViewVariable->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->TrViewVariable->Location = System::Drawing::Point(11, 40);
+			this->TrViewVariable->Location = System::Drawing::Point(11, 225);
 			this->TrViewVariable->Name = L"TrViewVariable";
-			this->TrViewVariable->Size = System::Drawing::Size(190, 276);
+			this->TrViewVariable->Size = System::Drawing::Size(190, 291);
 			this->TrViewVariable->TabIndex = 1;
+			// 
+			// checkBox1
+			// 
+			this->checkBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->checkBox1->AutoSize = true;
+			this->checkBox1->Checked = true;
+			this->checkBox1->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->checkBox1->Enabled = false;
+			this->checkBox1->Location = System::Drawing::Point(908, 22);
+			this->checkBox1->Name = L"checkBox1";
+			this->checkBox1->Size = System::Drawing::Size(133, 17);
+			this->checkBox1->TabIndex = 0;
+			this->checkBox1->Text = L"Update Script Window";
+			this->checkBox1->UseVisualStyleBackColor = true;
+			// 
+			// renameToolStripMenuItem
+			// 
+			this->renameToolStripMenuItem->Name = L"renameToolStripMenuItem";
+			this->renameToolStripMenuItem->Size = System::Drawing::Size(159, 22);
+			this->renameToolStripMenuItem->Text = L"Rename";
+			this->renameToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::renameToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -326,10 +339,8 @@ namespace AdvancedScript {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::SlateGray;
 			this->ClientSize = System::Drawing::Size(1047, 534);
+			this->Controls->Add(this->checkBox1);
 			this->Controls->Add(this->groupBox1);
-			this->Controls->Add(this->Bu_SaveScript);
-			this->Controls->Add(this->bu_CreateCategory);
-			this->Controls->Add(this->TrViewScript);
 			this->Controls->Add(this->DGV1);
 			this->KeyPreview = true;
 			this->Name = L"MainForm";
@@ -339,14 +350,15 @@ namespace AdvancedScript {
 			this->CMT1->ResumeLayout(false);
 			this->CMT_TreeView->ResumeLayout(false);
 			this->groupBox1->ResumeLayout(false);
-			this->groupBox1->PerformLayout();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
 	private: System::Void DGV1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::F12) {
 			DGV1->ClearSelection();
+			ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount);  // update max line just in case update script through run
 			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
 				DGV1->ClearSelection();
 				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
@@ -508,14 +520,14 @@ namespace AdvancedScript {
 			}
 		}
 		IO::File::WriteAllText(filepath, HoldClipBoradStr);
-		FillTrView();
+		//FillTrView();
 	}
 	private: System::Void TrViewScript_NodeMouseDoubleClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
 		if (TrViewScript->SelectedNode->Level != 0) {
 			LoadScriptFile(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text);
 		}
 	}
-	private: System::Void bu_CreateCategory_Click(System::Object^  sender, System::EventArgs^  e) {
+	/*private: System::Void bu_CreateCategory_Click(System::Object^  sender, System::EventArgs^  e) {
 		String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", "Category" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
 		if (Category_ == "") {
 			Interaction::MsgBox("this Category name not Valid", MsgBoxStyle::DefaultButton1, "Error");
@@ -530,8 +542,8 @@ namespace AdvancedScript {
 			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\" + Category_);
 			TrViewScript->Nodes->Add(Category_);
 		}
-	}
-	private: System::Void Bu_SaveScript_Click(System::Object^  sender, System::EventArgs^  e) {
+	}*/
+	/*private: System::Void Bu_SaveScript_Click(System::Object^  sender, System::EventArgs^  e) {
 		String^ Filename = Interaction::InputBox("Enter Category Name", "Category Name", "File" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
 		if (Filename == "") {
 			Interaction::MsgBox("this Filename name not Valid", MsgBoxStyle::DefaultButton1, "Error");
@@ -556,18 +568,26 @@ namespace AdvancedScript {
 
 		if (!IO::File::Exists((Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt"))) {
 			SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+			if (TrViewScript->SelectedNode->Level == 0) 
+				TrViewScript->SelectedNode->Nodes->Add(Filename + ".txt");
+			else			
+				TrViewScript->SelectedNode->Parent->Nodes->Add(Filename + ".txt");
 		}
 		else
 		{
 			if (Interaction::MsgBox("this File is Exist,Over Write it ??!!", MsgBoxStyle::OkCancel, "Error") == MsgBoxResult::Ok) {
 				SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+				if (TrViewScript->SelectedNode->Level == 0)
+					TrViewScript->SelectedNode->Nodes->Add(Filename + ".txt");
+				else
+					TrViewScript->SelectedNode->Parent->Nodes->Add(Filename + ".txt");
 			}
 			else {
 				return;
 			}
 		}
 
-	}
+	}*/
 	private: System::Void deletToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		if (Interaction::MsgBox("Are you sure??!!", MsgBoxStyle::OkCancel, "Delete") == MsgBoxResult::Ok) {
 			if (TrViewScript->SelectedNode->Level == 0) {
@@ -590,7 +610,7 @@ namespace AdvancedScript {
 			Interaction::MsgBox("this Filename name not Valid", MsgBoxStyle::DefaultButton1, "Error");
 			return;
 		}
-		if (Filename->EndsWith(".txt")) {
+		if (Filename->Trim()->EndsWith(".txt")) {
 			Filename = Filename->Substring(0, Filename->IndexOf(".txt"));
 		}
 		if (TrViewScript->SelectedNode == nullptr) {
@@ -609,16 +629,25 @@ namespace AdvancedScript {
 
 		if (!IO::File::Exists((Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt"))) {
 			SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+			if (TrViewScript->SelectedNode->Level == 0)
+				TrViewScript->SelectedNode->Nodes->Add(Filename + ".txt");
+			else
+				TrViewScript->SelectedNode->Parent->Nodes->Add(Filename + ".txt");
 		}
 		else
 		{
 			if (Interaction::MsgBox("this File is Exist,Over Write it ??!!", MsgBoxStyle::OkCancel, "Error") == MsgBoxResult::Ok) {
 				SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+				if (TrViewScript->SelectedNode->Level == 0)
+					TrViewScript->SelectedNode->Nodes->Add(Filename + ".txt");
+				else
+					TrViewScript->SelectedNode->Parent->Nodes->Add(Filename + ".txt");
 			}
 			else {
 				return;
 			}
 		}
+
 	}
 
 	private: System::Void FileVariableTreeView() {
@@ -645,5 +674,53 @@ namespace AdvancedScript {
 		}
 	}
 
-	};
+	private: System::Void Bu_ClearVariable_Click(System::Object^  sender, System::EventArgs^  e) {
+		VarListClear();
+		TrViewVariable->Nodes->Clear();
+	}
+private: System::Void createCategoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", "Category" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
+	if (Category_ == "") {
+		Interaction::MsgBox("this Category name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+		return;
+	}
+	if (IO::Directory::Exists((Application::StartupPath + "\\Script\\" + Category_))) {
+		Interaction::MsgBox("this Category is Exist", MsgBoxStyle::DefaultButton1, "Error");
+		return;
+	}
+	else
+	{
+		IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\" + Category_);
+		TrViewScript->Nodes->Add(Category_);
+	}
+}
+private: System::Void renameToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	String^ renamed;
+	if (TrViewScript->SelectedNode->Level == 0) {
+		
+		String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", TrViewScript->SelectedNode->Text, this->Width / 2, this->Height / 2);
+		if (Category_ == "") {
+			Interaction::MsgBox("this Category name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+			return;
+		}
+		
+		FileSystem::Rename(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Text, Application::StartupPath + "\\Script\\" + Category_);
+			TrViewScript->SelectedNode->Text = Category_;
+	}
+	else
+	{		
+		String^ Category_ = Interaction::InputBox("Enter file Name", "Category Name", TrViewScript->SelectedNode->Text, this->Width / 2, this->Height / 2);
+		if (Category_ == "") {
+			Interaction::MsgBox("this file name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+			return;
+		}
+		if (Category_->Trim()->EndsWith(".txt")) {
+			Category_ = Category_->Substring(0, Category_->IndexOf(".txt"));
+		}
+		FileSystem::Rename(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\"+ TrViewScript->SelectedNode->Text, Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + Category_ + ".txt");
+		TrViewScript->SelectedNode->Text = Category_ + ".txt";
+	}
+	
+}
+};
 }

@@ -36,6 +36,7 @@ static bool findallmemx(int argc, char* argv[]);
 
 static bool memdump(int argc, char* argv[]);
 static bool WriteStr(int argc, char* argv[]);
+//static bool ifCond(String^ input, String^% lineNumber);
 ///////////////////////
 System::Void LoadTemplateFiles_();
 

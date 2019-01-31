@@ -133,3 +133,6 @@ String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_="");
 String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_="");
 bool dumpmem(String^ addr, String^ size, String^ para = "");
 bool WriteStr_(duint address, String^ text, bool replace);
+String^ condtion_(String^ input, String^ typo);
+
+bool ifCond(String^ input, String^% lineNumber);

@@ -28,7 +28,7 @@ bool Varexist(String^ varname, String^% vartype_, int% index,int% arrayLength) {
 // defealt value for varvalue="" and will chnaged later to "0" when var is int
 bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	vartype = vartype->ToLower();		
-	if ( (varname->Contains(" ")) || (varname->Contains("$")) ) {
+	if ( (varname->Contains(" ")) ) { // || (varname->Contains("$")) ) {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
 		return false;
 	}		
@@ -44,6 +44,10 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	String^ retvartype = "";
 	
 	if (vartype == "str") {
+		if ((varname->Contains("$")) ) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
+			return false;
+		}
 		String^ resolveVarValue = StrAnalyze(varvalue, VarType::str);		
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue,1);
 		if (ScriptFunList::VarList->Count == 0) {
@@ -76,6 +80,10 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 			return false;
 		}
 		varname = varname->Substring(0, varname->IndexOf("[")); /// extrect array name
+		if ((varname->Contains("$"))) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
+			return false;
+		}
 		String^ resolveVarValue = StrAnalyze(varvalue, VarType::str);		
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue,Str2duint(arrayLen));
 		if (ScriptFunList::VarList->Count == 0) {
@@ -99,6 +107,10 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	};
 	/////////////////////////////
 	if (vartype == "int") {		
+		if ((varname->Contains("$"))) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
+			return false;
+		}
 		/// varValue_Int : resolve vriable value as Int we will used to store it in Int variable 					 
 		String^ varValue_Int = StrAnalyze(varvalue, VarType::int_);  		 
 		if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
@@ -594,4 +606,154 @@ bool WriteStr_(duint address, String^ text, bool replace) {
 		}
 	}
 	return true;
+}
+
+bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),type (int, str ),line number if true ,line number if false
+	Generic::List<String^>^ arguments;
+	GetArg(input, arguments);
+	String^ arrayIndex;
+	switch ((arguments->Count))
+	{
+	case 4: {
+		String^ trueline = StrAnalyze(arguments[2], VarType::int_);
+		String^ falseline = StrAnalyze(arguments[3], VarType::int_);
+		if (!Information::IsNumeric(trueline) || !Information::IsNumeric(falseline))
+			return false;
+		String ^ ret = condtion_(arguments[0], arguments[1]);
+		if (!ret->StartsWith("NULL/")) {
+			if (Str2bool(ret)) {
+				lineNumber = trueline;
+			}
+			else
+			{
+				lineNumber = falseline;
+			}
+		}
+
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+}
+
+
+String^ condtion_(String^ input,String^ typo) {
+	if ((input->Contains("!=")) && (!input->StartsWith("!="))) {
+		String^ left_ = input->Substring(0, input->IndexOf("!="))->Trim();
+		String^ right_ = input->Substring(input->IndexOf("!=") + 1, input->Length - (input->IndexOf("!=") + 1))->Trim();
+		if (typo == "int") {
+			left_ = StrAnalyze(left_, VarType::int_);
+			right_ = StrAnalyze(right_, VarType::int_);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+				return "NULL/";
+			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_))
+				return "NULL/";
+			if (Conversion::Val(left_) != Conversion::Val(right_))
+				return "1";  // true
+			else
+				return "0";  // false
+		}
+		else if (typo == "str")
+		{
+			left_ = StrAnalyze(left_, VarType::str);
+			right_ = StrAnalyze(right_, VarType::str);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+				return "NULL/";
+
+		/*	string.Compare(string1, string2);
+			If str1 is less than str2, it returns - 1.
+			If str1 is equal to str2, it returns 0.
+			If str1 is greater than str2, it returns 1.*/
+
+			if (String::Compare(left_, right_) == 0) // he we check not equal so the retun should be the oppsite.
+				return "0";  // false
+			else
+				return "1";  // true
+		}
+	}
+
+	if ((input->Contains("=")) && (!input->StartsWith("="))) {
+		String^ left_ = input->Substring(0, input->IndexOf("="))->Trim();
+		String^ right_ = input->Substring(input->IndexOf("=")+1,input->Length - (input->IndexOf("=") + 1))->Trim();
+		if (typo == "int") {
+			left_ = StrAnalyze(left_,VarType::int_);
+			right_ = StrAnalyze(right_, VarType::int_);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+				return "NULL/";
+			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_))
+				return "NULL/";
+			if (Conversion::Val(left_) == Conversion::Val(right_))
+				return "1";  // true
+			else
+				return "0";  // false
+		}
+		else if (typo == "str")
+		{
+			left_ = StrAnalyze(left_, VarType::str);
+			right_ = StrAnalyze(right_, VarType::str);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+				return "NULL/";
+			if (String::Compare(left_ ,right_)==0)
+				return "1";  // true
+			else
+				return "0";  // false
+		}		
+	}
+
+	if ((input->Contains(">")) && (!input->StartsWith(">"))) {
+		String^ left_ = input->Substring(0, input->IndexOf(">"))->Trim();
+		String^ right_ = input->Substring(input->IndexOf(">") + 1, input->Length - (input->IndexOf(">") + 1))->Trim();
+		if (typo == "int") {
+			left_ = StrAnalyze(left_, VarType::int_);
+			right_ = StrAnalyze(right_, VarType::int_);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+				return "NULL/";
+			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_))
+				return "NULL/";
+			if (Conversion::Val(left_) > Conversion::Val(right_))
+				return "1";  // true
+			else
+				return "0";  // false
+		}
+		else if (typo == "str")
+		{
+			left_ = StrAnalyze(left_, VarType::str);
+			right_ = StrAnalyze(right_, VarType::str);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+				return "NULL/";
+			if (String::Compare(left_, right_) == 1)
+				return "1";  // true
+			else
+				return "0";  // false
+		}
+	}
+
+	if ((input->Contains("<")) && (!input->StartsWith("<"))) {
+		String^ left_ = input->Substring(0, input->IndexOf("<"))->Trim();
+		String^ right_ = input->Substring(input->IndexOf("<") + 1, input->Length - (input->IndexOf("<") + 1))->Trim();
+		if (typo == "int") {
+			left_ = StrAnalyze(left_, VarType::int_);
+			right_ = StrAnalyze(right_, VarType::int_);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+				return "NULL/";
+			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_))
+				return "NULL/";
+			if (Conversion::Val(left_) < Conversion::Val(right_))
+				return "1";  // true
+			else
+				return "0";  // false
+		}
+		else if (typo == "str")
+		{
+			left_ = StrAnalyze(left_, VarType::str);
+			right_ = StrAnalyze(right_, VarType::str);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+				return "NULL/";
+			if (String::Compare(left_, right_) == -1)
+				return "1";  // true
+			else
+				return "0";  // false
+		}
+	}
 }
