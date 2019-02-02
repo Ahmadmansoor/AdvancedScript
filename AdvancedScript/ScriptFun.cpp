@@ -629,7 +629,7 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 				lineNumber = falseline;
 			}
 		}
-
+		return true;
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));

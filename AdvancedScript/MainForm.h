@@ -54,12 +54,15 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::ContextMenuStrip^  CMT_TreeView;
 	private: System::Windows::Forms::ToolStripMenuItem^  deletToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  saveScriptFileToolStripMenuItem;
+
 	private: System::Windows::Forms::CheckBox^  checkBox1;
 	private: System::Windows::Forms::TreeView^  TrViewVariable;
 	private: System::Windows::Forms::Button^  Bu_ClearVariable;
 	private: System::Windows::Forms::ToolStripMenuItem^  createCategoryToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  renameToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  fileToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  saveScriptFileToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  newScriptToolStripMenuItem;
 
 
 
@@ -72,6 +75,25 @@ namespace AdvancedScript {
 
 
 	protected:
+
+	public:
+		String^ ScriptFileName = String::Empty;
+	
+	public: ref class LableLine
+	{
+	public:
+		LableLine(int LableLineNumber_, String^ Lable_) {
+			LableLineNumber = LableLineNumber_;
+			Lable = Lable_;
+		}
+
+	private:
+	public:
+		int LableLineNumber;
+		String^ Lable;
+	};
+	public:
+		Generic::List<LableLine^>^ LableLines = gcnew Generic::List<LableLine^>;
 
 	public: ref class ArraySortAssist
 	{
@@ -114,21 +136,23 @@ namespace AdvancedScript {
 			this->Command = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->describe = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->CMT1 = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->newScriptToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->saveScriptFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->startHereToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pasteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->copySelectedLineToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->insertRowsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->insertDataFromClipboardToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->saveScriptFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->TrViewScript = (gcnew System::Windows::Forms::TreeView());
 			this->CMT_TreeView = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->createCategoryToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->renameToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->deletToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->Bu_ClearVariable = (gcnew System::Windows::Forms::Button());
 			this->TrViewVariable = (gcnew System::Windows::Forms::TreeView());
 			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
-			this->renameToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
 			this->CMT_TreeView->SuspendLayout();
@@ -169,6 +193,7 @@ namespace AdvancedScript {
 			this->DGV1->Name = L"DGV1";
 			this->DGV1->Size = System::Drawing::Size(810, 518);
 			this->DGV1->TabIndex = 0;
+			this->DGV1->CellEndEdit += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &MainForm::DGV1_CellEndEdit);
 			this->DGV1->RowsAdded += gcnew System::Windows::Forms::DataGridViewRowsAddedEventHandler(this, &MainForm::DGV1_RowsAdded);
 			this->DGV1->RowsRemoved += gcnew System::Windows::Forms::DataGridViewRowsRemovedEventHandler(this, &MainForm::DGV1_RowsRemoved);
 			this->DGV1->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::DGV1_KeyUp);
@@ -197,54 +222,71 @@ namespace AdvancedScript {
 			// CMT1
 			// 
 			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(6) {
-				this->startHereToolStripMenuItem,
-					this->pasteToolStripMenuItem, this->copySelectedLineToolStripMenuItem, this->insertRowsToolStripMenuItem, this->insertDataFromClipboardToolStripMenuItem,
-					this->saveScriptFileToolStripMenuItem
+				this->fileToolStripMenuItem,
+					this->startHereToolStripMenuItem, this->pasteToolStripMenuItem, this->copySelectedLineToolStripMenuItem, this->insertRowsToolStripMenuItem,
+					this->insertDataFromClipboardToolStripMenuItem
 			});
 			this->CMT1->Name = L"CMT1";
-			this->CMT1->Size = System::Drawing::Size(243, 136);
+			this->CMT1->Size = System::Drawing::Size(226, 136);
+			// 
+			// fileToolStripMenuItem
+			// 
+			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+				this->newScriptToolStripMenuItem,
+					this->saveScriptFileToolStripMenuItem
+			});
+			this->fileToolStripMenuItem->Name = L"fileToolStripMenuItem";
+			this->fileToolStripMenuItem->Size = System::Drawing::Size(225, 22);
+			this->fileToolStripMenuItem->Text = L"File";
+			// 
+			// newScriptToolStripMenuItem
+			// 
+			this->newScriptToolStripMenuItem->Name = L"newScriptToolStripMenuItem";
+			this->newScriptToolStripMenuItem->Size = System::Drawing::Size(125, 22);
+			this->newScriptToolStripMenuItem->Text = L"New Script";
+			this->newScriptToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::newScriptToolStripMenuItem_Click);
+			// 
+			// saveScriptFileToolStripMenuItem
+			// 
+			this->saveScriptFileToolStripMenuItem->Name = L"saveScriptFileToolStripMenuItem";
+			this->saveScriptFileToolStripMenuItem->Size = System::Drawing::Size(125, 22);
+			this->saveScriptFileToolStripMenuItem->Text = L"Save";
+			this->saveScriptFileToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::saveScriptFileToolStripMenuItem_Click);
 			// 
 			// startHereToolStripMenuItem
 			// 
 			this->startHereToolStripMenuItem->Name = L"startHereToolStripMenuItem";
-			this->startHereToolStripMenuItem->Size = System::Drawing::Size(242, 22);
-			this->startHereToolStripMenuItem->Text = L"Start Here";
+			this->startHereToolStripMenuItem->Size = System::Drawing::Size(225, 22);
+			this->startHereToolStripMenuItem->Text = L"Run from Here";
 			this->startHereToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::startHereToolStripMenuItem_Click);
 			// 
 			// pasteToolStripMenuItem
 			// 
 			this->pasteToolStripMenuItem->Name = L"pasteToolStripMenuItem";
-			this->pasteToolStripMenuItem->Size = System::Drawing::Size(242, 22);
+			this->pasteToolStripMenuItem->Size = System::Drawing::Size(225, 22);
 			this->pasteToolStripMenuItem->Text = L"Paste Clipboard/replace all lines";
 			this->pasteToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::pasteToolStripMenuItem_Click);
 			// 
 			// copySelectedLineToolStripMenuItem
 			// 
 			this->copySelectedLineToolStripMenuItem->Name = L"copySelectedLineToolStripMenuItem";
-			this->copySelectedLineToolStripMenuItem->Size = System::Drawing::Size(242, 22);
+			this->copySelectedLineToolStripMenuItem->Size = System::Drawing::Size(225, 22);
 			this->copySelectedLineToolStripMenuItem->Text = L"Copy Selected Line";
 			this->copySelectedLineToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::copySelectedLineToolStripMenuItem_Click);
 			// 
 			// insertRowsToolStripMenuItem
 			// 
 			this->insertRowsToolStripMenuItem->Name = L"insertRowsToolStripMenuItem";
-			this->insertRowsToolStripMenuItem->Size = System::Drawing::Size(242, 22);
+			this->insertRowsToolStripMenuItem->Size = System::Drawing::Size(225, 22);
 			this->insertRowsToolStripMenuItem->Text = L"Insert /n/ rows Here";
 			this->insertRowsToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::insertRowsToolStripMenuItem_Click);
 			// 
 			// insertDataFromClipboardToolStripMenuItem
 			// 
 			this->insertDataFromClipboardToolStripMenuItem->Name = L"insertDataFromClipboardToolStripMenuItem";
-			this->insertDataFromClipboardToolStripMenuItem->Size = System::Drawing::Size(242, 22);
-			this->insertDataFromClipboardToolStripMenuItem->Text = L"Insert Data From Clipboard";
+			this->insertDataFromClipboardToolStripMenuItem->Size = System::Drawing::Size(225, 22);
+			this->insertDataFromClipboardToolStripMenuItem->Text = L"Insert Script From Clipboard";
 			this->insertDataFromClipboardToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::insertDataFromClipboardToolStripMenuItem_Click);
-			// 
-			// saveScriptFileToolStripMenuItem
-			// 
-			this->saveScriptFileToolStripMenuItem->Name = L"saveScriptFileToolStripMenuItem";
-			this->saveScriptFileToolStripMenuItem->Size = System::Drawing::Size(242, 22);
-			this->saveScriptFileToolStripMenuItem->Text = L"Save";
-			this->saveScriptFileToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::saveScriptFileToolStripMenuItem_Click);
 			// 
 			// TrViewScript
 			// 
@@ -262,19 +304,26 @@ namespace AdvancedScript {
 					this->renameToolStripMenuItem, this->deletToolStripMenuItem
 			});
 			this->CMT_TreeView->Name = L"CMT_TreeView";
-			this->CMT_TreeView->Size = System::Drawing::Size(160, 92);
+			this->CMT_TreeView->Size = System::Drawing::Size(156, 70);
 			// 
 			// createCategoryToolStripMenuItem
 			// 
 			this->createCategoryToolStripMenuItem->Name = L"createCategoryToolStripMenuItem";
-			this->createCategoryToolStripMenuItem->Size = System::Drawing::Size(159, 22);
+			this->createCategoryToolStripMenuItem->Size = System::Drawing::Size(155, 22);
 			this->createCategoryToolStripMenuItem->Text = L"Create Category";
 			this->createCategoryToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::createCategoryToolStripMenuItem_Click);
+			// 
+			// renameToolStripMenuItem
+			// 
+			this->renameToolStripMenuItem->Name = L"renameToolStripMenuItem";
+			this->renameToolStripMenuItem->Size = System::Drawing::Size(155, 22);
+			this->renameToolStripMenuItem->Text = L"Rename";
+			this->renameToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::renameToolStripMenuItem_Click);
 			// 
 			// deletToolStripMenuItem
 			// 
 			this->deletToolStripMenuItem->Name = L"deletToolStripMenuItem";
-			this->deletToolStripMenuItem->Size = System::Drawing::Size(159, 22);
+			this->deletToolStripMenuItem->Size = System::Drawing::Size(155, 22);
 			this->deletToolStripMenuItem->Text = L"Delet";
 			this->deletToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::deletToolStripMenuItem_Click);
 			// 
@@ -326,13 +375,6 @@ namespace AdvancedScript {
 			this->checkBox1->Text = L"Update Script Window";
 			this->checkBox1->UseVisualStyleBackColor = true;
 			// 
-			// renameToolStripMenuItem
-			// 
-			this->renameToolStripMenuItem->Name = L"renameToolStripMenuItem";
-			this->renameToolStripMenuItem->Size = System::Drawing::Size(159, 22);
-			this->renameToolStripMenuItem->Text = L"Rename";
-			this->renameToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::renameToolStripMenuItem_Click);
-			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -346,6 +388,7 @@ namespace AdvancedScript {
 			this->Name = L"MainForm";
 			this->Text = L"MainForm";
 			this->Load += gcnew System::EventHandler(this, &MainForm::MainForm_Load);
+			this->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyUp);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->EndInit();
 			this->CMT1->ResumeLayout(false);
 			this->CMT_TreeView->ResumeLayout(false);
@@ -355,10 +398,27 @@ namespace AdvancedScript {
 
 		}
 #pragma endregion
+	private: System::Void MainForm_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+		if (e->KeyCode == Keys::F12) 
+		DGV1->Focus();
+	}
+	private: System::Void IniLoadData() {   /// we use it to get all lable in the script to use it for Goto
+		LableLines->Clear();
+		for (int i = 0; i < DGV1->RowCount - 1; i++)
+		{
+			DGV1->Rows[i]->Cells[0]->Value = i; // duint2Hex(i) + "/" + i;
+			if (DGV1->Rows[i]->Cells[0]->Value->ToString()->Trim()->EndsWith(":")) {
+				LableLine^ LaL = gcnew LableLine(i, DGV1->Rows[i]->Cells[0]->Value->ToString()->Trim());
+				LableLines->Add(LaL);
+			}
+		}
+	}
 	private: System::Void DGV1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::F12) {
 			DGV1->ClearSelection();
-			ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount);  // update max line just in case update script through run
+			if (ScriptargumentClass::Scriptargument_->GetLineNumber() == 0) {
+				IniLoadData();  /// get all lable in the Script
+			}
 			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
 				DGV1->ClearSelection();
 				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
@@ -374,24 +434,25 @@ namespace AdvancedScript {
 		}
 	}
 	private: System::Void DGV1_RowsAdded(System::Object^  sender, System::Windows::Forms::DataGridViewRowsAddedEventArgs^  e) {
-		for (int i = 0; i < DGV1->RowCount - 1; i++)
-		{
-			DGV1->Rows[i]->Cells[0]->Value = i;
-		}
+		//for (int i = 0; i < DGV1->RowCount - 1; i++)
+		//{
+		//	DGV1->Rows[i]->Cells[0]->Value = i; // duint2Hex(i) + "/" + i;
+		//}
+		IniLoadData();
 	}
 	private: System::Void DGV1_RowsRemoved(System::Object^  sender, System::Windows::Forms::DataGridViewRowsRemovedEventArgs^  e) {
-		for (int i = 0; i < DGV1->RowCount - 1; i++)
+		/*for (int i = 0; i < DGV1->RowCount - 1; i++)
 		{
 			DGV1->Rows[i]->Cells[0]->Value = i;
-		}
+		}*/
+		IniLoadData();
 	}
 	private: System::Void startHereToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		ScriptargumentClass::Scriptargument_->setLineNumber(DGV1->CurrentRow->Index);
 	}
 	private: System::Void pasteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		DGV1->Rows->Clear();
-		Generic::List<String^>^ lines = GetClipBoard();
-		//int i = 0;
+		Generic::List<String^>^ lines = GetClipBoard();		
 		for (int i = 0; i < lines->Count; i++)
 		{
 			DGV1->Rows->Add();
@@ -429,9 +490,7 @@ namespace AdvancedScript {
 			}
 
 		}
-
 		SetClipBoard(HoldClipBoradStr);
-
 	}
 	private: System::Void insertRowsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		String^ rowsCou = Interaction::InputBox("Please Enter how many rows you need", "info", "", this->Width / 2, this->Height / 2);
@@ -459,11 +518,11 @@ namespace AdvancedScript {
 
 	}
 	private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e) {
-		/*if (!IO::Directory::Exists(Application::StartupPath + "\\Script")) {
+		if (!IO::Directory::Exists(Application::StartupPath + "\\Script")) {
 			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script");
-			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\temp");
+			//IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\temp");
 		}
-		if (!IO::Directory::Exists(Application::StartupPath + "\\Script\\temp")) {
+		/*if (!IO::Directory::Exists(Application::StartupPath + "\\Script\\temp")) {
 			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\temp");
 		}*/
 		FillTrView();  // fill tree on load 
@@ -504,6 +563,7 @@ namespace AdvancedScript {
 				i += 1;
 			}
 		}
+		IniLoadData();
 	}
 
 	private: System::Void SaveScriptFile(String^ filepath) {  /// Save Script file from DataGridView to Disk
@@ -525,69 +585,10 @@ namespace AdvancedScript {
 	private: System::Void TrViewScript_NodeMouseDoubleClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
 		if (TrViewScript->SelectedNode->Level != 0) {
 			LoadScriptFile(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text);
+			ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line just in case update script through run
 		}
 	}
-	/*private: System::Void bu_CreateCategory_Click(System::Object^  sender, System::EventArgs^  e) {
-		String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", "Category" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
-		if (Category_ == "") {
-			Interaction::MsgBox("this Category name not Valid", MsgBoxStyle::DefaultButton1, "Error");
-			return;
-		}
-		if (IO::Directory::Exists((Application::StartupPath + "\\Script\\" + Category_))) {
-			Interaction::MsgBox("this Category is Exist", MsgBoxStyle::DefaultButton1, "Error");
-			return;
-		}
-		else
-		{
-			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\" + Category_);
-			TrViewScript->Nodes->Add(Category_);
-		}
-	}*/
-	/*private: System::Void Bu_SaveScript_Click(System::Object^  sender, System::EventArgs^  e) {
-		String^ Filename = Interaction::InputBox("Enter Category Name", "Category Name", "File" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
-		if (Filename == "") {
-			Interaction::MsgBox("this Filename name not Valid", MsgBoxStyle::DefaultButton1, "Error");
-			return;
-		}
-		if (Filename->EndsWith(".txt")) {
-			Filename = Filename->Substring(0, Filename->IndexOf(".txt"));
-		}
-		if (TrViewScript->SelectedNode == nullptr) {
-			Interaction::MsgBox("Please Select Category ", MsgBoxStyle::DefaultButton1, "Error");
-			return;
-		}
-		String^ Category_;
 
-		if (TrViewScript->SelectedNode->Level == 0) {
-			Category_ = TrViewScript->SelectedNode->Text;
-		}
-		else
-		{
-			Category_ = TrViewScript->SelectedNode->Parent->Text;
-		}
-
-		if (!IO::File::Exists((Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt"))) {
-			SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
-			if (TrViewScript->SelectedNode->Level == 0) 
-				TrViewScript->SelectedNode->Nodes->Add(Filename + ".txt");
-			else			
-				TrViewScript->SelectedNode->Parent->Nodes->Add(Filename + ".txt");
-		}
-		else
-		{
-			if (Interaction::MsgBox("this File is Exist,Over Write it ??!!", MsgBoxStyle::OkCancel, "Error") == MsgBoxResult::Ok) {
-				SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
-				if (TrViewScript->SelectedNode->Level == 0)
-					TrViewScript->SelectedNode->Nodes->Add(Filename + ".txt");
-				else
-					TrViewScript->SelectedNode->Parent->Nodes->Add(Filename + ".txt");
-			}
-			else {
-				return;
-			}
-		}
-
-	}*/
 	private: System::Void deletToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		if (Interaction::MsgBox("Are you sure??!!", MsgBoxStyle::OkCancel, "Delete") == MsgBoxResult::Ok) {
 			if (TrViewScript->SelectedNode->Level == 0) {
@@ -678,49 +679,59 @@ namespace AdvancedScript {
 		VarListClear();
 		TrViewVariable->Nodes->Clear();
 	}
-private: System::Void createCategoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", "Category" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
-	if (Category_ == "") {
-		Interaction::MsgBox("this Category name not Valid", MsgBoxStyle::DefaultButton1, "Error");
-		return;
-	}
-	if (IO::Directory::Exists((Application::StartupPath + "\\Script\\" + Category_))) {
-		Interaction::MsgBox("this Category is Exist", MsgBoxStyle::DefaultButton1, "Error");
-		return;
-	}
-	else
-	{
-		IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\" + Category_);
-		TrViewScript->Nodes->Add(Category_);
-	}
-}
-private: System::Void renameToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	String^ renamed;
-	if (TrViewScript->SelectedNode->Level == 0) {
-		
-		String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", TrViewScript->SelectedNode->Text, this->Width / 2, this->Height / 2);
+	private: System::Void createCategoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", "Category" + TrViewScript->Nodes->Count, this->Width / 2, this->Height / 2);
 		if (Category_ == "") {
 			Interaction::MsgBox("this Category name not Valid", MsgBoxStyle::DefaultButton1, "Error");
 			return;
 		}
-		
-		FileSystem::Rename(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Text, Application::StartupPath + "\\Script\\" + Category_);
-			TrViewScript->SelectedNode->Text = Category_;
-	}
-	else
-	{		
-		String^ Category_ = Interaction::InputBox("Enter file Name", "Category Name", TrViewScript->SelectedNode->Text, this->Width / 2, this->Height / 2);
-		if (Category_ == "") {
-			Interaction::MsgBox("this file name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+		if (IO::Directory::Exists((Application::StartupPath + "\\Script\\" + Category_))) {
+			Interaction::MsgBox("this Category is Exist", MsgBoxStyle::DefaultButton1, "Error");
 			return;
 		}
-		if (Category_->Trim()->EndsWith(".txt")) {
-			Category_ = Category_->Substring(0, Category_->IndexOf(".txt"));
+		else
+		{
+			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\" + Category_);
+			TrViewScript->Nodes->Add(Category_);
 		}
-		FileSystem::Rename(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\"+ TrViewScript->SelectedNode->Text, Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + Category_ + ".txt");
-		TrViewScript->SelectedNode->Text = Category_ + ".txt";
 	}
-	
-}
-};
+	private: System::Void renameToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		String^ renamed;
+		if (TrViewScript->SelectedNode->Level == 0) {
+
+			String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", TrViewScript->SelectedNode->Text, this->Width / 2, this->Height / 2);
+			if (Category_ == "") {
+				Interaction::MsgBox("this Category name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+				return;
+			}
+
+			FileSystem::Rename(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Text, Application::StartupPath + "\\Script\\" + Category_);
+			TrViewScript->SelectedNode->Text = Category_;
+		}
+		else
+		{
+			String^ Category_ = Interaction::InputBox("Enter file Name", "Category Name", TrViewScript->SelectedNode->Text, this->Width / 2, this->Height / 2);
+			if (Category_ == "") {
+				Interaction::MsgBox("this file name not Valid", MsgBoxStyle::DefaultButton1, "Error");
+				return;
+			}
+			if (Category_->Trim()->EndsWith(".txt")) {
+				Category_ = Category_->Substring(0, Category_->IndexOf(".txt"));
+			}
+			FileSystem::Rename(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text, Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + Category_ + ".txt");
+			TrViewScript->SelectedNode->Text = Category_ + ".txt";
+		}
+
+	}
+	private: System::Void newScriptToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		DGV1->Rows->Clear();
+		VarListClear();
+		TrViewVariable->Nodes->Clear();
+
+	}
+	private: System::Void DGV1_CellEndEdit(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+		ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line just in case update script through run
+	}
+
+	};
 }

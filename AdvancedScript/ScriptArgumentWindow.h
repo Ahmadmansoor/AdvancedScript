@@ -205,10 +205,15 @@ namespace ScriptWindowArg {
 					if (!ret_) {
 						break;
 					}
-					int Line2Jmp = Str2bool(Line2Jmp_);
+					int Line2Jmp = Str2duint(Line2Jmp_);
 					int MaxLine = ScriptargumentClass::Scriptargument_->GetMaxLine();
 					if (Line2Jmp > MaxLine) {
 						ret_ = false;
+					}
+					else
+					{
+						ScriptargumentClass::Scriptargument_->setLineNumber(Line2Jmp);
+						return true;
 					}
 					break; 
 				}
