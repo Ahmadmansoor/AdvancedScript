@@ -1,7 +1,8 @@
 #pragma once
 
 #include "HelperFunctions.h"
-
+#include "LogWindow.h"
+#include "Parser.h"
 
 ref class VarPara_temp
 {
@@ -106,6 +107,38 @@ public:
 	static Generic::List<VarPara^>^ VarList = gcnew Generic::List<VarPara^>;
 
 };
+
+public ref class LableLine
+{
+public:
+	LableLine(int LableLineNumber_, String^ Lable_) {
+		LableLineNumber = LableLineNumber_;
+		Lable = Lable_;
+	}
+
+private:
+public:
+	int LableLineNumber;
+	String^ Lable;
+
+	
+};
+
+public ref class LableLineClass {
+public:
+	static Generic::List<LableLine^>^ LableLines = gcnew Generic::List<LableLine^>;
+};
+
+
+static LableLine^ GetLineByLable(String^ input) {
+	for each (LableLine^ var in LableLineClass::LableLines)
+	{
+		if (var->Lable == input) {
+			return var;
+		}
+	}
+	return gcnew LableLine(0, "");
+}
 
 
 void VarListClear();

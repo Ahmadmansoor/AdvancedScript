@@ -1,10 +1,11 @@
 #include "Register_UnRegister_Commands.h"
-#include "MainForm.h"
 #include "LogTemplate.h"
 #include "HelperFunctions.h"
 #include "Parser.h"
 #include "LogWindow.h"
 #include "ScriptFun.h"
+#include "MainForm.h"
+
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;

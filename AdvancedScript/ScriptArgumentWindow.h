@@ -9,7 +9,7 @@ using namespace System::Windows::Forms;
 
 
 namespace ScriptWindowArg {
-
+ 
 	ref class Scriptargument
 	{
 	private:

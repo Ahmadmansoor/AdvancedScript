@@ -1,6 +1,7 @@
 #include "ScriptFun.h"
-#include "LogWindow.h"
-#include "Parser.h"
+
+
+
 void VarListClear() {
 	ScriptFunList::VarList->Clear();
 }
@@ -615,10 +616,58 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 	switch ((arguments->Count))
 	{
 	case 4: {
-		String^ trueline = StrAnalyze(arguments[2], VarType::int_);
-		String^ falseline = StrAnalyze(arguments[3], VarType::int_);
-		if (!Information::IsNumeric(trueline) || !Information::IsNumeric(falseline))
-			return false;
+		String^ trueline; String^ falseline;
+		/// first we check if its decimal it should hold d at the end 
+		if ( (arguments[2]->EndsWith("d")) && (Information::IsNumeric((arguments[2]->Substring(0, arguments[2]->Length - 1))))) {
+			trueline = arguments[2]->Substring(0, arguments[2]->Length - 1);			
+		}
+		else  /// if its not decimal then we should analyze the string if it's hex value 
+		{
+			trueline = StrAnalyze(arguments[2], VarType::int_);
+			if (!Information::IsNumeric(trueline)) {   /// in case the value not numric that mean it could be a Lable				
+				LableLine^ LLine = GetLineByLable(arguments[2]);
+				if (LLine->Lable != ""){
+					trueline = int2Str(LLine->LableLineNumber);
+				}
+				else
+				{
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + trueline +  " : true line is incorect"));
+					return false;
+				}
+			}			
+		}
+
+		/// first we check if its decimal it should hold d at the end 
+		if ((arguments[3]->EndsWith("d")) && (Information::IsNumeric((arguments[3]->Substring(0, arguments[3]->Length - 1))))) {
+			falseline = arguments[3]->Substring(0, arguments[3]->Length - 1);
+		}
+		else  /// if its not decimal then we should analyze the string if it's hex value 
+		{
+			falseline = StrAnalyze(arguments[3], VarType::int_);
+			if (!Information::IsNumeric(falseline)) {   /// in case the value not numric that mean it could be a Lable				
+				LableLine^ LLine = GetLineByLable(arguments[3]);
+				if (LLine->Lable != "") {
+					falseline = int2Str(LLine->LableLineNumber);
+				}
+				else
+				{
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + falseline + " : true line is incorect"));
+					return false;
+				}
+			}
+		}	
+				
+		/*if (arguments[3]->EndsWith("d")) {
+			if (Information::IsNumeric((arguments[3]->Substring(0, arguments[3]->Length - 1)))) {
+				trueline = arguments[3]->Substring(0, arguments[3]->Length - 1);
+			}
+		}
+		else
+		{
+			falseline = StrAnalyze(arguments[3], VarType::int_);
+		}	*/	 
+		/*if (!Information::IsNumeric(trueline) || !Information::IsNumeric(falseline))
+			return false;*/
 		String ^ ret = condtion_(arguments[0], arguments[1]);
 		if (!ret->StartsWith("NULL/")) {
 			if (Str2bool(ret)) {
