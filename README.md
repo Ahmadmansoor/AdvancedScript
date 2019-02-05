@@ -12,7 +12,9 @@ just a try to add more feature's to x64dbg script system
 	4- show all variables in a list with it's values.
 	5- edit script onfly.
 	6- enable to define array with range like z[n].
-	7- writestr
+	7- writestr Function.
+	
+	
 - version 2.0:
       1-all numbers are hex numbers.
       2-more nested in arguments.
@@ -48,7 +50,10 @@ just a try to add more feature's to x64dbg script system
       7- when define variables no need to use $, but wher ever you use this var you should add $ first.
       8- when calulate int value all arguments will converted to int and make the formula exist.
       9- when calulate str or array all arguments are set to gather after it calculate it's value's.
-      10- when we define array it will create array with 0x500 elements.
+      10- we can define array of string with n elements.
+      11- in parameter if string begin with " and end with " it will take it as it without analyzed.
+      	  so if u want to write a command for some functions like asm command u can define the asm command 
+	  with coma like "mov rax,1".
 ```
 ### 1- Varx: 
 it's Like Var in x64dbg system, for defining variable's which can used in Script commands.
@@ -109,6 +114,7 @@ Setx P1, P2
            setx $x, $z + 0x33 - 25        x= 0xB8\184
            varx array, y, 0x10            array y[0]= 0x10 :has been added
            setx $x, $x + $y[0]            x= 0xC8\200
+	 
 ```
 ### 3- Getx / Printx : 
 print the value of the virables .
