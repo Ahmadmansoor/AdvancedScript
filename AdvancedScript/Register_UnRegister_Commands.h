@@ -37,6 +37,19 @@ static bool findallmemx(int argc, char* argv[]);
 
 static bool memdump(int argc, char* argv[]);
 static bool WriteStr(int argc, char* argv[]);
+
+// BP 
+static bool BPxx(int argc, char* argv[]);
+static bool bpcx(int argc, char* argv[]);
+static bool bpex(int argc, char* argv[]);
+static bool bpdx(int argc, char* argv[]);
+static bool bphx(int argc, char* argv[]);
+static bool bphcx(int argc, char* argv[]);
+static bool bphex(int argc, char* argv[]);
+static bool bphdx(int argc, char* argv[]);
+static bool bpmx(int argc, char* argv[]);
+static bool asmx(int argc, char* argv[]);
+
 //static bool ifCond(String^ input, String^% lineNumber);
 ///////////////////////
 System::Void LoadTemplateFiles_();

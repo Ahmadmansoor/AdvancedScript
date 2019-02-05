@@ -46,7 +46,8 @@ namespace ScriptWindowArg {
 				"varxclear",
 				"memdump",
 				"writestr",
-				"if"
+				"if",
+				"goto"
 			};
 			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
 		};
@@ -104,11 +105,20 @@ namespace ScriptWindowArg {
 		memdump,
 		writestr,
 		ifx,
+		goto_,
 	};
 
 
 	bool readLine(String^ Line_, int MaxLine) {
 		bool ret_ = false;
+		if (Line_->Trim()->EndsWith(":")) {
+			ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+			return true;
+		}
+		if (Line_->Trim() == "") {
+			ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+			return true;
+		}
 		if (Line_->Trim()->IndexOf(" ") > 0) {  /// >0 it mean it has command at the begining			
 			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));
 
@@ -216,6 +226,23 @@ namespace ScriptWindowArg {
 						return true;
 					}
 					break; 
+				}
+				case ScriptWindowArg::goto_: {
+					String^ Line2Jmp_;
+					ret_ = gotox_(Line_, Line2Jmp_);
+					if (!ret_) {
+						break;
+					}
+					int Line2Jmp = Str2duint(Line2Jmp_);
+					int MaxLine = ScriptargumentClass::Scriptargument_->GetMaxLine();
+					if (Line2Jmp > MaxLine) {
+						ret_ = false;
+					}
+					else
+					{
+						ScriptargumentClass::Scriptargument_->setLineNumber(Line2Jmp);
+						return true;
+					}
 				}
 				default: // case non of them begin with command
 					ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));

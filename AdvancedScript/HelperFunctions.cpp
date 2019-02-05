@@ -63,17 +63,20 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 			if (input->Substring(i, 1) != ",") {
 				temp = temp + input->Substring(i, 1);
 			}
-			//if (input->Substring(i, 1) == "\"") {  /// case some arguments have (") like a string >> "Test.txt"
-			//	String^ restTemp = input->Substring(i + 1, input->Length - (i + 1)); // get the rest of the string (input)
-			//	int indexOfNextcomma= restTemp->IndexOf("\"");
-			//	if (indexOfNextcomma < 1) {
-			//		Script::Gui::Message("Something Wrong in the arguments");
-			//		return;
-			//	}
-			//	arguments->Add(restTemp->Substring(0, indexOfNextcomma));
-			//	temp = "";
-			//	i = i + indexOfNextcomma + 1;
-			//}
+			if (input->Substring(i, 1) == "\"") {  /// case some arguments have (") like a string >> "Test.txt"
+				String^ restTemp = input->Substring(i + 1, input->Length - (i + 1)); // get the rest of the string (input)
+				int indexOfNextcomma= restTemp->IndexOf("\"");
+				if (indexOfNextcomma > 0) {       ///if (indexOfNextcomma < 1) {
+					/*Script::Gui::Message("Something Wrong in the arguments");
+					return;*/
+					arguments->Add(restTemp->Substring(0, indexOfNextcomma));
+					temp = "";
+					i = i + indexOfNextcomma + 1;
+				}
+				/*arguments->Add(restTemp->Substring(0, indexOfNextcomma));
+				temp = "";
+				i = i + indexOfNextcomma + 1;*/
+			}
 		}
 		else {
 			arguments->Add(temp->Trim());
@@ -201,9 +204,31 @@ String^ str2Hex(String^ input) {
 	}
 	else
 	{
-		if (Information::IsNumeric(input)) {
+		String^ intValue;
+		int check_ = CheckHexIsValid(input, intValue);
+		switch (check_)
+		{
+		case 0: {		
+			break;
+		}
+		case 1: {
+			return "0x" + input;
+		}
+		case 2: {  /// it's hex value
+			return "0x" + input;
+		}
+		default:
+			break;
+		}
+		/*if (Information::IsNumeric(input)) {
 			return duint2Hex(Str2duint((input)));
 		}
+		else
+		{
+			String^ intValue;
+			int check_ = CheckHexIsValid(input, intValue);
+			
+		}*/
 	}
 	return "NULL/ ";
 }

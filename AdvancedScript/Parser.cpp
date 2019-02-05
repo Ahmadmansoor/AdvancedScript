@@ -735,6 +735,9 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 	Generic::List <String^>^ StrHolderList = gcnew Generic::List <String^>;
 	String^ temp ="";
 	int begin_ = 0;
+	if (input == "") {
+		return input;
+	}
 	if (Array::IndexOf(vars_, input->Substring(0, 1)) >= 0) {/// if (i=0) begin with vars defenations this we need to add it 
 
 		if (input->Substring(0, 1) == " ") {  /// in case calc str or array we need spaces

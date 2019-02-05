@@ -427,10 +427,12 @@ namespace AdvancedScript {
 		for (int i = 0; i < DGV1->RowCount - 1; i++)
 		{
 			DGV1->Rows[i]->Cells[0]->Value = i; // duint2Hex(i) + "/" + i;   // fill first colume with number 0 1 2 3 ....
-			if (DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->EndsWith(":")) {
-				String^ LableHold = DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->Substring(0, DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->IndexOf(":"));
-				LableLine^ LaL = gcnew LableLine(i, LableHold);
-				LableLineClass::LableLines->Add(LaL);
+			if (DGV1->Rows[i]->Cells[1]->Value != nullptr) {
+				if (DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->EndsWith(":")) {
+					String^ LableHold = DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->Substring(0, DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->IndexOf(":"));
+					LableLine^ LaL = gcnew LableLine(i, LableHold);
+					LableLineClass::LableLines->Add(LaL);
+				}
 			}
 		}
 	}
@@ -444,7 +446,12 @@ namespace AdvancedScript {
 			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
 				DGV1->ClearSelection();
 				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
-				readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
+				if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
+					readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
+				}
+				else
+					readLine("", DGV1->Rows->Count);
+				
 			}
 			else
 			{

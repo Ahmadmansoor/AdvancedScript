@@ -609,6 +609,42 @@ bool WriteStr_(duint address, String^ text, bool replace) {
 	return true;
 }
 
+bool gotox_(String^ input, String^% lineNumber) {
+	Generic::List<String^>^ arguments;
+	GetArg(input, arguments);
+	String^ arrayIndex;
+	switch ((arguments->Count))
+	{
+	case 1: {		
+		/// first we check if its decimal it should hold d at the end 
+		if ((arguments[0]->EndsWith("d")) && (Information::IsNumeric((arguments[0]->Substring(0, arguments[0]->Length - 1))))) {
+			lineNumber = arguments[0]->Substring(0, arguments[2]->Length - 1);
+			return true;
+		}
+		else  /// if its not decimal then we should analyze the string if it's hex value 
+		{
+			lineNumber = StrAnalyze(arguments[0], VarType::int_);
+			if (!Information::IsNumeric(lineNumber)) {   /// in case the value not numric that mean it could be a Lable				
+				LableLine^ LLine = GetLineByLable(arguments[0]);
+				if (LLine->Lable != "") {
+					lineNumber = int2Str(LLine->LableLineNumber);
+					return true;
+				}
+				else
+				{
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + lineNumber + " : true line is incorect"));
+					return false;
+				}
+			}
+		}	
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+}
+
 bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),type (int, str ),line number if true ,line number if false
 	Generic::List<String^>^ arguments;
 	GetArg(input, arguments);
@@ -655,19 +691,7 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 					return false;
 				}
 			}
-		}	
-				
-		/*if (arguments[3]->EndsWith("d")) {
-			if (Information::IsNumeric((arguments[3]->Substring(0, arguments[3]->Length - 1)))) {
-				trueline = arguments[3]->Substring(0, arguments[3]->Length - 1);
-			}
-		}
-		else
-		{
-			falseline = StrAnalyze(arguments[3], VarType::int_);
-		}	*/	 
-		/*if (!Information::IsNumeric(trueline) || !Information::IsNumeric(falseline))
-			return false;*/
+		}							
 		String ^ ret = condtion_(arguments[0], arguments[1]);
 		if (!ret->StartsWith("NULL/")) {
 			if (Str2bool(ret)) {
@@ -686,6 +710,10 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 	}
 }
 
+//String^ BPxx_(String^ addr, String^ BPname , String^ BPType) {
+//
+//
+//}
 
 String^ condtion_(String^ input,String^ typo) {
 	if ((input->Contains("!=")) && (!input->StartsWith("!="))) {
@@ -806,3 +834,4 @@ String^ condtion_(String^ input,String^ typo) {
 		}
 	}
 }
+

@@ -133,7 +133,7 @@ public:
 static LableLine^ GetLineByLable(String^ input) {
 	for each (LableLine^ var in LableLineClass::LableLines)
 	{
-		if (var->Lable == input) {
+		if (var->Lable->Trim() == input->Trim()) {
 			return var;
 		}
 	}
@@ -169,3 +169,6 @@ bool WriteStr_(duint address, String^ text, bool replace);
 String^ condtion_(String^ input, String^ typo);
 
 bool ifCond(String^ input, String^% lineNumber);
+bool gotox_(String^ input, String^% lineNumber);
+
+//String^ BPxx_(String^ addr, String^ BPname = "", String^ BPType = "");

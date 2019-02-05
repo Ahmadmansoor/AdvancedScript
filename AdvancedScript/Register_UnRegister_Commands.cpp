@@ -83,7 +83,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("test_", test, false);
 
 	/////////Logx....
-	registerCommand("LogxJustAtBP", cbLogxJustAtBP, false);
+	registerCommand("LogxJustAtBP", cbLogxJustAtBP, true);
 
 	registerCommand("LogxTemplateManager", LogxTemplateManager, false);
 
@@ -105,26 +105,39 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("Setx", SetVarx, false);
 
 	/// Script instruments equivalent in x64dbg 
-	registerCommand("Movx", Movx, false);
-	registerCommand("addx", addx, false);
-	registerCommand("subx", subx, false);
-	registerCommand("mulx", mulx, false);
-	registerCommand("andx", andx, false);
-	registerCommand("orx", orx, false);
-	registerCommand("xorx", xorx, false);
-	registerCommand("shlx", shlx, false);
-	registerCommand("pushx", pushx, false);
-	registerCommand("popx", popx, false);
-	registerCommand("cmpx", cmpx, false);
+	registerCommand("Movx", Movx, true);
+	registerCommand("addx", addx, true);
+	registerCommand("subx", subx, true);
+	registerCommand("mulx", mulx, true);
+	registerCommand("andx", andx, true);
+	registerCommand("orx", orx, true);
+	registerCommand("xorx", xorx, true);
+	registerCommand("shlx", shlx, true);
+	registerCommand("pushx", pushx, true);
+	registerCommand("popx", popx, true);
+	registerCommand("cmpx", cmpx, true);
 	////
-	registerCommand("findx", findx, false);
-	registerCommand("findallx", findallx, false);
-	registerCommand("findallmemx", findallmemx, false);
+	registerCommand("findx", findx, true);
+	registerCommand("findallx", findallx, true);
+	registerCommand("findallmemx", findallmemx, true);
 	////
 	registerCommand("VarxClear", VarxClear, false);
-	registerCommand("memdump", memdump, false);
+	registerCommand("memdump", memdump, true);
 	////
-	registerCommand("writeStr",WriteStr , false);
+	registerCommand("writeStr",WriteStr , true);
+
+	registerCommand("BPxx", BPxx, true);
+	registerCommand("bpcx", bpcx, true);
+	registerCommand("bpex", bpex, true);
+	registerCommand("bpdx", bpdx, true);
+	registerCommand("bphx", bphx, true);
+	registerCommand("bphcx", bphcx, true);
+	registerCommand("bphex", bphex, true);
+	registerCommand("bphdx", bphdx, true);
+	registerCommand("bpmx", bpmx, true);
+	registerCommand("asmx", asmx, true);
+
+
 
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 }
@@ -882,13 +895,13 @@ static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, 
 	switch ((arguments->Count))
 	{
 	case 2: {
-		String^ cmd = findallmemx_(arguments[0], arguments[1]);
+		String^ cmd = findallmemx_(arguments[0], arguments[1]);		
 		DbgCmdExecDirect(Str2ConstChar(cmd));
 		return true;
 	}
 	case 3: {
-		String^ cmd = findallmemx_(arguments[0], arguments[1], arguments[2]);
-		DbgCmdExecDirect(Str2ConstChar(cmd));
+		String^ cmd = findallmemx_(arguments[0], arguments[1], arguments[2]);		
+		 DbgCmdExecDirect(Str2ConstChar(cmd));
 		return true;
 	}
 	default:
@@ -953,6 +966,405 @@ static bool WriteStr(int argc, char* argv[]) { //WriteStr(duint address, String^
 			bool replace_ = Str2bool(arguments[2]);
 			WriteStr_(Str2duint(intValue), text_, replace_);
 			break;			
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+
+/// BP 
+
+static bool BPxx(int argc, char* argv[]) { 
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bp " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	case 2: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ BPname = StrAnalyze(arguments[1], VarType::str);		
+		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) ) {
+			String^ cmd = "bp " + addr + "," + BPname ;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + addr + " " + BPname ));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+			return false;
+		}
+		break;		
+	}
+	case 3: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ BPname = StrAnalyze(arguments[1], VarType::str);
+		String^ BPType = StrAnalyze(arguments[2], VarType::str);
+		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
+			String^ cmd = "bp " + addr + "," + BPname + "," + BPType;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + addr + " " + BPname + " " + BPType));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+static bool bpcx(int argc, char* argv[]) { 
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bpc " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+static bool bpex(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); 	
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bpe " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+static bool bpdx(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments);
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bpd " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+static bool bphx(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bph " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	case 2: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ BPname = StrAnalyze(arguments[1], VarType::str);
+		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) ) {
+			String^ cmd = "bph " + addr + "," + BPname;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + addr + " " + BPname));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	case 3: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ BPname = StrAnalyze(arguments[1], VarType::str);
+		String^ BPType = StrAnalyze(arguments[2], VarType::str);
+		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
+			String^ cmd = "bph " + addr + "," + BPname + "," + BPType;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + addr + " " + BPname + " " + BPType));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+static bool bphcx(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments);
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bphc " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+static bool bphex(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments);
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bphe " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+
+static bool bphdx(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments);
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bphd " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+static bool bpmx(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 1: {
+		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		if (!cmd->Contains("NULL")) {
+			cmd = "bpm " + cmd;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	case 2: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ BPname = StrAnalyze(arguments[1], VarType::str);
+		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) ) {
+			String^ cmd = "bpm " + addr + "," + BPname;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + addr + " " + BPname));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	case 3: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ BPname = StrAnalyze(arguments[1], VarType::str);
+		String^ BPType = StrAnalyze(arguments[2], VarType::str);
+		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
+			String^ cmd = "bpm " + addr + "," + BPname + "," + BPType;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + addr + " " + BPname + " " + BPType));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+}
+
+static bool asmx(int argc, char* argv[]) {
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	
+	case 2: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ Instruction = StrAnalyze(arguments[1], VarType::str);
+		if ((!Instruction->StartsWith("\"")) && (!Instruction->EndsWith("\"")) ) {
+			Instruction = "\"" + Instruction + "\"";
+		}
+		if ((!addr->Contains("NULL")) && (!Instruction->Contains("NULL"))) {
+			String^ cmd = "asm " + addr + "," + Instruction;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + addr + " " + Instruction));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+			return false;
+		}
+		break;
+	}
+	case 3: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ Instruction = StrAnalyze(arguments[1], VarType::str);
+		if ((Instruction->StartsWith("\"")) && (Instruction->EndsWith("\""))) {
+			Instruction = "\"" + Instruction + "\"";
+		}
+		String^ BPType = StrAnalyze(arguments[2], VarType::str);
+		if ((!addr->Contains("NULL")) && (!Instruction->Contains("NULL")) && (!Instruction->Contains("NULL"))) {
+			String^ cmd = "asm " + addr + "," + Instruction + "," + BPType;
+			DbgCmdExecDirect(Str2ConstChar(cmd));
+			return true;
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + addr + " " + Instruction + " " + BPType));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+			return false;
+		}
+		break;
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));

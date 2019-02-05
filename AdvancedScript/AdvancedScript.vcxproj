@@ -111,6 +111,7 @@
     <Link>
       <AdditionalDependencies>user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/rt %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -134,24 +135,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Data.v17.1">
-      <HintPath>DevExpress.Data.v17.1</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Printing.v17.1.Core">
-      <HintPath>DevExpress.Printing.v17.1.Core</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Utils.v17.1">
-      <HintPath>DevExpress.Utils.v17.1</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraEditors.v17.1">
-      <HintPath>DevExpress.XtraEditors.v17.1</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraLayout.v17.1">
-      <HintPath>DevExpress.XtraLayout.v17.1</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraTreeList.v17.1">
-      <HintPath>C:\Program Files (x86)\DevExpress 17.1\Components\Bin\Framework\DevExpress.XtraTreeList.v17.1.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
