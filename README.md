@@ -1,10 +1,18 @@
 # AdvancedScript
 
 just a try to add more feature's to x64dbg script system
-
+![scriptwindow](https://user-images.githubusercontent.com/7176580/52273727-1d816b00-2964-11e9-83a5-2e587e7275c3.png)
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 2.5 beta :
+	1- Script window is sperate.
+	2- Create Folder for script,form Load script with category.
+	3- add more mirror Functions (xorx - pushx ...), and Functions like ( if , goto,writestr ) to shortcut the work.
+	4- show all variables in a list with it's values.
+	5- edit script onfly.
+	6- enable to define array with range like z[n].
+	7- writestr
 - version 2.0:
       1-all numbers are hex numbers.
       2-more nested in arguments.
