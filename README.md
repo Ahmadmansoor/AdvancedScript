@@ -297,10 +297,10 @@ it's mirror of asm command in x64dbg, it accept variables.
 
 ```
 ### 8- writeStr : 
-this Function write any string to address of memory, in case replace is true, it read the string ( Code or unicode )
-then it zero the string memory and replace it with new string according the string type ( Code or unicode ).
-WriteStr(duint address, String^ text, bool replace)
+this Function write any string to address of memory, in case replace is true, it read the string ( Asci or unicode )
+then it zero the string memory and replace it with new string according the string type ( Asci or unicode ).
 ```
+WriteStr(duint address, String^ text, bool replace)
 ```
 ### 9- if / goto: 
 if this Function as any if, its good for short the work of cmp jne .
