@@ -20,7 +20,7 @@ just a try to add more feature's to x64dbg script system
 	11- insert from clipboard replace all script.
 	12- insert from clipboard inside the script.
 	13- copy separated lines to used in other script.
-	14- insert description with confusing ;).
+	14- insert description without confusing ;).
 	
 - version 2.0:
       1-all numbers are hex numbers.
@@ -273,7 +273,7 @@ Good for maintenance.
    sample :
          - VarxClear           
 ```
-### 6- asmx : 
+### 7- asmx : 
 it's mirror of asm command in x64dbg, it accept variables.
 ``` 
    sample :
@@ -290,10 +290,51 @@ it's mirror of asm command in x64dbg, it accept variables.
 	asmx $addr,$call
 
 ```
-### 6- writeStr : 
+### 8- writeStr : 
 this Function write any string to address of memory, in case replace is true, it read the string ( Code or unicode )
 then it zero the string memory and replace it with new string according the string type ( Code or unicode ).
 WriteStr(duint address, String^ text, bool replace)
+```
+```
+### 9- if / goto: 
+if this Function as any if, its good for short the work of cmp jne .
+goto it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
+ if condtion ( > < = != ) , type (int, str ) , line number if true , line number if false
+ - in parameter 1 :we can make any compare with variables ( >  <  =  != ).
+ - in parameter 2 :we define the type of variable we need to compare. we can compare int with int or string to string
+ - Line number : there are 3 way to set it 
+ 		1- number + d : it mean the number is int not hex value Like 10d = line number 10
+		2- number : it mean the number hex value Like 10 = line number 16
+		3- string lable : it mean there are lable in the script it will jmp to 
+note : we can mix this tow commands and we get a loop good for IAT read write fix Loop
+	or for search 
+ 
+```
+	-0	varx int,x,10
+	 1	varx int,y,5
+	 2	if $x=$y,int,GotHere,4d   compare between 2 int if they equal it will jmp to 
+	 					lable (GotHere) else jmp to line number 4
+ 	 3	getx $x
+ 	 4	goto GotHere		go to line 8 ( lable GotHere)
+ 	 5	getx $y
+ 	 6	varx array,z[5],test
+  	 7	setx $x,20
+  	 8	GotHere:
+  	 9	movx rax,{rsp}
+	 .
+	 .
+	 .
+	 20	goto 10			go to line 16
+	 21 	goto 10d		go to line 10
+	 
+	 -Loop:
+	 	varx int,x,0
+		if $x<10,int,2d,Finish
+		setx $x,$x+1
+		getx $x
+		goto 1d
+		Finish:
+
 ```
 ////////////////////////////////////////////////////////////////////////////
 ## Log Section:
