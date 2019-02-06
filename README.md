@@ -2,6 +2,8 @@
 
 just a try to add more feature's to x64dbg script system
 ![scriptwindow](https://user-images.githubusercontent.com/7176580/52273727-1d816b00-2964-11e9-83a5-2e587e7275c3.png)
+
+use Scriptw command for showing the Script window
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
