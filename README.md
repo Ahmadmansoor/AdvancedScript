@@ -8,7 +8,8 @@ just a try to add more feature's to x64dbg script system
 - version 2.5 beta :
 	1- Script window is sperate.
 	2- Create Folder for script,form Load script with category.
-	3- add more mirror Functions (xorx - pushx ...), and Functions like ( if , goto,writestr ) to shortcut the work.
+	3- add more mirror Functions (xorx - pushx ...), and Functions like 
+	       ( if , goto,writestr ) to shortcut the work.
 	4- show all variables in a list with it's values.
 	5- edit script onfly.
 	6- enable to define array with range like z[n].
@@ -60,27 +61,40 @@ it's Like Var in x64dbg system, for defining variable's which can used in Script
 ```
 Parameter:
 Varx P1, P2 , P3(optional) 
-      P1: variable type it holde ( str , int , array )  /// array is defined with 500 elements.
+      P1: variable type it holde ( str , int , array )  /// array is just string elements.
       P2: variable name it should not have spaces or begin with $ , 
-        >>>>>>but when resolve it's value it should add $ before it.<<<< like this $x  >> value of x 
+        >>>>>>but when resolve it's value, we should add $ before it.<<<< like this $x  >> value of x 
+	For array variable we add [size] after the varible like this :
+	 - varx array,x[10]		Create array with 16 elements
+	 - varx array,x[10],test	Create array with 16 elements and set the first element value to (test)
       P3: the value of the variable it's optional for str and array only and the value will be null
             for int type it should be have a value and must be int 
-            note : you can use variable for this arguments like $x or {rax}.
-            no need to use ""
+            note : you can use variables as a value of the variable like this  $x or {rax}.
+            no need to use "" in general, but if it had comma (,) we should but "" to define it as one string
+	    like :
+	    - varx str,x,this is test comma,done     >>this is wrong because it contain comma ",", so it should be 
+	    - varx str,x,"this is test comma,done"
+	    in some cases for some commands like findallmemx command we should use ""
+	    like :
+	    - varx str, search, "4533C94533C033"	here we should use comma
+	    - varx str, base, { rdx }
+	    - findallmemx $base, $search    
+	    - mov rdi, ref.addr(0)
  Variable type is :
- - int: all value will saved as int value.
+ - int: all value will saved as int value but it will show as hex or printed with two value hex/decimal.
  - str.
- - array with 0x500 string elements ( it's just string).
+ - array with n string elements ( it's just string).
   sample :
          - varx int, x, 90
-         - varx array, y, 1
+         - varx array, y[1],10	       array with 1 elemnt with value =10 we get it by getx y[0]
+	 - getx y[0]			as array index is begin from 0
          - varx str, x, {rax}
-         - varx array, y
+         - varx array, y[10]	array with 16 elemnts 
          - varx str, x
          //////////
          - varx int, x, 0x45fa
          - varx int,x1,25+30     /// 0x55 /85
-         - varx array, z,30
+         - varx array, z[30]
          - setx $z[10],test
          - varx int,x2,$x +$x1+$z[0]
 ```
@@ -102,7 +116,7 @@ Setx P1, P2
            
          - varx str, x, {rax}             x=rax value
            Setx $x,test                   x=test
-           varx array,z,10                z[0]=10     because all elements are string       
+           varx array,z[23],10            z[0]=10     because all elements are string       
            setx $z[5],$x$z[0]             z[5]=test10
            setx $z[5],$x $z[0]            z[5]=test 10
            setx $z[5],$x+$z[0]            z[5]=test+10
@@ -112,7 +126,7 @@ Setx P1, P2
          - varx int, x, 0x45fa            int x= 0x45FA\17914 :has been added
            varx str, z, 0xaa              str z= 0xaa :has been added
            setx $x, $z + 0x33 - 25        x= 0xB8\184
-           varx array, y, 0x10            array y[0]= 0x10 :has been added
+           varx array, y[6], 0x10            array y[0]= 0x10 :has been added
            setx $x, $x + $y[0]            x= 0xC8\200
 	 
 ```
