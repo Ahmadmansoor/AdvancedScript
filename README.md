@@ -309,9 +309,11 @@ goto it is as any goto it will jmp to line, it use the same Line number formulas
  - in parameter 1 :we can make any compare with variables ( >  <  =  != ).
  - in parameter 2 :we define the type of variable we need to compare. we can compare int with int or string to string
  - Line number : there are 3 way to set it 
+ 
  		1- number + d : it mean the number is int not hex value Like 10d = line number 10
 		2- number : it mean the number hex value Like 10 = line number 16
 		3- string lable : it mean there are lable in the script it will jmp to 
+		
 note : we can mix this tow commands and we get a loop good for IAT read write fix Loop
 	or for search 
  
