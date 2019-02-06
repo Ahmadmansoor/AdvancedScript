@@ -21,7 +21,8 @@ just a try to add more feature's to x64dbg script system
 	12- insert from clipboard inside the script.
 	13- copy separated lines to used in other script.
 	14- insert description without confusing ;).
-	15- as it is beta version so it support one step not auto step , use F12 for step, sorry for that 
+	15- add the dll file of c++ runtime for each package.
+	16- as it is beta version so it support one step not auto step , use F12 for step, sorry for that 
 		I need to check if it work then I will add auto step :}
 	
 - version 2.0:
