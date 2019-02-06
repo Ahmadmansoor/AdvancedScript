@@ -65,12 +65,18 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 			}
 			if (input->Substring(i, 1) == "\"") {  /// case some arguments have (") like a string >> "Test.txt"
 				String^ restTemp = input->Substring(i + 1, input->Length - (i + 1)); // get the rest of the string (input)
-				int indexOfNextcomma= restTemp->IndexOf("\"");
+				int indexOfNextcomma= restTemp->LastIndexOf("\"");
 				if (indexOfNextcomma > 0) {       ///if (indexOfNextcomma < 1) {
 					/*Script::Gui::Message("Something Wrong in the arguments");
 					return;*/
-					arguments->Add(restTemp->Substring(0, indexOfNextcomma));
-					temp = "";
+					if ((temp != "") && (temp != "\"")) {
+						temp = temp->Substring(0,temp->IndexOf("\"")) + restTemp->Substring(0, indexOfNextcomma);  // temp->Substring(0,temp->IndexOf("\"")) to remove comma at end
+					}
+					else
+					{
+						arguments->Add(restTemp->Substring(0, indexOfNextcomma));
+						temp = "";
+					}							
 					i = i + indexOfNextcomma + 1;
 				}
 				/*arguments->Add(restTemp->Substring(0, indexOfNextcomma));

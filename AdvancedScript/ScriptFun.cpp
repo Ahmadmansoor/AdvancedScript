@@ -251,7 +251,7 @@ bool GetVarx_(String^ varname, int Arrayindex_) {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
 			//_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
 			if (x->vartype == "int") {
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= 0x" + str2Hex(x->varvalue) + "\\" + x->varvalue )) ;
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= 0x" + duint2Hex(Str2duint(x->varvalue)) + "\\" + x->varvalue )) ;
 			}
 			else { /// it mean str
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
@@ -265,7 +265,7 @@ bool GetVarx_(String^ varname, int Arrayindex_) {
 			else {
 				if (x->vartype == "int") {
 					//_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue + "\\" + str2Hex(x->varvalue)));
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= 0x" + str2Hex(x->varvalue) + "\\" + x->varvalue));
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= 0x" + duint2Hex(Str2duint(x->varvalue)) + "\\" + x->varvalue));
 				}
 				else  /// it mean str
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
@@ -627,7 +627,7 @@ bool gotox_(String^ input, String^% lineNumber) {
 	case 1: {		
 		/// first we check if its decimal it should hold d at the end 
 		if ((arguments[0]->EndsWith("d")) && (Information::IsNumeric((arguments[0]->Substring(0, arguments[0]->Length - 1))))) {
-			lineNumber = arguments[0]->Substring(0, arguments[2]->Length - 1);
+			lineNumber = arguments[0]->Substring(0, arguments[0]->Length - 1);
 			return true;
 		}
 		else  /// if its not decimal then we should analyze the string if it's hex value 
