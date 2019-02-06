@@ -93,8 +93,9 @@ Varx P1, P2 , P3(optional)
          - varx str, x
          //////////
          - varx int, x, 0x45fa
-         - varx int,x1,25+30     /// 0x55 /85
-         - varx array, z[30]
+         - varx int,x1,25+30    	 /// 0x55 /85
+         - varx array, z[$x],10		<<<you can use variable or equation in the index of the array>>>
+	 - varx array,cx[z[0]+$x+6]
          - setx $z[10],test
          - varx int,x2,$x +$x1+$z[0]
 ```
@@ -149,7 +150,7 @@ SetVarx P1, P2
            getx $x                  x=rax value
          
          -varx int, x, 10           int x= 0x10\16 :has been added
-          varx array, y, 1          array y[0]= 1 :has been added
+          varx array, y[$x], 1          array y[0]= 1 :has been added
           setx $y[$x], 110          y[10]= 110
           getx $y                   y[0]= 1
           getx $y[$x]               y[10]= 110
@@ -158,7 +159,7 @@ SetVarx P1, P2
 it's collection of edit functions from x64dbg system, but it accept variables in the parameter.
 - (Movx , addx , subx , mulx , divx , andx , orx , xorx , shlx ) : first parameter will not analyzed, just the second one.
 - (pushx , popx):parameter will analyzed
-- cmpx : both parameter will analyzed
+- cmpx : both parameter will analyzed  /// replaced with (if) commands 
 ```
 sample :
      - again:
