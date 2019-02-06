@@ -290,7 +290,7 @@ String^ Movx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -303,7 +303,7 @@ String^ addx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -316,7 +316,7 @@ String^ subx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -329,7 +329,7 @@ String^ mulx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -342,7 +342,7 @@ String^ divx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -355,7 +355,7 @@ String^ andx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -368,7 +368,7 @@ String^ orx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -381,7 +381,7 @@ String^ xorx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -394,7 +394,7 @@ String^ shlx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -434,7 +434,7 @@ String^ cmpx_(String^ p1, String^ p2) {
 	String^ oldvalue = "";
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
-	if (!p1->StartsWith("NULL/ ")) {
+	if (!p2->StartsWith("NULL/ ")) {
 		cmd_ = cmd_ + str2Hex(p2);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
@@ -710,10 +710,6 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 	}
 }
 
-//String^ BPxx_(String^ addr, String^ BPname , String^ BPType) {
-//
-//
-//}
 
 String^ condtion_(String^ input,String^ typo) {
 	if ((input->Contains("!=")) && (!input->StartsWith("!="))) {

@@ -647,7 +647,7 @@ namespace AdvancedScript {
 		{
 			if (var->vartype == "int") {
 				TrViewVariable->Nodes->Add(var->varname);
-				TrViewVariable->Nodes[i]->Nodes->Add(str2Hex(var->varvalue[0]));
+				TrViewVariable->Nodes[i]->Nodes->Add(duint2Hex(Str2duint(var->varvalue[0])));
 			}
 			if (var->vartype == "str") {
 				TrViewVariable->Nodes->Add(var->varname);

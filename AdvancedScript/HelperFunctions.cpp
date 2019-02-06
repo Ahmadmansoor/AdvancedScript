@@ -199,13 +199,22 @@ String^ charPTR2String(char* input) {
 }
 
 String^ str2Hex(String^ input) {
+	String^ intValue;
 	if (input->StartsWith("0x")) {
-		return input;
+		if (CheckHexIsValid(input->Substring(2, input->Length-2), intValue) > 0) {
+			return input;
+		}		
 	}
 	else
 	{
-		String^ intValue;
-		int check_ = CheckHexIsValid(input, intValue);
+		
+		if (CheckHexIsValid(input, intValue) > 0) {
+			return "0x" + input;
+		}
+		/*if (Information::IsNumeric(input)) {
+			return duint2Hex(Str2duint((input)));
+		}*/
+		/*int check_ = CheckHexIsValid(input, intValue);
 		switch (check_)
 		{
 		case 0: {		
@@ -219,7 +228,7 @@ String^ str2Hex(String^ input) {
 		}
 		default:
 			break;
-		}
+		}*/
 		/*if (Information::IsNumeric(input)) {
 			return duint2Hex(Str2duint((input)));
 		}

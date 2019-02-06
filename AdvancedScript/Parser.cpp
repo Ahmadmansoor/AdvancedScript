@@ -185,7 +185,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value				
 				//return ScriptFunList::VarList[indexofVar]->varvalue[0];
 				if (vartype_ == "int") {  /// if retAsVartype is string and vartype_ is int then we convert it to hex value
-					return  int2Str((int)Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
+					return  duint2Hex((int)Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
 				}
 				else { /// case str 
 					return  ScriptFunList::VarList[indexofVar]->varvalue[0]; // return var string as it
@@ -710,7 +710,7 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 					String^ oldv="";
 					if (CheckHexIsValid(tempInput, oldv)) {						
 						if (!tempInput->StartsWith("0x")) {
-							tempInput = "0x" + tempInput;
+							tempInput = "0x" + tempInput->Trim();
 						}
 					}
 					argument = ReplaceAtIndex(argument, oldValue, tempInput);
