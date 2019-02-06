@@ -159,7 +159,10 @@ SetVarx P1, P2
 it's collection of edit functions from x64dbg system, but it accept variables in the parameter.
 - (Movx , addx , subx , mulx , divx , andx , orx , xorx , shlx ) : first parameter will not analyzed, just the second one.
 - (pushx , popx):parameter will analyzed
-- cmpx : both parameter will analyzed  /// replaced with (if) commands 
+- (BPxx , bpcx ,bpex ,bpdx ,bphx ,bphcx ,bphex ,bphdx ,bpmx) 	parallel commands for break point commands, 
+								   parameters will not analyzed.
+- cmpx : both parameter will analyzed  /// replaced with (if) commands on the new Script window,
+						but can used at x64dbg Screen Script
 ```
 sample :
      - again:
@@ -186,11 +189,22 @@ SetVarx P1, P2, P3
             for example: EB0?90??8D
       P3: The size of the data to search in. Default is the entire memory map..
                   >>all variable can used AVS<<
+<<<<<<note: you can find the count of result by get {$result}>>>>>>>>
+
    sample :
          - varx str, search, "4533C94533C033"  << or >> varx str, search, 4533C94533C033
            varx str, base, { rdx }
            findallmemx $base, $search
+	or:   findallmemx $base,4533C94533C033
+	or:   findallmemx $base,"4533C94533C033"
            mov rdi, ref.addr(0)
+	   
+	- varx str, search, "4533C94533C033"
+	  varx str, base, { rdx }
+	  findallmemx $base, $search
+	  log {ref.addr(500)}
+	  varx int,k,0	  
+	  setx $k,{$result} //result hold the array length
          
 ```
 ### 5- memdump : 
