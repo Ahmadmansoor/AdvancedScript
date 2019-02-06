@@ -14,7 +14,13 @@ just a try to add more feature's to x64dbg script system
 	5- edit script onfly.
 	6- enable to define array with range like z[n].
 	7- writestr Function.
-	
+	8- run from anyware in the script.
+	9- rest variables list in case maintenance. 
+	10- insert rows as much as you need.
+	11- insert from clipboard replace all script.
+	12- insert from clipboard inside the script.
+	13- copy separated lines to used in other script.
+	14- insert description with confusing ;).
 	
 - version 2.0:
       1-all numbers are hex numbers.
@@ -86,18 +92,24 @@ Varx P1, P2 , P3(optional)
  - array with n string elements ( it's just string).
   sample :
          - varx int, x, 90
-         - varx array, y[1],10	       array with 1 elemnt with value =10 we get it by getx y[0]
-	 - getx y[0]			as array index is begin from 0
-         - varx str, x, {rax}
-         - varx array, y[10]	array with 16 elemnts 
-         - varx str, x
+           varx array, y[1],10	       array with 1 elemnt with value =10 we get it by getx y[0]
+	   getx y[0]			as array index is begin from 0
+           varx str, x, {rax}
+           varx array, y[10]	array with 16 elemnts 
+           varx str, x
          //////////
          - varx int, x, 0x45fa
-         - varx int,x1,25+30    	 /// 0x55 /85
-         - varx array, z[$x],10		<<<you can use variable or equation in the index of the array>>>
-	 - varx array,cx[z[0]+$x+6]
-         - setx $z[10],test
-         - varx int,x2,$x +$x1+$z[0]
+           varx int,x1,25+30    	 /// 0x55 /85
+           varx array, z[$x],10		<<<you can use variable or equation in the index of the array>>>
+	   varx array,cx[z[0]+$x+6]
+           setx $z[10],test
+           varx int,x2,$x +$x1+$z[0]
+	   
+	- varx array,x[1]
+	  setx $x[0],10
+	  getx $x[0]
+	  varx array,z[$x[0]+1],t3
+	  getx $z[0]
 ```
 ### 2- Setx : 
 set value to the virables in AdvancedScript vriable system or x64dbg system.
@@ -127,7 +139,7 @@ Setx P1, P2
          - varx int, x, 0x45fa            int x= 0x45FA\17914 :has been added
            varx str, z, 0xaa              str z= 0xaa :has been added
            setx $x, $z + 0x33 - 25        x= 0xB8\184
-           varx array, y[6], 0x10            array y[0]= 0x10 :has been added
+           varx array, y[6], 0x10         array y[0]= 0x10 :has been added
            setx $x, $x + $y[0]            x= 0xC8\200
 	 
 ```
@@ -162,20 +174,31 @@ it's collection of edit functions from x64dbg system, but it accept variables in
 - (BPxx , bpcx ,bpex ,bpdx ,bphx ,bphcx ,bphex ,bphdx ,bpmx) 	parallel commands for break point commands, 
 								   parameters will not analyzed.
 - cmpx : both parameter will analyzed  /// replaced with (if) commands on the new Script window,
-						but can used at x64dbg Screen Script
+						but can be used at x64dbg Script Screen 
 ```
 sample :
      - again:
-      varx str,base,{rax}
-      cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
-      jne done
-      jmp again 
-      done:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
      - varx int,x,20
        varx int,y,0xFF
        var z     		>>> this var from x64dbg system
        addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
        addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
 
          
 ```
@@ -201,10 +224,20 @@ SetVarx P1, P2, P3
 	   
 	- varx str, search, "4533C94533C033"
 	  varx str, base, { rdx }
-	  findallmemx $base, $search
+	  findallmemx $base, $search  
 	  log {ref.addr(500)}
-	  varx int,k,0	  
+	  varx int,k,0
+	  setx $k,{ref.addr(500)}
 	  setx $k,{$result} //result hold the array length
+	  mov rdi, ref.addr(0)
+	  varx int, x0, 90
+	  varx int, x1, 5
+	  getx $x0
+	  getx $x1
+	  varx array, y, 1
+	  setx $y, 110, 100
+	  getx $y, 10 + $x + $x1 + 5
+
          
 ```
 ### 5- memdump : 
@@ -239,6 +272,28 @@ Good for maintenance.
 ``` 
    sample :
          - VarxClear           
+```
+### 6- asmx : 
+it's mirror of asm command in x64dbg, it accept variables.
+``` 
+   sample :
+         - varx str,addr,{rip}
+	   varx str,command,"add rax,10"
+	   asmx $addr,$command
+      or   asmx $addr,"add rax,10"     
+      
+     How to asmeble command ( call qword ptr ds:[0x000000014004C408] ) at address, way to fix IAT
+     -  varx str,addr,{rip}
+	varx str,IAT,0x000000014004C408
+ 	varx str,call,"call qword ptr ds:["
+ 	setx $call,$call $IAT ]		Don't forget the spacess :)
+	asmx $addr,$call
+
+```
+### 6- writeStr : 
+this Function write any string to address of memory, in case replace is true, it read the string ( Code or unicode )
+then it zero the string memory and replace it with new string according the string type ( Code or unicode ).
+WriteStr(duint address, String^ text, bool replace)
 ```
 ////////////////////////////////////////////////////////////////////////////
 ## Log Section:
