@@ -74,9 +74,9 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 	if (vartype == "array") {		
 		///find array length
 		String^ arrayLen = varname->Substring(varname->IndexOf("[") + 1, varname->Length - (varname->IndexOf("[") + 1));  /// extrect array length
-		arrayLen = arrayLen->Substring(0, arrayLen->IndexOf("]"));
+		arrayLen = arrayLen->Substring(0, arrayLen->LastIndexOf("]"));  // we used LastIndexOf in case index value calculated from array var 
 		arrayLen = StrAnalyze(arrayLen, VarType::int_);
-		if (arrayLen == "NULL/") {
+		if ((arrayLen == "NULL/") || (arrayLen=="")){
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Array Length not valid"));
 			return false;
 		}
@@ -89,14 +89,14 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue,Str2duint(arrayLen));
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[0]" + "= " + resolveVarValue + " :has been added"));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[" + duint2Hex(Str2duint(arrayLen)) + "]" + "= " + resolveVarValue + " :has been added"));
 			return true;
 		}
 		else {
 			int indexofVar = 0; int arrayLength;
 			if (!Varexist(varname, retvartype, indexofVar, arrayLength)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[0]" + "= " + resolveVarValue + " :has been added"));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[" + duint2Hex(Str2duint(arrayLen)) + "]" + "= " + resolveVarValue + " :has been added"));
 				return true;
 			}
 			else {
@@ -149,7 +149,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 	if ( (Varexist(varname, retvartype, indexofVar, arrayLength)) && (varname->StartsWith("$")) ) {
 		varname = varname->Substring(1, varname->Length - 1);
 		if (index_ > 0 && retvartype == "array") {  // it is a array then all elements are string 			
-			if (index_ > arrayLength) {  /// check if the requested index beyond array length
+			if (index_ > arrayLength-1) {  /// check if the requested index beyond array length
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "index out of the boundary"));
 				return false;
 			}
@@ -238,7 +238,7 @@ bool GetVarx_(String^ varname, int Arrayindex_) {
 	int indexofVar = 0;	String^ retvartype = ""; int arrayLength;
 	if (Varexist(varname, retvartype, indexofVar, arrayLength)) {
 		if (Arrayindex_ > 0 && retvartype == "array") {
-			if (Arrayindex_ > arrayLength) {  /// check if the requested index beyond array length
+			if (Arrayindex_ > arrayLength-1) {  /// check if the requested index beyond array length
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "index out of the boundary"));
 				return false;
 			}
@@ -444,12 +444,15 @@ String^ cmpx_(String^ p1, String^ p2) {
 
 String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "find ";	
-	String^ base_s = StrAnalyze(base_,VarType::str);
+	String^ base_s = StrAnalyze(base_,VarType::str);	
 	if (!base_s->StartsWith("NULL/")) {		
 		cmd_ = cmd_ + base_s + ",";			
 		String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
 		if (Searchvalue_x->StartsWith("0x")) {
 			Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
+		}
+		if ((!Searchvalue_x->StartsWith("\"")) && (!Searchvalue_x->EndsWith("\""))) {   /// check if it between comma ""
+			Searchvalue_x = "\"" + Searchvalue_x + "\"";
 		}
 		if (!Searchvalue_x->StartsWith("NULL/")) {
 			cmd_ = cmd_ + Searchvalue_x;
@@ -476,12 +479,15 @@ String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 
 String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findall ";
-	String^ base_s = StrAnalyze(base_, VarType::str);
+	String^ base_s = StrAnalyze(base_, VarType::str);	
 	if (!base_s->StartsWith("NULL/")) {		
 		cmd_ = cmd_ + base_s + ",";		
 		String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
 		if (Searchvalue_x->StartsWith("0x")) {
 			Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
+		}
+		if ((!Searchvalue_x->StartsWith("\"")) && (!Searchvalue_x->EndsWith("\""))) {   /// check if it between comma ""
+			Searchvalue_x = "\"" + Searchvalue_x + "\"";
 		}
 		if (!Searchvalue_x->StartsWith("NULL/")) {
 			cmd_ = cmd_ + Searchvalue_x;
@@ -517,6 +523,9 @@ String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 			String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
 			if (Searchvalue_x->StartsWith("0x")) {
 				Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
+			}
+			if ((!Searchvalue_x->StartsWith("\"")) && (!Searchvalue_x->EndsWith("\""))) {   /// check if it between comma ""
+				Searchvalue_x = "\"" + Searchvalue_x + "\"";
 			}
 			if (!Searchvalue_x->StartsWith("NULL/")) {
 				cmd_ = cmd_ + Searchvalue_x;

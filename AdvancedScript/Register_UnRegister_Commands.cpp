@@ -76,7 +76,7 @@ void registerCommand(const char* command, CBPLUGINCOMMAND cbCommand, bool debugo
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
-	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.0] || Coded By AhmadMansoor /exetools "));
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.5 beta] || Coded By AhmadMansoor /exetools "));
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 
 	registerCommand("Scriptw", cbMainForm, false);
@@ -109,12 +109,15 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("addx", addx, true);
 	registerCommand("subx", subx, true);
 	registerCommand("mulx", mulx, true);
+	registerCommand("divx", divx, true);
 	registerCommand("andx", andx, true);
 	registerCommand("orx", orx, true);
 	registerCommand("xorx", xorx, true);
 	registerCommand("shlx", shlx, true);
+
 	registerCommand("pushx", pushx, true);
 	registerCommand("popx", popx, true);
+
 	registerCommand("cmpx", cmpx, true);
 	////
 	registerCommand("findx", findx, true);
@@ -516,7 +519,7 @@ static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int ind
 		}
 		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) {  /// this mean it's array
 			String^  arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("[") + 1));
-			arrayIndex = arrayIndex->Substring(0, arrayIndex->IndexOf("]"));
+			arrayIndex = arrayIndex->Substring(0, arrayIndex->LastIndexOf("]"));
 			arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
 			if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex))) {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng index of array"));

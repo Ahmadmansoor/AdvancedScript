@@ -237,11 +237,13 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 	{
 		temp = temp->Substring(tokenindex, temp->Length - tokenindex); // get value after token
 		int i1 = 0;
+		if (i1 + 1 < temp->Length) {		
 		while (temp->Substring(i1 + 1, 1) == " ")  /// count how many spaces
 		{
 			VarString = " " + VarString;
 			if (i1 + 1 > input->Length) { break; } // if we reach the begin of the string
 			i1 += 1;
+		}
 		}
 		temp = temp->Trim(); /// remove all spaces after token like >>  55   + 10
 		int i = 0;
