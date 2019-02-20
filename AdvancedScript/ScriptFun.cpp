@@ -170,20 +170,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int ));
 				}
-			}else {  /// case str
-				//int commaCount = 0;
-				//if (value_ == "") { value_ = "NULL"; } // in case user not define value
-				//String^ intValue;
-				//if (!CheckHexIsValid(value_, intValue)) {
-				//	String^ resolveVarValue = resolveString(value_, commaCount);
-				//	if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
-				//		resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-				//		resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
-				//	}
-				//	if (commaCount >= 0) {
-				//		value_ = resolveVarValue;
-				//	}
-				//}
+			}else {  /// case str				
 				String^ resolveVarValue = StrAnalyze(value_, VarType::str);
 				ScriptFunList::VarList[indexofVar]->varvalue[0] = resolveVarValue;
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + resolveVarValue));
@@ -202,20 +189,7 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int));
 				}
-			}else {  /// case str
-				//int commaCount = 0;
-				//if (value_ == "") { value_ = "NULL"; } // in case user not define value
-				//String^ intValue;
-				//if (!CheckHexIsValid(value_, intValue)) {
-				//	String^ resolveVarValue = resolveString(value_, commaCount);
-				//	if (resolveVarValue->StartsWith("\"") && (resolveVarValue->EndsWith("\""))) {  /// that mean all string is commaed 
-				//		resolveVarValue = resolveVarValue->Substring(1, resolveVarValue->Length - 1);
-				//		resolveVarValue = resolveVarValue->Substring(0, resolveVarValue->IndexOf("\"")); // get string without comma's
-				//	}
-				//	if (commaCount >= 0) {
-				//		value_ = resolveVarValue;
-				//	}
-				//}
+			}else {  /// case str				
 				String^ resolveVarValue = StrAnalyze(value_, VarType::str);
 				ScriptFunList::VarList[indexofVar]->varvalue[0] = resolveVarValue;
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + resolveVarValue));

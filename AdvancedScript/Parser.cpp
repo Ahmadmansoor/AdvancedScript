@@ -469,7 +469,7 @@ bool CheckexcutedCmd(String^ cmd_) {
 		}
 	}
 	_plugin_logprint(Str2ConstChar(argumentValue(cmd_, OldValue_)));
-	return true;
+	return false;
 }
 
 

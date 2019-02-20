@@ -78,6 +78,7 @@ namespace AdvancedScript {
 
 	public:
 		String^ ScriptFileName = String::Empty;
+		bool Run = false;
 	private: System::Windows::Forms::ToolStripMenuItem^  saveAsToolStripMenuItem;
 	public:
 
@@ -460,6 +461,52 @@ namespace AdvancedScript {
 				ScriptargumentClass::Scriptargument_->setLineNumber(0);
 			}
 			FileVariableTreeView();
+		}
+		if (e->KeyCode == Keys::F11) {
+			if (Run)
+				Run = false;
+			else
+				Run = true;
+			while (Run)
+			{
+				Application::DoEvents();
+				DGV1->ClearSelection();
+				if (ScriptargumentClass::Scriptargument_->GetLineNumber() == 0) {
+					IniLoadData();  /// get all lable in the Script
+					ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line 
+				}
+				if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
+					DGV1->ClearSelection();
+					DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
+					if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
+						if (!readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count)) {
+							Run = false;
+						}
+						else
+						{
+							Script::Debug::Wait();
+						}
+					}
+					else
+						if (!readLine("", DGV1->Rows->Count)) {
+							Run = false;
+						}
+						else
+						{
+							Script::Debug::Wait();
+						}
+				}
+				else
+				{
+					DGV1->ClearSelection();
+					DGV1->Rows[0]->Selected = true;
+					ScriptargumentClass::Scriptargument_->setLineNumber(0);
+					Run = false;
+				}
+				FileVariableTreeView();
+				Application::DoEvents();
+			}
+
 		}
 	}
 	private: System::Void DGV1_RowsAdded(System::Object^  sender, System::Windows::Forms::DataGridViewRowsAddedEventArgs^  e) {

@@ -140,6 +140,7 @@ namespace ScriptWindowArg {
 				case ScriptWindowArg::logxwindow:
 					break;
 				case ScriptWindowArg::logx:
+					ret_ = ::logx(0, &argv);
 					break;
 				case ScriptWindowArg::logxtrace:
 					break;
@@ -260,6 +261,7 @@ namespace ScriptWindowArg {
 			else
 			{
 				ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
+				Script::Debug::Wait();
 				if (ret_) {
 					ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
 					return ret_;
@@ -272,6 +274,21 @@ namespace ScriptWindowArg {
 
 			}
 		}
+		else
+		{
+			ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
+			Script::Debug::Wait();
+			if (ret_) {
+				ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+				return ret_;
+			}
+			else
+			{
+				Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+			}
+			return ret_;
+		}
+		
 		return ret_;
 
 	}

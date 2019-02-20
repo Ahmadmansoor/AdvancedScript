@@ -50,6 +50,7 @@ static bool bphdx(int argc, char* argv[]);
 static bool bpmx(int argc, char* argv[]);
 static bool asmx(int argc, char* argv[]);
 
+static bool GetAPIName(int argc, char* argv[]);
 //static bool ifCond(String^ input, String^% lineNumber);
 ///////////////////////
 System::Void LoadTemplateFiles_();
