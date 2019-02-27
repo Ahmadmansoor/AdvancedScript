@@ -14,12 +14,13 @@ String^ charPTR2String(char* input);
 String^ ClearSlash_etc(String^ input);
 String^ GetAPIName_LableWay(duint Addr_);
 duint Str2duint(String^ input_);
+int Str2int(String^ input);
 duint Hex2duint(String^ input_);
 String^ str2Asci(String^ input);
 String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newValue);
 String^ AddZero2Addr(String^ input);
 
-String^ str2Hex(String^ input);
+
 bool IsAllSpaces(String^ input_);
 
 template<class T>
@@ -42,11 +43,14 @@ enum VarType
 	int_,
 	str,
 	array_,
+	hex,
 };
 
 VarType GetVarType(String^ vartype);
 Generic::List<String^>^ GetClipBoard();
 void SetClipBoard(String^ input);
+
+String^ str2Hex(String^ input, VarType inputType_,bool addx0);
 
 System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brackets=false);
 

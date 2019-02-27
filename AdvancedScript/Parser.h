@@ -14,7 +14,8 @@ String^ resolveString(String^ input, int% commaCount);
 String^ argumentValue(String^ argument, String^% OldValue_);
 String^ GetArgValueByType(String^ argument, VarType type_);
 String^ StrAnalyze(String^ input, VarType type_);
-
+String^ returnSpaces(int SpaceNum);
+String^ replaceValueBetweenBrackets(String^ input_);
 //script test 
 
 //Logx memdump(76FA0000, 50)

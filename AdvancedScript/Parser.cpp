@@ -101,21 +101,30 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 					return "NULL/ something go wrong in resolve index";
 				}
 				if (Information::IsNumeric(ArrayIndexValue)) {  /// if it's resolved as int value then we used it 
+					if ((int)Str2duint(ArrayIndexValue)   > ScriptFunList::VarList[indexofVar]->arrayLength -1) { // -1 because array begin from 0
+						return "NULL/ value beggier than array index";
+					}
 					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
 						return ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)];
 					}
 					else //// but if the retAsVartype (ret value of the var) is int so we need to resolve it as int because array hold string
 					{
 						String^ intValue;  /// we ret the int value from the array item
+						if (ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)] == nullptr) {
+							return "NULL/ no value for this cell in the array";
+						}
 						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)], intValue) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
 							return "NULL/ array value is not Numeric";/// that something wrong in the index of the array 
 						}
 						else {
-							return intValue; 
+							return intValue;
 						}
 					}
 				}
 				String^ intValue;
+				if ((int)Str2duint(ArrayIndexValue)   > ScriptFunList::VarList[indexofVar]->arrayLength - 1) { // -1 because array begin from 0
+					return "NULL/ value beggier than array index";
+				}
 				if (CheckHexIsValid(ArrayIndexValue, intValue) == 0) {  /// /// check if array index is not Numeric then if could be Hex
 					return "NULL/ array index is not Numeric";/// that something wrong in the index of the array 
 				}
@@ -237,13 +246,13 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 	{
 		temp = temp->Substring(tokenindex, temp->Length - tokenindex); // get value after token
 		int i1 = 0;
-		if (i1 + 1 < temp->Length) {		
-		while (temp->Substring(i1 + 1, 1) == " ")  /// count how many spaces
-		{
-			VarString = " " + VarString;
-			if (i1 + 1 > input->Length) { break; } // if we reach the begin of the string
-			i1 += 1;
-		}
+		if (i1 + 1 < temp->Length) {
+			while (temp->Substring(i1 + 1, 1) == " ")  /// count how many spaces
+			{
+				VarString = " " + VarString;
+				if (i1 + 1 > input->Length) { break; } // if we reach the begin of the string
+				i1 += 1;
+			}
 		}
 		temp = temp->Trim(); /// remove all spaces after token like >>  55   + 10
 		int i = 0;
@@ -254,7 +263,7 @@ String^ ForWard(String^ input, int tokenindex, String^% VarString) { /// tokenin
 			if (i + 1 > temp->Length) { break; } // if we reach the begin of the string
 		}
 		if (value_ == "") {
-			value_ = temp;				
+			value_ = temp;
 		}
 
 		VarString = value_ + VarString;
@@ -709,11 +718,12 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 				}
 				else {
 					/// as it's str we return the int value to hex value 
-					String^ oldv="";
-					if (CheckHexIsValid(tempInput, oldv)) {						
-						if (!tempInput->StartsWith("0x")) {
+					String^ oldv = "";
+					if (CheckHexIsValid(tempInput, oldv)) {
+						/*if (!tempInput->StartsWith("0x")) {
 							tempInput = "0x" + tempInput->Trim();
-						}
+						}*/
+						tempInput = tempInput->Trim();
 					}
 					argument = ReplaceAtIndex(argument, oldValue, tempInput);
 				}
@@ -730,16 +740,90 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 	return argument;
 }
 
+String^ returnSpaces(int SpaceNum) {  /// used for replaceValueBetweenBrackets to fill the gaps with spaces  
+	String^ temp;
+	for (int i = 0; i < SpaceNum; i++)
+	{
+		temp = temp + " ";
+	}
+	return temp;
+}
+
+/// used in cases $x[$z[3]] nasted variables (array)
+String^ replaceValueBetweenBrackets(String^ input_) {
+	String^ tempstr;
+	if ((input_->Contains("[")) && (input_->Contains("]"))) {
+		/// setx $c,$x[$z[3]]
+		String^ Tinput = input_;
+		int beginB = input_->LastIndexOf("[") + 1;
+		tempstr = input_->Substring(beginB, input_->Length - beginB);
+		int EndB = tempstr->IndexOf("]");
+		tempstr = tempstr->Substring(0, EndB);
+
+		while (beginB > 0)
+		{
+			if (tempstr->Trim()->StartsWith("$")) {
+				String^ newValue = StrAnalyze(tempstr, VarType::int_);  /// we get int value after Analyze so we should make it hex 
+				if (newValue->Contains("NULL/")) {
+					return "NULL/";
+				}
+				if ((Information::IsNumeric(newValue))) {
+					input_ = ReplaceAtIndex(input_, tempstr, str2Hex(newValue,VarType::int_,false));
+					Tinput = ReplaceAtIndex(Tinput, "[" + tempstr + "]", returnSpaces((Tinput, "[" + tempstr + "]")->Length));
+				}				
+			}
+			else
+			{
+				Tinput = ReplaceAtIndex(Tinput, "[" + tempstr + "]", returnSpaces((Tinput, "[" + tempstr + "]")->Length));
+			}
+			int beginB = Tinput->LastIndexOf("[") + 1;
+			if (beginB <= 0)
+				break;
+			tempstr = Tinput->Substring(beginB, Tinput->Length - beginB);
+			int EndB = tempstr->IndexOf("]");
+			tempstr = input_->Substring(beginB, EndB);
+
+		}
+	}
+	//while ((input_->Contains("[")) && (input_->Contains("]")))
+	//{
+	//	/// setx $c,$x[$z[3]]
+	//	int beginB = input_->LastIndexOf("[")+1;   // 
+	//	String^ tempstr = input_->Substring(beginB, input_->Length - beginB);
+	//	int EndB = tempstr->IndexOf("]");
+	//	tempstr = tempstr->Substring(0, EndB); // 
+	//	String^ newValue = StrAnalyze(tempstr, VarType::int_);
+	//	if ((!Information::IsNumeric(newValue))) {
+	//		return "NULL/";
+	//	}
+	//	else
+	//	{
+	//		input_=ReplaceAtIndex(input_, tempstr, newValue);
+	//	}
+
+	//}
+
+	return input_;
+}
+
 String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value should be int , other wise it would be str and we add str to gather
 	array <String^>^ breaks = { "*" ,"/" ,"+" ,"-" ,"$" ," " , "{" , "}" , "\"" };
 	array <String^>^ token_ = { "*" ,"/" ,"+" ,"-" };
 	array <String^>^ vars_ = { "$" ," " , "{" , "\"" };
 	Generic::List <String^>^ StrHolderList = gcnew Generic::List <String^>;
-	String^ temp ="";
+	String^ temp = "";
 	int begin_ = 0;
 	if (input == "") {
 		return input;
 	}
+	/// in cases like this  
+	/// setx $c,$x[$z[3]]    here we have nested 
+	String^ retvalue = replaceValueBetweenBrackets(input);
+	if (!retvalue->Contains("NULL/"))
+		input = retvalue;
+	else
+		return "NULL/";
+	///
 	if (Array::IndexOf(vars_, input->Substring(0, 1)) >= 0) {/// if (i=0) begin with vars defenations this we need to add it 
 
 		if (input->Substring(0, 1) == " ") {  /// in case calc str or array we need spaces
@@ -803,7 +887,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 		}
 
 	}
-	
+
 	for (int i = begin_; i < input->Length; i++)
 	{
 		if (Array::IndexOf(breaks, input->Substring(i, 1)) < 0) {
@@ -891,7 +975,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 				}
 			}
 			if (Array::IndexOf(token_, input->Substring(i, 1)) >= 0) {
-				if ((temp != "")|| ((temp == nullptr)) ) {
+				if ((temp != "") || ((temp == nullptr))) {
 					StrHolderList->Add(temp);
 				}
 				StrHolderList->Add(input->Substring(i, 1));
@@ -904,7 +988,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 			temp = "";
 		}
 	}
-	if (temp->Length ==1) {  // case enter 1 special char
+	if (temp->Length == 1) {  // case enter 1 special char
 		StrHolderList->Add(temp);
 		temp = "";   /// rest temp	
 	}
@@ -935,16 +1019,16 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 	case str:
 	{
 		for (int i = 0; i < StrHolderList->Count; i++)
-		{			
-				if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
-					StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::str);
-					StrHolder = StrHolder + StrHolderList[i]; 
-				}
-				else
-				{
-					StrHolder = StrHolder + StrHolderList[i];
-				}
-			
+		{
+			if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
+				StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::str);
+				StrHolder = StrHolder + StrHolderList[i];
+			}
+			else
+			{
+				StrHolder = StrHolder + StrHolderList[i];
+			}
+
 		}
 		break;
 	}

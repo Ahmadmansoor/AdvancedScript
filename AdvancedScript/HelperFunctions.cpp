@@ -85,8 +85,10 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 			}
 		}
 		else {
+			if ( (temp != "") && (temp != " ") ){
 			arguments->Add(temp->Trim());
 			temp = "";
+			}
 		}
 	}
 }
@@ -204,48 +206,51 @@ String^ charPTR2String(char* input) {
 
 }
 
-String^ str2Hex(String^ input) {
+/// it return hex from string if avalible 
+/// in case the input value is int it will be converted to hex 
+/// 
+String^ str2Hex(String^ input,VarType inputType_, bool addx0) {
 	String^ intValue;
-	if (input->StartsWith("0x")) {
+	if (input->StartsWith("0x")) {  /// it mean its hex value
 		if (CheckHexIsValid(input->Substring(2, input->Length-2), intValue) > 0) {
-			return input;
+			if (addx0) 
+				return input;			
+			else			
+				return input->Substring(2, input->Length - 2);			
 		}		
 	}
 	else
 	{
-		
-		if (CheckHexIsValid(input, intValue) > 0) {
-			return "0x" + input;
-		}
-		/*if (Information::IsNumeric(input)) {
-			return duint2Hex(Str2duint((input)));
-		}*/
-		/*int check_ = CheckHexIsValid(input, intValue);
+		int check_ = CheckHexIsValid(input, intValue);
 		switch (check_)
-		{
-		case 0: {		
-			break;
+		{		
+		case 1: {   /// the value is numaric so we don't know if it's hex or int so user define it
+			if (inputType_ == VarType::int_) {   /// the input value is int not hex value 
+				if (addx0)
+					return "0x" + duint2Hex(Str2duint(input));
+				else
+					return  duint2Hex(Str2duint(input));
+			}
+			else   /// the input value is hex 
+			{
+				if (addx0)
+					return  input;
+				else
+					return  "0x" + input;
+			}
+			
 		}
-		case 1: {
-			return "0x" + input;
-		}
-		case 2: {  /// it's hex value
-			return "0x" + input;
+		case 2: {  ///  the value is valid hex 
+			if (addx0)
+				return  input;
+			else
+				return  "0x" + input;
 		}
 		default:
-			break;
-		}*/
-		/*if (Information::IsNumeric(input)) {
-			return duint2Hex(Str2duint((input)));
-		}
-		else
-		{
-			String^ intValue;
-			int check_ = CheckHexIsValid(input, intValue);
-			
-		}*/
+			return "NULL /";
+		}	
 	}
-	return "NULL/ ";
+	return "NULL/";
 }
 
 duint Hex2duint(String^ input_) {
@@ -335,6 +340,18 @@ String^ reMoveSpaces(String^ input_) {
 		}
 	}
 	return temp;
+}
+
+int Str2int(String^ input) {   /// we need it just in case we need an int just
+	int result;
+	if (int::TryParse(input, result)) {
+		return result;
+	}
+	else {
+		_plugin_logprintf("can't get int from argument");
+		return -1;
+	}
+
 }
 
 duint Str2duint(String^ input_) {

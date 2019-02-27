@@ -94,6 +94,11 @@ public:
 			varvalue[0] = varvalue_;
 		}
 	}
+public :
+	void ResizeArr(int i) {
+		Array::Resize(varvalue, arrayLength + i);
+		arrayLength = arrayLength + i;
+	}
 
 public:
 	String^ vartype;
@@ -167,8 +172,11 @@ String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_="");
 bool dumpmem(String^ addr, String^ size, String^ para = "");
 bool WriteStr_(duint address, String^ text, bool replace);
 String^ condtion_(String^ input, String^ typo);
+bool ResizeArray_(String^ varname, int AddSub);
+bool GetArraySize_(String^ varArrName, String^ varname);
+bool Write2File_(String^ filepath, bool append_, String^ data_);
 
-
+bool InputBox_(String^ varname, int index_, String^ message_, String^ title);
 
 bool ifCond(String^ input, String^% lineNumber);
 bool gotox_(String^ input, String^% lineNumber);

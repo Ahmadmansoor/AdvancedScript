@@ -49,7 +49,10 @@ static bool bphex(int argc, char* argv[]);
 static bool bphdx(int argc, char* argv[]);
 static bool bpmx(int argc, char* argv[]);
 static bool asmx(int argc, char* argv[]);
-
+static bool ResizeArray(int argc, char* argv[]);
+static bool GetArraySize(int argc, char* argv[]);
+static bool Write2File(int argc, char* argv[]);
+static bool InputBox(int argc, char* argv[]);
 static bool GetAPIName(int argc, char* argv[]);
 //static bool ifCond(String^ input, String^% lineNumber);
 ///////////////////////

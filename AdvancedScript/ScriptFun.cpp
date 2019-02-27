@@ -76,7 +76,7 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		String^ arrayLen = varname->Substring(varname->IndexOf("[") + 1, varname->Length - (varname->IndexOf("[") + 1));  /// extrect array length
 		arrayLen = arrayLen->Substring(0, arrayLen->LastIndexOf("]"));  // we used LastIndexOf in case index value calculated from array var 
 		arrayLen = StrAnalyze(arrayLen, VarType::int_);
-		if ((arrayLen == "NULL/") || (arrayLen=="")){
+		if ((arrayLen == "NULL/") || (arrayLen=="") || (arrayLen == "0")){
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Array Length not valid"));
 			return false;
 		}
@@ -265,7 +265,7 @@ String^ Movx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2,VarType::hex,true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -278,7 +278,7 @@ String^ addx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -291,7 +291,7 @@ String^ subx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -304,7 +304,7 @@ String^ mulx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -317,7 +317,7 @@ String^ divx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -330,7 +330,7 @@ String^ andx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -343,7 +343,7 @@ String^ orx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -356,7 +356,7 @@ String^ xorx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -369,7 +369,7 @@ String^ shlx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -382,7 +382,7 @@ String^ pushx_(String^ p1) {
 	//p1 = argumentValue(p1, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p1 = StrAnalyze(p1, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p1);
+		cmd_ = cmd_ + str2Hex(p1, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -395,7 +395,7 @@ String^ popx_(String^ p1) {
 	//p1 = argumentValue(p1, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p1 = StrAnalyze(p1, VarType::str);
 	if (!p1->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p1);
+		cmd_ = cmd_ + str2Hex(p1, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -409,11 +409,127 @@ String^ cmpx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
 	return "NULL/ ";
+}
+
+bool GetArraySize_(String^ varArrName, String^ varname) {
+	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+	int indexofVarArr = 0; 	String^ retvartypeArr = "";		int arrayLengthArr;
+	if ((Varexist(varArrName->Trim(), retvartypeArr, indexofVarArr, arrayLengthArr)) && (varArrName->StartsWith("$"))) {
+		if ((Varexist(varname->Trim(), retvartype, indexofVar, arrayLength)) && (varname->StartsWith("$"))) {
+			if (retvartype == "array") {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Sorry not support array now, maybe later"));
+				return false;
+			}
+			else
+			{
+				ScriptFunList::VarList[indexofVar]->varvalue[0]=int2Str(ScriptFunList::VarList[indexofVarArr]->arrayLength);
+				return true;
+			}
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
+			return false;
+		}
+	}
+	else
+	{
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
+		return false;
+	}
+
+}
+
+bool InputBox_(String^ varname,int index_, String^ message_ , String^ title) {
+	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+	if ((Varexist(varname->Trim(), retvartype, indexofVar, arrayLength))) {
+		varname = varname->Substring(1, varname->Length - 1);		
+		if (retvartype == "array") {
+			if (index_ > ScriptFunList::VarList[indexofVar]->arrayLength - 1) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "value out of array index"));
+				return false;
+			}
+			message_ = StrAnalyze(message_,VarType::str);
+			String^ userInput = Interaction::InputBox(message_, title, "", System::Windows::Forms::Application::OpenForms[0]->Width / 2, System::Windows::Forms::Application::OpenForms[0]->Height / 2);
+			ScriptFunList::VarList[indexofVar]->varvalue[index_] = userInput;
+			return true;
+		}
+		if (retvartype == "str") {
+			message_ = StrAnalyze(message_, VarType::str);
+			String^ userInput = Interaction::InputBox(message_, title, "", System::Windows::Forms::Application::OpenForms[0]->Width / 2, System::Windows::Forms::Application::OpenForms[0]->Height / 2);
+			ScriptFunList::VarList[indexofVar]->varvalue[index_] = userInput;
+			return true;
+		}
+		else  // case int
+		{
+			message_ = StrAnalyze(message_, VarType::str);
+			String^ userInput = Interaction::InputBox(message_, title, "", System::Windows::Forms::Application::OpenForms[0]->Width / 2, System::Windows::Forms::Application::OpenForms[0]->Height / 2);
+			String^ intValue;
+			if (CheckHexIsValid(userInput, intValue) > 0) {
+				ScriptFunList::VarList[indexofVar]->varvalue[index_] = intValue;
+				return true;
+			}
+			else
+			{
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable is int and input is not int or hex"));
+				return false;
+			}
+		}
+	}
+	else {
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
+		return false;
+	}
+	return false;
+}
+
+bool ResizeArray_(String^ varname, int AddSub ) {	// resizeArr(array, added amount)
+	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+	if ((Varexist(varname->Trim(), retvartype, indexofVar, arrayLength)) && (varname->StartsWith("$"))) {
+		varname = varname->Substring(1, varname->Length - 1);
+		if (retvartype == "array") { 			
+			if (ScriptFunList::VarList[indexofVar]->arrayLength + AddSub <= 0) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Array length can't be less or equal 0"));
+				return false;
+			}
+			else
+			{
+				ScriptFunList::VarList[indexofVar]->ResizeArr(AddSub);
+				return true;
+			}
+			
+		}
+		else
+		{
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This is not an array"));
+			return false;
+		}
+	}
+	else {
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
+		return false;
+	}	
+}
+
+bool Write2File_(String^ filepath, bool append_,String^ data_) {	//  write2File(path,over_append(true),data
+	String^ data_x= StrAnalyze(data_, VarType::str);
+	if (data_x->Contains("NULL/")) {
+		return false;
+	}
+	if (append_) {
+		IO::File::AppendAllText( filepath, Environment::NewLine + data_x);
+		return true;
+	}
+	else
+	{
+		IO::File::WriteAllText(filepath, data_x);
+		return true;
+	}
 }
 
 String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
