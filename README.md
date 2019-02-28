@@ -189,7 +189,7 @@ SetVarx P1, P2
           getx $y                   y[0]= 1
           getx $y[$x]               y[10]= 110
 ```
-### 3- commands parallel of x64dbg  : 
+### 4- commands parallel of x64dbg  : 
 it's collection of edit functions from x64dbg system, but it accept variables in the parameter.
 - (Movx , addx , subx , mulx , divx , andx , orx , xorx , shlx ) : first parameter will not analyzed, just the second one.
 - (pushx , popx):parameter will analyzed
@@ -224,7 +224,7 @@ sample :
 
          
 ```
-### 4- findallmemx : 
+### 5- findallmemx : 
 it's same findallmem in x64dbg system, but it accept variables in the parameter.
 ```
 Parameter:
@@ -262,7 +262,7 @@ SetVarx P1, P2, P3
 
          
 ```
-### 5- memdump : 
+### 6- memdump : 
 dump memory to log window like windbg style
 ```
 	//00007ff8`02f42280  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
@@ -288,14 +288,14 @@ SetVarx P1, P2, P3
          memdump $address,$size
          
 ```
-### 6- VarxClear : 
+### 7- VarxClear : 
 clear all variable's rest variables list , so we can add again same var 
 Good for maintenance.
 ``` 
    sample :
          - VarxClear           
 ```
-### 7- asmx : 
+### 8- asmx : 
 it's mirror of asm command in x64dbg, it accept variables.
 Parameter  asmx(addr , Instruction , fill with nops)
 	Instruction: if you define it as var no problem if u but "" or not 
@@ -320,13 +320,13 @@ Parameter  asmx(addr , Instruction , fill with nops)
      - 
 
 ```
-### 8- writeStr : 
+### 9- writeStr : 
 this Function write any string to address of memory, in case replace is true, it read the string ( Asci or unicode )
 then it zero the string memory and replace it with new string according the string type ( Asci or unicode ).
 ```
 WriteStr(duint address, String^ text, bool replace)
 ```
-### 9- if / goto: 
+### 10- if / goto: 
 (if) this Function as any if, its good for short the work of cmp jne .
 (goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
  if condtion ( > < = != ) , type (int, str ) , line number if true , line number if false
@@ -368,7 +368,7 @@ note : we can mix this tow commands and we get a loop good for IAT read write fi
 		Finish:
 
 ```
-### 10- GetAPIName: 
+### 11- GetAPIName: 
 this Function get API name of the address and set it to variable .
 GetAPIName  varname ,  addrress
  - in parameter 1 :the variable which will handle the name it should be str or array
@@ -380,7 +380,7 @@ GetAPIName  varname ,  addrress
  	 setx $x[4],APIAddr : $x[0] / $x[2]
  	 getx $x[4]
 ```
-### 11- ResizeArray: 
+### 12- ResizeArray: 
 this Function used to Resize Array variable it's good if we don't know how much we want to reverse.
 so we can add more elements or sub some elements . 
 resizeArr array,added amount
@@ -392,7 +392,7 @@ resizeArr array,added amount
 	 resizearray $x,-7    sub elements
 
 ```
-### 12- GetArraySize: 
+### 13- GetArraySize: 
 this Function used to get the size of Array variable.
 GetArraySize  varArrName, varname
  - in parameter 1 :the array name .
@@ -400,7 +400,7 @@ GetArraySize  varArrName, varname
 ```
 	-GetArraySize $temp,$sizeArray	
 ```
-### 13- Write2File: 
+### 14- Write2File: 
 this Function used to write data to file .
 write2File path,over_append(false/true),data
  - in parameter 1 :set the path of the file it can be done by variable other wise use "" surrounded path.
@@ -415,7 +415,7 @@ write2File path,over_append(false/true),data
 	 write2file $path,1,$x[0]	here it will append data to the log file
 	 write2file $path,0,"API Name:" $x[0]
 ```
-### 14- InputBox: 
+### 15- InputBox: 
 this Function used to get data from the user like address , it could be used as dialog to see if user say
 yes or no or (y/n).
 inputBox  variable, message, title
