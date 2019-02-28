@@ -9,7 +9,7 @@ using namespace System::Windows::Forms;
 
 
 namespace ScriptWindowArg {
- 
+
 	ref class Scriptargument
 	{
 	private:
@@ -47,7 +47,7 @@ namespace ScriptWindowArg {
 				"memdump",
 				"writestr",*/
 				"if",
-				"goto"				
+				"goto"
 			};
 			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
 		};
@@ -61,7 +61,7 @@ namespace ScriptWindowArg {
 		}
 	public:
 		int GetMaxLine() {
-			return MaxLine ;
+			return MaxLine;
 		}
 	public:
 		int GetLineNumber() {
@@ -106,7 +106,7 @@ namespace ScriptWindowArg {
 		memdump,
 		writestr,*/
 		ifx,
-		goto_		
+		goto_
 	};
 
 	bool reten_ = false;
@@ -130,89 +130,89 @@ namespace ScriptWindowArg {
 
 			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
 			if (CmdExist >= 0) {
-				char* argv = new char[50];				
-				strcpy(argv, Str2CharPTR(Line_));				
+				char* argv = new char[50];
+				strcpy(argv, Str2CharPTR(Line_));
 				switch (CmdExist)
 				{
-				/*case ScriptWindowArg::scriptw:
-					break;
-				case ScriptWindowArg::logxjustatbp:
-					ret_ = ::cbLogxJustAtBP(0, &argv);
-					break;
-				case ScriptWindowArg::logxtemplatemanager:
-					break;
-				case ScriptWindowArg::logxwindow:
-					break;
-				case ScriptWindowArg::logx:
-					ret_ = ::logx(0, &argv);
-					break;
-				case ScriptWindowArg::logxtrace:
-					break;
-				case ScriptWindowArg::strcompx:
-					break;
-				case ScriptWindowArg::varx:
-					ret_ = Varx(0, &argv);
-					break;
-				case ScriptWindowArg::getx:
-					ret_ = GetVarx(0, &argv);
-					break;
-				case ScriptWindowArg::printx:
-					ret_ = GetVarx(0, &argv);
-					break;
-				case ScriptWindowArg::setx:
-					ret_ = SetVarx(0, &argv);
-					break;
-				case ScriptWindowArg::movx:
-					ret_ = ::Movx(0, &argv);
-					break;
-				case ScriptWindowArg::addx:
-					ret_ = ::addx(0, &argv);
-					break;
-				case ScriptWindowArg::subx:
-					ret_ = ::subx(0, &argv);
-					break;
-				case ScriptWindowArg::mulx:
-					ret_ = ::mulx(0, &argv);
-					break;
-				case ScriptWindowArg::andx:
-					ret_ = ::andx(0, &argv);
-					break;
-				case ScriptWindowArg::orx:
-					ret_ = ::orx(0, &argv);
-					break;
-				case ScriptWindowArg::xorx:
-					ret_ = ::xorx(0, &argv);
-					break;
-				case ScriptWindowArg::shlx:
-					ret_ = ::shlx(0, &argv);
-					break;
-				case ScriptWindowArg::pushx:
-					ret_ = ::pushx(0, &argv);
-					break;
-				case ScriptWindowArg::popx:
-					ret_ = ::popx(0, &argv);
-					break;
-				case ScriptWindowArg::cmpx:
-					ret_ = ::cmpx(0, &argv);
-					break;
-				case ScriptWindowArg::findx:
-					ret_ = ::findx(0, &argv);
-					break;
-				case ScriptWindowArg::findallx:
-					ret_ = ::findallx(0, &argv);
-					break;
-				case ScriptWindowArg::findallmemx:
-					ret_ = ::findallmemx(0, &argv);
-					break;
-				case ScriptWindowArg::varxclear:
-					ret_ = ::VarxClear(0, &argv);
-					break;
-				case ScriptWindowArg::memdump:
-					ret_ = ::memdump(0, &argv);
-					break;
-				case ScriptWindowArg::writestr:
-					ret_ = ::WriteStr(0, &argv);
-					break;*/
+					/*case ScriptWindowArg::scriptw:
+						break;
+					case ScriptWindowArg::logxjustatbp:
+						ret_ = ::cbLogxJustAtBP(0, &argv);
+						break;
+					case ScriptWindowArg::logxtemplatemanager:
+						break;
+					case ScriptWindowArg::logxwindow:
+						break;
+					case ScriptWindowArg::logx:
+						ret_ = ::logx(0, &argv);
+						break;
+					case ScriptWindowArg::logxtrace:
+						break;
+					case ScriptWindowArg::strcompx:
+						break;
+					case ScriptWindowArg::varx:
+						ret_ = Varx(0, &argv);
+						break;
+					case ScriptWindowArg::getx:
+						ret_ = GetVarx(0, &argv);
+						break;
+					case ScriptWindowArg::printx:
+						ret_ = GetVarx(0, &argv);
+						break;
+					case ScriptWindowArg::setx:
+						ret_ = SetVarx(0, &argv);
+						break;
+					case ScriptWindowArg::movx:
+						ret_ = ::Movx(0, &argv);
+						break;
+					case ScriptWindowArg::addx:
+						ret_ = ::addx(0, &argv);
+						break;
+					case ScriptWindowArg::subx:
+						ret_ = ::subx(0, &argv);
+						break;
+					case ScriptWindowArg::mulx:
+						ret_ = ::mulx(0, &argv);
+						break;
+					case ScriptWindowArg::andx:
+						ret_ = ::andx(0, &argv);
+						break;
+					case ScriptWindowArg::orx:
+						ret_ = ::orx(0, &argv);
+						break;
+					case ScriptWindowArg::xorx:
+						ret_ = ::xorx(0, &argv);
+						break;
+					case ScriptWindowArg::shlx:
+						ret_ = ::shlx(0, &argv);
+						break;
+					case ScriptWindowArg::pushx:
+						ret_ = ::pushx(0, &argv);
+						break;
+					case ScriptWindowArg::popx:
+						ret_ = ::popx(0, &argv);
+						break;
+					case ScriptWindowArg::cmpx:
+						ret_ = ::cmpx(0, &argv);
+						break;
+					case ScriptWindowArg::findx:
+						ret_ = ::findx(0, &argv);
+						break;
+					case ScriptWindowArg::findallx:
+						ret_ = ::findallx(0, &argv);
+						break;
+					case ScriptWindowArg::findallmemx:
+						ret_ = ::findallmemx(0, &argv);
+						break;
+					case ScriptWindowArg::varxclear:
+						ret_ = ::VarxClear(0, &argv);
+						break;
+					case ScriptWindowArg::memdump:
+						ret_ = ::memdump(0, &argv);
+						break;
+					case ScriptWindowArg::writestr:
+						ret_ = ::WriteStr(0, &argv);
+						break;*/
 				case ScriptWindowArg::ifx:
 				{
 					String^ Line2Jmp_;
@@ -230,7 +230,7 @@ namespace ScriptWindowArg {
 						ScriptargumentClass::Scriptargument_->setLineNumber(Line2Jmp);
 						return true;
 					}
-					break; 
+					break;
 				}
 				case ScriptWindowArg::goto_: {
 					String^ Line2Jmp_;
@@ -248,7 +248,7 @@ namespace ScriptWindowArg {
 						ScriptargumentClass::Scriptargument_->setLineNumber(Line2Jmp);
 						return true;
 					}
-				}				
+				}
 				default: // case non of them begin with command
 					ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
 					break;
@@ -266,7 +266,7 @@ namespace ScriptWindowArg {
 			else
 			{
 				ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
-				Script::Debug::Wait();
+				//Script::Debug::Wait();
 				if (ret_) {
 					ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
 					return ret_;
@@ -283,7 +283,7 @@ namespace ScriptWindowArg {
 		else
 		{
 			ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
-			Script::Debug::Wait();
+			//Script::Debug::Wait();
 			if (ret_) {
 				ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
 				return ret_;
@@ -295,8 +295,15 @@ namespace ScriptWindowArg {
 			}
 			return ret_;
 		}
-		
+
 		return ret_;
+
+	}
+
+	void waitPauseProcess() {
+		while (!_plugin_waituntilpaused()) {
+			Application::DoEvents();
+		}
 
 	}
 

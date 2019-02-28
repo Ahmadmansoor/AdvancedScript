@@ -492,7 +492,8 @@ namespace AdvancedScript {
 						}
 						else
 						{
-							Script::Debug::Wait();
+							//Script::Debug::Wait();  // problem in compile under x32 platform
+							waitPauseProcess();							
 						}
 					}
 					else
@@ -501,7 +502,9 @@ namespace AdvancedScript {
 						}
 						else
 						{
-							Script::Debug::Wait();
+							//Script::Debug::Wait();
+							waitPauseProcess();
+							
 						}
 				}
 				else
@@ -513,6 +516,8 @@ namespace AdvancedScript {
 				}
 				FileVariableTreeView();
 				if (reten_) {   /// it mean it hit ret command
+					DGV1->Rows[0]->Selected = true;
+					ScriptargumentClass::Scriptargument_->setLineNumber(0);
 					reten_ = false;
 					Run = false;
 				}

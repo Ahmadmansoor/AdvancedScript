@@ -76,7 +76,7 @@ void registerCommand(const char* command, CBPLUGINCOMMAND cbCommand, bool debugo
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
-	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.5 beta] || Coded By AhmadMansoor /exetools "));
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.8 ] || Coded By AhmadMansoor /exetools "));
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 
 	registerCommand("Scriptw", cbMainForm, false);
@@ -192,8 +192,11 @@ static bool test(int argc, char* argv[]) {
 	memcpy(xc, l, sizeof(l));
 	Script::Memory::WriteByte(Script::Register::Get(Script::Register::R8), xc[0]);*/
 
-	ScriptFunList::VarList[0]->ResizeArr(10);
-
+	//ScriptFunList::VarList[0]->ResizeArr(10);
+	unsigned char x; // = new  char[MAX_STRING_SIZE];
+	String^ d = StringFormatInline_Str("{rip");
+	duint h = Hex2duint(d);
+	x = Script::Memory::ReadByte(h);
 
 	return true;
 

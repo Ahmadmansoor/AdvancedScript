@@ -193,7 +193,4 @@
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="licenses.licx" />
-  </ItemGroup>
 </Project>
