@@ -105,15 +105,15 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 						return "NULL/ value beggier than array index";
 					}
 					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
-						return ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)];
+						return ScriptFunList::VarList[indexofVar]->varvalue[Str2duint(ArrayIndexValue)];
 					}
 					else //// but if the retAsVartype (ret value of the var) is int so we need to resolve it as int because array hold string
 					{
 						String^ intValue;  /// we ret the int value from the array item
-						if (ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)] == nullptr) {
+						if (ScriptFunList::VarList[indexofVar]->varvalue[Str2duint(ArrayIndexValue)] == nullptr) {
 							return "NULL/ no value for this cell in the array";
 						}
-						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(ArrayIndexValue)], intValue) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
+						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[Str2duint(ArrayIndexValue)], intValue) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
 							return "NULL/ array value is not Numeric";/// that something wrong in the index of the array 
 						}
 						else {
@@ -130,12 +130,12 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 				}
 				else {
 					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
-						return ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(intValue)];
+						return ScriptFunList::VarList[indexofVar]->varvalue[Str2duint(intValue)];
 					}
 					else //// but if the ret value of the var is int so we need to resolve it as int
 					{
 						String^ intValue1;  /// we ret the int value from the array 
-						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[(int)Str2duint(intValue)], intValue1) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
+						if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[Str2duint(intValue)], intValue1) == 0) {  /// /// check the value of the vra if it's not Numeric then if could be Hex
 							return "NULL/ array value is not Numeric";/// that something wrong in the index of the array 
 						}
 						else {
@@ -161,7 +161,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
 				//return ScriptFunList::VarList[indexofVar]->varvalue[0];
 				if (vartype_ == "int") {  /// if retAsVartype is string and vartype_ is int then we convert it to hex value
-					return  int2Str((int)Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
+					return  int2Str(Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
 				}
 				else { /// case str 
 					return  ScriptFunList::VarList[indexofVar]->varvalue[0]; // return var string as it
@@ -174,12 +174,14 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 					return ScriptFunList::VarList[indexofVar]->varvalue[0]; // return the value of the int var as it
 				}
 				else {  /// in case it str we need to check for hex validation and convert to int
-					String^ intValue;
-					if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[0], intValue) == 0) {
+					String^ varvalue = StrAnalyze(ScriptFunList::VarList[indexofVar]->varvalue[0], VarType::int_);
+					//String^ intValue;
+					//if (CheckHexIsValid(varvalue, intValue) == 0) {
+					if (!Information::IsNumeric(varvalue)) {
 						return "NULL/ Value of str var is not Numeric";
 					}
 					else {
-						return intValue; // return the value 
+						return varvalue; // return the value 
 					}
 				}
 			}
@@ -194,7 +196,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value				
 				//return ScriptFunList::VarList[indexofVar]->varvalue[0];
 				if (vartype_ == "int") {  /// if retAsVartype is string and vartype_ is int then we convert it to hex value
-					return  duint2Hex((int)Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
+					return  duint2Hex(Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
 				}
 				else { /// case str 
 					return  ScriptFunList::VarList[indexofVar]->varvalue[0]; // return var string as it
@@ -207,12 +209,15 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 					return ScriptFunList::VarList[indexofVar]->varvalue[0]; // return the value of the int var as it
 				}
 				else {  /// in case it str we need to check for hex validation and convert to int
-					String^ intValue;
-					if (CheckHexIsValid(ScriptFunList::VarList[indexofVar]->varvalue[0], intValue) == 0) {
+					// we need to resolve the value to check if can get int from it 
+					String^ varvalue =StrAnalyze(ScriptFunList::VarList[indexofVar]->varvalue[0],VarType::int_);
+					//String^ intValue;
+					//if (CheckHexIsValid(varvalue, intValue) == 0) {
+					if (!Information::IsNumeric(varvalue) ) {
 						return "NULL/ Value of str var is not Numeric";
 					}
 					else {
-						return intValue; // return the value 
+						return varvalue; // return the value 
 					}
 				}
 
@@ -456,7 +461,7 @@ bool CheckexcutedCmd(String^ cmd_) {
 
 	if (cmd_->StartsWith("memdump(") || cmd_->StartsWith("memdump (")) {
 		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str,true);
 		String^ Size_ = StrAnalyze(arguments[1], VarType::str);
 		if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
 			_plugin_logprint("wrong arguments for memdump command");
@@ -607,7 +612,7 @@ String^ argumentValue(String^ argument, String^% OldValue_) {  /// return the <<
 	return argument;
 }
 
-String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value by type	
+String^ GetArgValueByType(String^ argument, VarType type_, bool Add0x) {  /// return value by type	
 
 	switch (type_)
 	{
@@ -723,6 +728,9 @@ String^ GetArgValueByType(String^ argument, VarType type_) {  /// return value b
 						/*if (!tempInput->StartsWith("0x")) {
 							tempInput = "0x" + tempInput->Trim();
 						}*/
+						if (Add0x) {
+							tempInput = "0x" + tempInput->Trim();
+						}
 						tempInput = tempInput->Trim();
 					}
 					argument = ReplaceAtIndex(argument, oldValue, tempInput);
@@ -806,7 +814,7 @@ String^ replaceValueBetweenBrackets(String^ input_) {
 	return input_;
 }
 
-String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value should be int , other wise it would be str and we add str to gather
+String^ StrAnalyze(String^ input, VarType type_, bool Add0x) {  /// in case it int all value should be int , other wise it would be str and we add str to gather
 	array <String^>^ breaks = { "*" ,"/" ,"+" ,"-" ,"$" ," " , "{" , "}" , "\"" };
 	array <String^>^ token_ = { "*" ,"/" ,"+" ,"-" };
 	array <String^>^ vars_ = { "$" ," " , "{" , "\"" };
@@ -1021,7 +1029,7 @@ String^ StrAnalyze(String^ input, VarType type_) {  /// in case it int all value
 		for (int i = 0; i < StrHolderList->Count; i++)
 		{
 			if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
-				StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::str);
+				StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::str,Add0x);
 				StrHolder = StrHolder + StrHolderList[i];
 			}
 			else

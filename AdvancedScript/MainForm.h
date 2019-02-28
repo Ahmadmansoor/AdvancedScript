@@ -79,6 +79,10 @@ namespace AdvancedScript {
 	public:
 		String^ ScriptFileName = String::Empty;
 		bool Run = false;
+
+	public:
+
+	public:
 	private: System::Windows::Forms::ToolStripMenuItem^  saveAsToolStripMenuItem;
 	public:
 
@@ -152,6 +156,7 @@ namespace AdvancedScript {
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->newScriptToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->saveScriptFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->saveAsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->startHereToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pasteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->copySelectedLineToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -166,7 +171,6 @@ namespace AdvancedScript {
 			this->Bu_ClearVariable = (gcnew System::Windows::Forms::Button());
 			this->TrViewVariable = (gcnew System::Windows::Forms::TreeView());
 			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
-			this->saveAsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
 			this->CMT_TreeView->SuspendLayout();
@@ -203,9 +207,9 @@ namespace AdvancedScript {
 			dataGridViewCellStyle3->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
 			dataGridViewCellStyle3->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
 			this->DGV1->DefaultCellStyle = dataGridViewCellStyle3;
-			this->DGV1->Location = System::Drawing::Point(231, 12);
+			this->DGV1->Location = System::Drawing::Point(274, 26);
 			this->DGV1->Name = L"DGV1";
-			this->DGV1->Size = System::Drawing::Size(810, 518);
+			this->DGV1->Size = System::Drawing::Size(767, 504);
 			this->DGV1->TabIndex = 0;
 			this->DGV1->CellEndEdit += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &MainForm::DGV1_CellEndEdit);
 			this->DGV1->RowsAdded += gcnew System::Windows::Forms::DataGridViewRowsAddedEventHandler(this, &MainForm::DGV1_RowsAdded);
@@ -241,7 +245,7 @@ namespace AdvancedScript {
 					this->insertDataFromClipboardToolStripMenuItem
 			});
 			this->CMT1->Name = L"CMT1";
-			this->CMT1->Size = System::Drawing::Size(243, 158);
+			this->CMT1->Size = System::Drawing::Size(243, 136);
 			// 
 			// fileToolStripMenuItem
 			// 
@@ -256,16 +260,23 @@ namespace AdvancedScript {
 			// newScriptToolStripMenuItem
 			// 
 			this->newScriptToolStripMenuItem->Name = L"newScriptToolStripMenuItem";
-			this->newScriptToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->newScriptToolStripMenuItem->Size = System::Drawing::Size(131, 22);
 			this->newScriptToolStripMenuItem->Text = L"New Script";
 			this->newScriptToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::newScriptToolStripMenuItem_Click);
 			// 
 			// saveScriptFileToolStripMenuItem
 			// 
 			this->saveScriptFileToolStripMenuItem->Name = L"saveScriptFileToolStripMenuItem";
-			this->saveScriptFileToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveScriptFileToolStripMenuItem->Size = System::Drawing::Size(131, 22);
 			this->saveScriptFileToolStripMenuItem->Text = L"Save";
 			this->saveScriptFileToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::saveScriptFileToolStripMenuItem_Click);
+			// 
+			// saveAsToolStripMenuItem
+			// 
+			this->saveAsToolStripMenuItem->Name = L"saveAsToolStripMenuItem";
+			this->saveAsToolStripMenuItem->Size = System::Drawing::Size(131, 22);
+			this->saveAsToolStripMenuItem->Text = L"Save As";
+			this->saveAsToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::saveAsToolStripMenuItem_Click);
 			// 
 			// startHereToolStripMenuItem
 			// 
@@ -304,10 +315,12 @@ namespace AdvancedScript {
 			// 
 			// TrViewScript
 			// 
+			this->TrViewScript->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->TrViewScript->ContextMenuStrip = this->CMT_TreeView;
 			this->TrViewScript->Location = System::Drawing::Point(11, 19);
 			this->TrViewScript->Name = L"TrViewScript";
-			this->TrViewScript->Size = System::Drawing::Size(199, 168);
+			this->TrViewScript->Size = System::Drawing::Size(244, 168);
 			this->TrViewScript->TabIndex = 1;
 			this->TrViewScript->NodeMouseDoubleClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &MainForm::TrViewScript_NodeMouseDoubleClick);
 			// 
@@ -350,14 +363,14 @@ namespace AdvancedScript {
 			this->groupBox1->Controls->Add(this->TrViewScript);
 			this->groupBox1->Location = System::Drawing::Point(7, 3);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(216, 524);
+			this->groupBox1->Size = System::Drawing::Size(261, 524);
 			this->groupBox1->TabIndex = 4;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Options";
 			// 
 			// Bu_ClearVariable
 			// 
-			this->Bu_ClearVariable->Location = System::Drawing::Point(42, 193);
+			this->Bu_ClearVariable->Location = System::Drawing::Point(11, 193);
 			this->Bu_ClearVariable->Name = L"Bu_ClearVariable";
 			this->Bu_ClearVariable->Size = System::Drawing::Size(119, 26);
 			this->Bu_ClearVariable->TabIndex = 5;
@@ -372,7 +385,7 @@ namespace AdvancedScript {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->TrViewVariable->Location = System::Drawing::Point(11, 225);
 			this->TrViewVariable->Name = L"TrViewVariable";
-			this->TrViewVariable->Size = System::Drawing::Size(190, 291);
+			this->TrViewVariable->Size = System::Drawing::Size(244, 291);
 			this->TrViewVariable->TabIndex = 1;
 			// 
 			// checkBox1
@@ -382,19 +395,12 @@ namespace AdvancedScript {
 			this->checkBox1->Checked = true;
 			this->checkBox1->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->checkBox1->Enabled = false;
-			this->checkBox1->Location = System::Drawing::Point(908, 22);
+			this->checkBox1->Location = System::Drawing::Point(908, 3);
 			this->checkBox1->Name = L"checkBox1";
 			this->checkBox1->Size = System::Drawing::Size(133, 17);
 			this->checkBox1->TabIndex = 0;
 			this->checkBox1->Text = L"Update Script Window";
 			this->checkBox1->UseVisualStyleBackColor = true;
-			// 
-			// saveAsToolStripMenuItem
-			// 
-			this->saveAsToolStripMenuItem->Name = L"saveAsToolStripMenuItem";
-			this->saveAsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
-			this->saveAsToolStripMenuItem->Text = L"Save As";
-			this->saveAsToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::saveAsToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -460,13 +466,15 @@ namespace AdvancedScript {
 				DGV1->Rows[0]->Selected = true;
 				ScriptargumentClass::Scriptargument_->setLineNumber(0);
 			}
+			if (reten_) { reten_ = false; }
 			FileVariableTreeView();
 		}
 		if (e->KeyCode == Keys::F11) {
 			if (Run)
 				Run = false;
 			else
-				Run = true;
+				Run = true;			
+
 			while (Run)
 			{
 				Application::DoEvents();
@@ -504,6 +512,10 @@ namespace AdvancedScript {
 					Run = false;
 				}
 				FileVariableTreeView();
+				if (reten_) {   /// it mean it hit ret command
+					reten_ = false;
+					Run = false;
+				}
 				Application::DoEvents();
 			}
 
@@ -871,5 +883,6 @@ namespace AdvancedScript {
 		}
 
 	}
-	};
+	
+};
 }

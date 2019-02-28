@@ -295,9 +295,9 @@ static bool logx(int argc, char* argv[]) {  // it need agument Template name lik
 		}
 		else {
 			if (!CheckexcutedCmd(arguments[0])) {
-				AdvancedScript::LogWindow::LogWindow_->Log_Str = AdvancedScript::LogWindow::Log_Str + Environment::NewLine + StrAnalyze(arguments[0], VarType::str);
+				AdvancedScript::LogWindow::LogWindow_->Log_Str = AdvancedScript::LogWindow::Log_Str + Environment::NewLine + StrAnalyze(arguments[0], VarType::str, true);
 				if (AdvancedScript::LogWindow::LogWindow_->FormLoaded) {
-					AdvancedScript::LogWindow::LogWindow_->RTBAppendText(StrAnalyze(arguments[0], VarType::str));
+					AdvancedScript::LogWindow::LogWindow_->RTBAppendText(StrAnalyze(arguments[0], VarType::str, true));
 				}
 			}
 		}
@@ -931,7 +931,7 @@ static bool memdump(int argc, char* argv[]) {  /// dump memory to log window lik
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
 
-	String^ addr = StrAnalyze(arguments[0], VarType::str);
+	String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 	String^ Size_ = StrAnalyze(arguments[1], VarType::str);
 	if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
 		_plugin_logprint("wrong arguments for memdump command");
@@ -963,7 +963,7 @@ static bool WriteStr(int argc, char* argv[]) { //WriteStr(duint address, String^
 	switch ((arguments->Count))
 	{
 	case 3: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 		String^ intValue;
 
 		if (CheckHexIsValid(addr, intValue) == 0) {
@@ -992,7 +992,7 @@ static bool BPxx(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bp " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));			
@@ -1005,7 +1005,7 @@ static bool BPxx(int argc, char* argv[]) {
 		break;
 	}
 	case 2: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 		String^ BPname = StrAnalyze(arguments[1], VarType::str);
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bp " + addr + "," + BPname;
@@ -1021,7 +1021,7 @@ static bool BPxx(int argc, char* argv[]) {
 		break;
 	}
 	case 3: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 		String^ BPname = StrAnalyze(arguments[1], VarType::str);
 		String^ BPType = StrAnalyze(arguments[2], VarType::str);
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
@@ -1051,7 +1051,7 @@ static bool bpcx(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bpc " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
@@ -1078,7 +1078,7 @@ static bool bpex(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bpe " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
@@ -1105,7 +1105,7 @@ static bool bpdx(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bpd " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
@@ -1132,7 +1132,7 @@ static bool bphx(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bph " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
@@ -1146,7 +1146,7 @@ static bool bphx(int argc, char* argv[]) {
 		break;
 	}
 	case 2: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 		String^ BPname = StrAnalyze(arguments[1], VarType::str);
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bph " + addr + "," + BPname;
@@ -1162,7 +1162,7 @@ static bool bphx(int argc, char* argv[]) {
 		break;
 	}
 	case 3: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 		String^ BPname = StrAnalyze(arguments[1], VarType::str);
 		String^ BPType = StrAnalyze(arguments[2], VarType::str);
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
@@ -1191,7 +1191,7 @@ static bool bphcx(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bphc " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));			
@@ -1217,7 +1217,7 @@ static bool bphex(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bphe " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));			
@@ -1244,7 +1244,7 @@ static bool bphdx(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bphd " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));			
@@ -1270,7 +1270,7 @@ static bool bpmx(int argc, char* argv[]) {
 	switch ((arguments->Count))
 	{
 	case 1: {
-		String^ cmd = StrAnalyze(arguments[0], VarType::str);
+		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bpm " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
@@ -1284,7 +1284,7 @@ static bool bpmx(int argc, char* argv[]) {
 		break;
 	}
 	case 2: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 		String^ BPname = StrAnalyze(arguments[1], VarType::str);
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bpm " + addr + "," + BPname;
@@ -1300,7 +1300,7 @@ static bool bpmx(int argc, char* argv[]) {
 		break;
 	}
 	case 3: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 		String^ BPname = StrAnalyze(arguments[1], VarType::str);
 		String^ BPType = StrAnalyze(arguments[2], VarType::str);
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
@@ -1331,24 +1331,18 @@ static bool asmx(int argc, char* argv[]) { // asmx ( addr , Instruction , fill w
 	{
 
 	case 2: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
-		String^ Instruction = StrAnalyze(arguments[1], VarType::str);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
+		if (!addr->StartsWith("0x")) {
+			addr = "0x" + addr;
+		}
+		String^ Instruction = StrAnalyze(arguments[1], VarType::str, true);
 		//bool FillNops = Str2bool(arguments[2]);
 		if ((!Instruction->StartsWith("\"")) && (!Instruction->EndsWith("\""))) {
 			Instruction = "\"" + Instruction + "\"";
 		}
 		if ((!addr->Contains("NULL")) && (!Instruction->Contains("NULL"))) {
-			String^ cmd;
-			/*if (FillNops) {
-				 cmd = "asm " + addr + "," + Instruction + ",true";
-			}
-			else
-			{*/
-				cmd = "asm " + addr + "," + Instruction;
-			//}
-			
-			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			 
+			String^ cmd =  "asm " + addr + "," + Instruction ;			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));			 
 		}
 		else
 		{
@@ -1359,15 +1353,18 @@ static bool asmx(int argc, char* argv[]) { // asmx ( addr , Instruction , fill w
 		break;
 	}
 	case 3: {
-		String^ addr = StrAnalyze(arguments[0], VarType::str);
-		String^ Instruction = StrAnalyze(arguments[1], VarType::str);
-		/*if ((Instruction->StartsWith("\"")) && (Instruction->EndsWith("\""))) {
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
+		if (!addr->StartsWith("0x")) {
+			addr = "0x" + addr;
+		}
+		String^ Instruction = StrAnalyze(arguments[1], VarType::str, true);
+		if ((!Instruction->StartsWith("\"")) && (!Instruction->EndsWith("\""))) {
 			Instruction = "\"" + Instruction + "\"";
-		}*/
+		}
 		//String^ BPType = StrAnalyze(arguments[2], VarType::str);
 		if ((!addr->Contains("NULL")) && (!Instruction->Contains("NULL")) && (!Instruction->Contains("NULL"))) {
-			String^ cmd = "asm " + addr + "," + Instruction + "," ;
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			 
+			String^ cmd = "asm " + addr + "," + Instruction + ",\"" + "1\""  ;
+			return DbgCmdExec(Str2ConstChar(cmd));			 
 		}
 		else
 		{
@@ -1392,7 +1389,7 @@ static bool GetAPIName(int argc, char* argv[]) {  //GetAPIName_ (String^ varname
 	{
 
 	case 2: {
-		String^ addr = StrAnalyze(arguments[1], VarType::str);	 // check is addr is valid 
+		String^ addr = StrAnalyze(arguments[1], VarType::str, true);	 // check is addr is valid 
 		if ((!addr->Contains("NULL"))) {
 			String^ intValue;
 			if (CheckHexIsValid(addr, intValue) > 0) {

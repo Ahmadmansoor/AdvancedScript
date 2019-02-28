@@ -18,7 +18,7 @@ namespace ScriptWindowArg {
 	public:
 		int isCommandsExist(String^ input_) {
 			array <String^>^ CommandsArray_ = {
-				"scriptw",
+				/*"scriptw",
 				"logxjustatbp",
 				"logxtemplatemanager",
 				"logxwindow",
@@ -45,9 +45,9 @@ namespace ScriptWindowArg {
 				"findallmemx",
 				"varxclear",
 				"memdump",
-				"writestr",
+				"writestr",*/
 				"if",
-				"goto"
+				"goto"				
 			};
 			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
 		};
@@ -76,7 +76,8 @@ namespace ScriptWindowArg {
 	};
 
 	enum Commandenum {
-		scriptw,
+		//no need any more we left them to x64dbg to handle
+		/*scriptw,
 		logxjustatbp,
 		logxtemplatemanager,
 		logxwindow,
@@ -103,11 +104,12 @@ namespace ScriptWindowArg {
 		findallmemx,
 		varxclear,
 		memdump,
-		writestr,
+		writestr,*/
 		ifx,
-		goto_,
+		goto_		
 	};
 
+	bool reten_ = false;
 
 	bool readLine(String^ Line_, int MaxLine) {
 		bool ret_ = false;
@@ -119,18 +121,20 @@ namespace ScriptWindowArg {
 			ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
 			return true;
 		}
+		if (Line_->Trim()->ToLower() == "ret") {
+			reten_ = true;
+			return true;
+		}
 		if (Line_->Trim()->IndexOf(" ") > 0) {  /// >0 it mean it has command at the begining			
 			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));
 
 			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
 			if (CmdExist >= 0) {
-				char* argv = new char[50];
-				//argv[1] = Str2CharPTR(Line_);
-				strcpy(argv, Str2CharPTR(Line_));
-				//_plugin_logputs(argv);
+				char* argv = new char[50];				
+				strcpy(argv, Str2CharPTR(Line_));				
 				switch (CmdExist)
 				{
-				case ScriptWindowArg::scriptw:
+				/*case ScriptWindowArg::scriptw:
 					break;
 				case ScriptWindowArg::logxjustatbp:
 					ret_ = ::cbLogxJustAtBP(0, &argv);
@@ -208,7 +212,7 @@ namespace ScriptWindowArg {
 					break;
 				case ScriptWindowArg::writestr:
 					ret_ = ::WriteStr(0, &argv);
-					break;
+					break;*/
 				case ScriptWindowArg::ifx:
 				{
 					String^ Line2Jmp_;
@@ -244,7 +248,7 @@ namespace ScriptWindowArg {
 						ScriptargumentClass::Scriptargument_->setLineNumber(Line2Jmp);
 						return true;
 					}
-				}
+				}				
 				default: // case non of them begin with command
 					ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
 					break;
@@ -255,7 +259,8 @@ namespace ScriptWindowArg {
 				}
 				else
 				{
-					Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+					//Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+					_plugin_logputs(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
 				}
 			}
 			else
@@ -268,7 +273,8 @@ namespace ScriptWindowArg {
 				}
 				else
 				{
-					Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+					//Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+					_plugin_logputs(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
 				}
 				return ret_;
 
@@ -284,7 +290,8 @@ namespace ScriptWindowArg {
 			}
 			else
 			{
-				Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+				//Script::Gui::Message(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
+				_plugin_logputs(Str2ConstChar("this Line have error" + Environment::NewLine + Line_));
 			}
 			return ret_;
 		}
