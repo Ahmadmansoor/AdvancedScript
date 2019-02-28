@@ -8,6 +8,13 @@ just a try to add more feature's to x64dbg script system
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 2.8 :
+	1- fix a lot of bugs in calculations and get values.
+	2- F11 run/stop script now Enabled, F12 step script.
+	3- get values for nasted variables like $x[$z+1]
+	4- add new commands (ret ,GetAPIName ,ResizeArray ,GetArraySize ,Write2File ,inputbox).
+	5- add Dependency and samples Script as separate package.
+	
 - version 2.5 beta :
 	1- Script window is sperate.
 	2- Create Folder for script,form Load script with category.
@@ -52,6 +59,15 @@ just a try to add more feature's to x64dbg script system
 ////////////////////////////////////////////////////////////////////////////
 ## Script Section:
 ```
+- notes:
+	1-to call the window of plugin type: Scriptw
+	2-use F11 to run or stop Auto step
+	3-use F12 to step on.
+	4-sometime you think it's hange,but check if the Plugin send error messageBox for some lines.
+	5-when you use F11 if the software in run mode ( not suspended) ,you have to pause it to work with Script window,
+	  as it use wait Function form x64dbg which will not respond till the process is suspended.
+	
+	
 -arguments value system (AVS): all argument pass through Parser system recognizer,how it work:
       1- all numbers are in hex shape ( setx $x,50  == setx $x,0x50). 
       2- search for all {} which is releated x64dbg system and try to resolve it.
@@ -281,6 +297,10 @@ Good for maintenance.
 ```
 ### 7- asmx : 
 it's mirror of asm command in x64dbg, it accept variables.
+Parameter  asmx(addr , Instruction , fill with nops)
+	Instruction: if you define it as var no problem if u but "" or not 
+			but if you define it direct it good to surrounded it by ""
+	fill with nops : just put 1 that enough and it will fill the rest with nops.
 ``` 
    sample :
          - varx str,addr,{rip}
@@ -290,10 +310,14 @@ it's mirror of asm command in x64dbg, it accept variables.
       
      How to asmeble command ( call qword ptr ds:[0x000000014004C408] ) at address, way to fix IAT
      -  varx str,addr,{rip}
-	varx str,IAT,0x000000014004C408
+	varx str,IAT,0x000000014004C408  or varx str,IAT,{rax}
  	varx str,call,"call qword ptr ds:["
- 	setx $call,$call $IAT ]		Don't forget the spacess :)
-	asmx $addr,$call
+ 	setx $call,$call$IAT ]		Don't forget the spaces before ] :), so the it mix with var IAT name
+	asmx $addr,$call   << this asm without fill with nops
+	asmx $addr,$call,1 << this asm with fill with nops	
+	
+	asmx 0x0000000140EA0010,"call qword ptr ds:[0x777259C0]",1
+     - 
 
 ```
 ### 8- writeStr : 
@@ -303,8 +327,8 @@ then it zero the string memory and replace it with new string according the stri
 WriteStr(duint address, String^ text, bool replace)
 ```
 ### 9- if / goto: 
-if this Function as any if, its good for short the work of cmp jne .
-goto it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
+(if) this Function as any if, its good for short the work of cmp jne .
+(goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
  if condtion ( > < = != ) , type (int, str ) , line number if true , line number if false
  - in parameter 1 :we can make any compare with variables ( >  <  =  != ).
  - in parameter 2 :we define the type of variable we need to compare. we can compare int with int or string to string
@@ -344,6 +368,93 @@ note : we can mix this tow commands and we get a loop good for IAT read write fi
 		Finish:
 
 ```
+### 10- GetAPIName: 
+this Function get API name of the address and set it to variable .
+GetAPIName  varname ,  addrress
+ - in parameter 1 :the variable which will handle the name it should be str or array
+ - in parameter 2 :valid address of the API.
+ 
+```
+	-varx array,x[30],{rax}
+	 GetApiName $x[2],$x[0]
+ 	 setx $x[4],APIAddr : $x[0] / $x[2]
+ 	 getx $x[4]
+```
+### 11- ResizeArray: 
+this Function used to Resize Array variable it's good if we don't know how much we want to reverse.
+so we can add more elements or sub some elements . 
+resizeArr array,added amount
+ - in parameter 1 :the array name .
+ - in parameter 2 :the amount need to sub (-n) or add (+n) . 
+```
+	-varx array,x[1],1r
+	 resizearray $x,10    add elements 
+	 resizearray $x,-7    sub elements
+
+```
+### 12- GetArraySize: 
+this Function used to get the size of Array variable.
+GetArraySize  varArrName, varname
+ - in parameter 1 :the array name .
+ - in parameter 2 :the amount need to sub (-n) or add (+n) . 
+```
+	-GetArraySize $temp,$sizeArray	
+```
+### 13- Write2File: 
+this Function used to write data to file .
+write2File path,over_append(false/true),data
+ - in parameter 1 :set the path of the file it can be done by variable other wise use "" surrounded path.
+ - in parameter 2 :
+ 		- false: to over write file . ( u can use false or 0 or off )
+		- true: to append to file . ( u can use true or 1 or on )
+ - in parameter 3 : the data you want to write to the file it will analyzed if it have variables.
+```
+	-varx str,path,"E:\temp1\log.txt"
+	 varx array,x[2]
+	 GetAPIName $x[0],{rax}
+	 write2file $path,1,$x[0]	here it will append data to the log file
+	 write2file $path,0,"API Name:" $x[0]
+```
+### 14- InputBox: 
+this Function used to get data from the user like address , it could be used as dialog to see if user say
+yes or no or (y/n).
+inputBox  variable, message, title
+ - in parameter 1 :the variable which will hold the return message.
+ - in parameter 2 :
+ 		- false: to over write file . ( u can use false or 0 or off )
+		- true: to append to file . ( u can use true or 1 or on )
+```
+	-varx str,path,"E:\temp1\log.txt"
+	 varx array,x[2]
+	 GetAPIName $x[0],{rax}
+	 write2file $path,1,$x[0]	here it will append data to the log file
+```
+Sample Scripts :
+
+	-tracer :
+		varx str,path,"E:\temp1\log.txt"
+		varx str,addr
+		varx str,APIname
+		varx int,OEP,0000000140226B80
+		varx array,temp[1]
+		varx int,i,0
+		if {rip}=$OEP,int,14d,7d
+		resizearray $temp,1
+		setx $addr,{rax}
+		GETAPIName $APIname,$addr
+		setx $temp[$i],$addr    $APIname
+		setx $i,$i + 1
+		go
+		goto 6d
+		varx int,sizeArray,0
+		GetArraySize $temp,$sizeArray
+		if $sizeArray=0,int,19d,17d
+		write2file $path,1,$temp[$sizeArray]
+		setx $sizeArray,$sizeArray -1
+		goto 16d
+
+
+
 ////////////////////////////////////////////////////////////////////////////
 ## Log Section:
 
