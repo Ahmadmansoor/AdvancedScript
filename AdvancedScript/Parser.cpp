@@ -1047,4 +1047,6 @@ String^ StrAnalyze(String^ input, VarType type_, bool Add0x) {  /// in case it i
 	return StrHolder;
 }
 
+String^ ads(String^ input) {
 
+}

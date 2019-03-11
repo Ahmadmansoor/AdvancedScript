@@ -146,27 +146,31 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("Write2File", Write2File, false);
 	registerCommand("inputbox", InputBox, false);
 
+	registerCommand("cmtx", commentset, true);
+
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
-	//Generic::List<String^>^ arguments;
-	//GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	//switch (arguments->Count)
-	//{
-	//case 1: {
-	//	char* text_ = new char[MAX_STRING_SIZE];
-	//	//DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
-	//	_plugin_logprint(text_);
-	//	break;
-	//}
-	//case 2: {
-	//	break;
-	//}
-	//default:
-	//	_plugin_logputs("worng arguments");
-	//	return false;
-	//}
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	switch (arguments->Count)
+	{
+	case 1: {
+		//char* text_ = new char[MAX_STRING_SIZE];
+		////DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
+		//_plugin_logprint(text_);
+		String^ AsmcommandStr = StringFormatInline_Str(arguments[0]);
+		DbgCmdExecDirect(Str2ConstChar("cmt " + AsmcommandStr));
+		break;
+	}
+	case 2: {
+		break;
+	}
+	default:
+		_plugin_logputs("worng arguments");
+		return false;
+	}
 	//DbgScriptCmdExec("{jmp res}");
 
 
@@ -193,10 +197,10 @@ static bool test(int argc, char* argv[]) {
 	Script::Memory::WriteByte(Script::Register::Get(Script::Register::R8), xc[0]);*/
 
 	//ScriptFunList::VarList[0]->ResizeArr(10);
-	unsigned char x; // = new  char[MAX_STRING_SIZE];
-	String^ d = StringFormatInline_Str("{rip");
-	duint h = Hex2duint(d);
-	x = Script::Memory::ReadByte(h);
+	//unsigned char x; // = new  char[MAX_STRING_SIZE];
+	//String^ d = StringFormatInline_Str("{rip");
+	//duint h = Hex2duint(d);
+	//x = Script::Memory::ReadByte(h);
 
 	return true;
 
@@ -1573,4 +1577,24 @@ static bool InputBox(int argc, char* argv[]) {  // inputBox ( variable,String me
 	}	
 	return false;
 
+}
+
+static bool commentset(int argc, char* argv[]) {  // commentset ( Addr , String message)
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments);
+	switch ((arguments->Count))
+	{
+	case 2: {		
+		String^ Addr = StrAnalyze(arguments[0], VarType::int_);
+		if (Information::IsNumeric(Addr)) {
+			return DbgCmdExecDirect(Str2ConstChar("cmt " + str2Hex(Addr, VarType::int_, true) + "," + StrAnalyze(arguments[1], VarType::str)));
+		}	
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "can't resolve Address"));
+		return false;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return false;
 }

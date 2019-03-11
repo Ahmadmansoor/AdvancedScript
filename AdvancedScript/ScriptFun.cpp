@@ -427,6 +427,7 @@ bool GetArraySize_(String^ varArrName, String^ varname) {
 			}
 			else
 			{
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + varArrName + ": 0x" + duint2Hex(ScriptFunList::VarList[indexofVarArr]->arrayLength) + "/" + int2Str(ScriptFunList::VarList[indexofVarArr]->arrayLength)));
 				ScriptFunList::VarList[indexofVar]->varvalue[0]=int2Str(ScriptFunList::VarList[indexofVarArr]->arrayLength);
 				return true;
 			}
@@ -500,6 +501,7 @@ bool ResizeArray_(String^ varname, int AddSub ) {	// resizeArr(array, added amou
 			else
 			{
 				ScriptFunList::VarList[indexofVar]->ResizeArr(AddSub);
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " index: 0x" + duint2Hex(ScriptFunList::VarList[indexofVar]->arrayLength) + "/" + int2Str(ScriptFunList::VarList[indexofVar]->arrayLength)));
 				return true;
 			}
 			
@@ -517,6 +519,32 @@ bool ResizeArray_(String^ varname, int AddSub ) {	// resizeArr(array, added amou
 }
 
 bool Write2File_(String^ filepath, bool append_,String^ data_) {	//  write2File(path,over_append(true),data
+	//add case data_ is array without []
+	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+	if ((Varexist(data_->Trim(), retvartype, indexofVar, arrayLength)) && (data_->StartsWith("$"))) {
+		if (retvartype == "array") {
+			if (append_) {
+				for (int i = 0; i < arrayLength; i++)
+				{
+
+					IO::File::AppendAllText(filepath, Environment::NewLine +ScriptFunList::VarList[indexofVar]->varvalue[i]);
+				}
+				
+				return true;
+			}
+			else
+			{
+				IO::File::WriteAllText(filepath, ""); // clear file
+				for (int i = 0; i < arrayLength; i++)
+				{
+					IO::File::AppendAllText(filepath, Environment::NewLine + ScriptFunList::VarList[indexofVar]->varvalue[i]);
+				}
+				
+				return true;
+			}
+		}
+	}
+	////// if it's not array
 	String^ data_x= StrAnalyze(data_, VarType::str, true);
 	if (data_x->Contains("NULL/")) {
 		return false;

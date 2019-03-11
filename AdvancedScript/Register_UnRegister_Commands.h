@@ -53,6 +53,7 @@ static bool ResizeArray(int argc, char* argv[]);
 static bool GetArraySize(int argc, char* argv[]);
 static bool Write2File(int argc, char* argv[]);
 static bool InputBox(int argc, char* argv[]);
+static bool commentset(int argc, char* argv[]);
 static bool GetAPIName(int argc, char* argv[]);
 //static bool ifCond(String^ input, String^% lineNumber);
 ///////////////////////
