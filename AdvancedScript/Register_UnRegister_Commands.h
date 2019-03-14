@@ -37,7 +37,7 @@ static bool findallmemx(int argc, char* argv[]);
 
 static bool memdump(int argc, char* argv[]);
 static bool WriteStr(int argc, char* argv[]);
-
+static bool ReadStr(int argc, char* argv[]);
 // BP 
 static bool BPxx(int argc, char* argv[]);
 static bool bpcx(int argc, char* argv[]);

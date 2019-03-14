@@ -13,9 +13,24 @@ String^ findHexValue(String^ input, String^% oldvalue_);
 String^ resolveString(String^ input, int% commaCount);
 String^ argumentValue(String^ argument, String^% OldValue_);
 String^ GetArgValueByType(String^ argument, VarType type_, bool Add0x=false);
+
+String^ replace_ads(String^ input_);
+String^ Get_adsValue(String^ input, int% EndB);
 String^ StrAnalyze(String^ input, VarType type_,bool Add0x=false);
 String^ returnSpaces(int SpaceNum);
 String^ replaceValueBetweenBrackets(String^ input_);
+
+enum ads_Enum
+{
+	exebase,
+	modulebase,
+	SectionSize,
+	exefolderpath,
+	exename,
+	SectionBegin,
+	SectionEnd,
+};
+
 //script test 
 
 //Logx memdump(76FA0000, 50)

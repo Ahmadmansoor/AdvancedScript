@@ -175,7 +175,7 @@ String^ condtion_(String^ input, String^ typo);
 bool ResizeArray_(String^ varname, int AddSub);
 bool GetArraySize_(String^ varArrName, String^ varname);
 bool Write2File_(String^ filepath, bool append_, String^ data_);
-
+bool ReadStr_(String^ varname, String^ value_);
 bool InputBox_(String^ varname, int index_, String^ message_, String^ title);
 
 bool ifCond(String^ input, String^% lineNumber);

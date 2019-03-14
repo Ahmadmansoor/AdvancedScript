@@ -101,7 +101,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 					return "NULL/ something go wrong in resolve index";
 				}
 				if (Information::IsNumeric(ArrayIndexValue)) {  /// if it's resolved as int value then we used it 
-					if ((int)Str2duint(ArrayIndexValue)   > ScriptFunList::VarList[indexofVar]->arrayLength -1) { // -1 because array begin from 0
+					if ((int)Str2duint(ArrayIndexValue) > ScriptFunList::VarList[indexofVar]->arrayLength - 1) { // -1 because array begin from 0
 						return "NULL/ value beggier than array index";
 					}
 					if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
@@ -122,7 +122,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 					}
 				}
 				String^ intValue;
-				if ((int)Str2duint(ArrayIndexValue)   > ScriptFunList::VarList[indexofVar]->arrayLength - 1) { // -1 because array begin from 0
+				if ((int)Str2duint(ArrayIndexValue) > ScriptFunList::VarList[indexofVar]->arrayLength - 1) { // -1 because array begin from 0
 					return "NULL/ value beggier than array index";
 				}
 				if (CheckHexIsValid(ArrayIndexValue, intValue) == 0) {  /// /// check if array index is not Numeric then if could be Hex
@@ -210,10 +210,10 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 				}
 				else {  /// in case it str we need to check for hex validation and convert to int
 					// we need to resolve the value to check if can get int from it 
-					String^ varvalue =StrAnalyze(ScriptFunList::VarList[indexofVar]->varvalue[0],VarType::int_);
+					String^ varvalue = StrAnalyze(ScriptFunList::VarList[indexofVar]->varvalue[0], VarType::int_);
 					//String^ intValue;
 					//if (CheckHexIsValid(varvalue, intValue) == 0) {
-					if (!Information::IsNumeric(varvalue) ) {
+					if (!Information::IsNumeric(varvalue)) {
 						return "NULL/ Value of str var is not Numeric";
 					}
 					else {
@@ -461,7 +461,7 @@ bool CheckexcutedCmd(String^ cmd_) {
 
 	if (cmd_->StartsWith("memdump(") || cmd_->StartsWith("memdump (")) {
 		GetArg(cmd_->Substring(cmd_->IndexOf("("), cmd_->Length - cmd_->IndexOf("(")), arguments, true);
-		String^ addr = StrAnalyze(arguments[0], VarType::str,true);
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
 		String^ Size_ = StrAnalyze(arguments[1], VarType::str);
 		if ((addr->StartsWith("NULL/ ")) || (Size_->StartsWith("NULL/ "))) {
 			_plugin_logprint("wrong arguments for memdump command");
@@ -776,9 +776,9 @@ String^ replaceValueBetweenBrackets(String^ input_) {
 					return "NULL/";
 				}
 				if ((Information::IsNumeric(newValue))) {
-					input_ = ReplaceAtIndex(input_, tempstr, str2Hex(newValue,VarType::int_,false));
+					input_ = ReplaceAtIndex(input_, tempstr, str2Hex(newValue, VarType::int_, false));
 					Tinput = ReplaceAtIndex(Tinput, "[" + tempstr + "]", returnSpaces((Tinput, "[" + tempstr + "]")->Length));
-				}				
+				}
 			}
 			else
 			{
@@ -793,23 +793,233 @@ String^ replaceValueBetweenBrackets(String^ input_) {
 
 		}
 	}
-	//while ((input_->Contains("[")) && (input_->Contains("]")))
-	//{
-	//	/// setx $c,$x[$z[3]]
-	//	int beginB = input_->LastIndexOf("[")+1;   // 
-	//	String^ tempstr = input_->Substring(beginB, input_->Length - beginB);
-	//	int EndB = tempstr->IndexOf("]");
-	//	tempstr = tempstr->Substring(0, EndB); // 
-	//	String^ newValue = StrAnalyze(tempstr, VarType::int_);
-	//	if ((!Information::IsNumeric(newValue))) {
-	//		return "NULL/";
-	//	}
-	//	else
-	//	{
-	//		input_=ReplaceAtIndex(input_, tempstr, newValue);
-	//	}
+	return input_;
+}
 
-	//}
+String^ Get_adsValue(String^ input,int% EndB) {
+	bool found = false;
+	int ConstIndex = -1;
+	String^ ConstCommand;
+	if (input->StartsWith(" ")) {
+		_plugin_logprint(Str2ConstChar(Environment::NewLine + "space exist After ads."));
+		return "NULL/ ";
+	}
+		
+	String^ input_ = input->ToLower()->Trim();
+	array <String^>^ ListConst = { "exebase","modulebase","SectionSize","exefolderpath","exename",
+		"SectionBegin","SectionEnd" };
+	for (int i = 0; i < ListConst->Length ; i++)
+	{
+		if (input_->StartsWith(ListConst[i]->ToLower())) {
+			ConstIndex = i;
+			ConstCommand = ListConst[i];
+			found=true;
+			break;
+		}
+	}
+	if (!found)
+		return "NULL/ ";
+	switch (ConstIndex)
+	{
+	case exebase: {
+		///EndB = input->IndexOf(ConstCommand) + ConstCommand->Length; in case have begin with space
+		EndB = ConstCommand->Length;
+		return "0x" + duint2Hex(Script::Module::GetMainModuleBase());
+		break; 
+	}
+	case modulebase:  /// (name of module or address )
+	{
+		String^ findrest = input_->Substring(ConstCommand->Length, input_->Length - ConstCommand->Length);
+		if ((!findrest->Contains("(")) && (!findrest->Contains(")"))) {
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command(modulebase) of ads."));
+			EndB = ConstCommand->Length;
+			return "NULL/ ";
+		}
+		else
+		{
+			EndB = ConstCommand->Length + findrest->IndexOf(")") + 1;  // +1  to include ")"
+			findrest = findrest->Substring(1, findrest->IndexOf(")") -1 ); // remove ()
+			if ((findrest->Contains("$")) || (findrest->Contains("{"))) { // in case resolve value form x64dbg system
+				findrest = StrAnalyze(findrest, VarType::str, false);
+				//return  "0x" + duint2Hex(Script::Module::BaseFromName(Str2ConstChar(findrest)));
+				String^ intvalue;  /// first if it is hex value
+				if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
+					return  "0x" + duint2Hex(Script::Module::BaseFromAddr(Str2int(intvalue)));  // resolve it as hex address 
+				}
+				else
+				{
+					return  "0x" + duint2Hex(Script::Module::BaseFromName(Str2ConstChar(findrest)));// resolve it as name of module 
+				}
+			}
+			String^ intvalue;
+			if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
+				return  "0x" + duint2Hex(Script::Module::BaseFromAddr(Str2int(intvalue)));
+			}
+			else
+			{
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve name or address after command(modulebase) of ads"));
+				return "NULL/ ";
+			}
+		}
+		break;
+	}		
+	case SectionSize:		// (address)
+	{
+		String^ findrest = input_->Substring(ConstCommand->Length, input_->Length - ConstCommand->Length);
+		if ((!findrest->Contains("(")) && (!findrest->Contains(")"))) {
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command(modulebase) of ads."));
+			EndB = ConstCommand->Length;
+			return "NULL/ ";
+		}
+		else
+		{
+			EndB = ConstCommand->Length + findrest->IndexOf(")") + 1;  // +1  to include ")"
+			findrest = findrest->Substring(1, findrest->IndexOf(")") - 1); // remove ()
+			if ((findrest->Contains("$")) || (findrest->Contains("{"))) { // in case resolve value form x64dbg system
+				findrest = StrAnalyze(findrest, VarType::str, false);
+				//return  "0x" + duint2Hex(Script::Module::SizeFromAddr(Str2ConstChar(findrest)));
+			}
+			String^ intvalue;
+			if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
+				return  "0x" + duint2Hex(Script::Memory::GetSize(Hex2duint(findrest)));
+			}
+			else
+			{
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve name or address after command(modulebase) of ads"));
+				return "NULL/ ";
+			}
+		}
+		break;
+	}
+	case exefolderpath: {
+		EndB = ConstCommand->Length;
+		char* path_ = new char[MAX_STRING_SIZE];
+		if (Script::Module::GetMainModulePath(path_))
+			return CharArr2Str(path_);
+		else
+			return "NULL/ ";
+		break;
+	}
+	case exename: {
+		EndB = ConstCommand->Length;
+		char* exename = new char[MAX_STRING_SIZE];
+		if (Script::Module::GetMainModuleName(exename))
+			return CharArr2Str(exename);
+		else
+			return "NULL/ ";
+		break;
+	}
+	case SectionBegin:  // ( address)
+	{
+		String^ findrest = input_->Substring(ConstCommand->Length, input_->Length - ConstCommand->Length);
+		if ((!findrest->Contains("(")) && (!findrest->Contains(")"))) {
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command(modulebase) of ads."));
+			EndB = ConstCommand->Length;
+			return "NULL/ ";
+		}
+		else
+		{
+			EndB = ConstCommand->Length + findrest->IndexOf(")") + 1;  // +1  to include ")"
+			findrest = findrest->Substring(1, findrest->IndexOf(")") - 1); // remove ()
+			if ((findrest->Contains("$")) || (findrest->Contains("{"))) { // in case resolve value form x64dbg system
+				findrest = StrAnalyze(findrest, VarType::str, false);				
+				String^ intvalue;
+				if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
+					return  "0x" + duint2Hex(Script::Memory::GetBase(Hex2duint(findrest)));
+				}
+				else
+				{
+					_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve name or address after command(modulebase) of ads"));
+					return "NULL/ ";
+				}
+			}
+			String^ intvalue;
+			if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
+				return  "0x" + duint2Hex(Script::Memory::GetBase(Hex2duint(findrest)));
+			}
+			else
+			{
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve name or address after command(modulebase) of ads"));
+				return "NULL/ ";
+			}
+		}
+		break;
+	}
+		
+	case SectionEnd:
+	{
+		String^ findrest = input_->Substring(ConstCommand->Length, input_->Length - ConstCommand->Length);
+		if ((!findrest->Contains("(")) && (!findrest->Contains(")"))) {
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command(modulebase) of ads."));
+			EndB = ConstCommand->Length;
+			return "NULL/ ";
+		}
+		else
+		{
+			EndB = ConstCommand->Length + findrest->IndexOf(")") + 1;  // +1  to include ")"
+			findrest = findrest->Substring(1, findrest->IndexOf(")") - 1); // remove ()
+			if ((findrest->Contains("$")) || (findrest->Contains("{"))) { // in case resolve value form x64dbg system
+				findrest = StrAnalyze(findrest, VarType::str, false);
+				String^ intvalue;
+				if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
+					duint EndSec = Script::Memory::GetSize(Hex2duint(findrest))+ Script::Memory::GetBase(Hex2duint(findrest));
+					return  "0x" + duint2Hex(EndSec);
+				}
+				else
+				{
+					_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve name or address after command(modulebase) of ads"));
+					return "NULL/ ";
+				}
+			}
+			String^ intvalue;
+			if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
+				duint EndSec = Script::Memory::GetSize(Hex2duint(findrest)) + Script::Memory::GetBase(Hex2duint(findrest));
+				return  "0x" + duint2Hex(EndSec);
+			}
+			else
+			{
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve name or address after command(modulebase) of ads"));
+				return "NULL/ ";
+			}
+		}
+		break;
+	}
+	default: {
+		_plugin_logprint(Str2ConstChar(Environment::NewLine + "no known command after ads."));
+		EndB = ConstCommand->Length;
+		return "NULL/ ";
+		break;
+	}
+	}
+
+
+}
+
+String^ replace_ads(String^ input_) {
+	String^ tempstr; int EndB; int beginB;
+	String^ Tinput = input_;
+	if (!input_->Contains("ads."))
+		return input_;
+
+	beginB = input_->IndexOf("ads.");
+	while ((beginB >= 0) && (beginB < input_->Length))
+	{			
+		beginB = Tinput->IndexOf("ads.");
+		tempstr = Tinput->Substring(beginB, Tinput->Length - beginB);
+		String^ restStr = tempstr->Substring( 4, tempstr->Length -  4);
+		String^ value_ = Get_adsValue(restStr, EndB);
+		restStr = restStr->Substring(0, EndB);
+		if (!value_->StartsWith("NULL/")) {			
+			Tinput = ReplaceAtIndex(Tinput, "ads." + restStr, value_);
+			beginB += 4;
+			if (!Tinput->Contains("ads."))
+				return Tinput;
+		}
+		else
+		{
+			return input_;
+		}
+	}	
 
 	return input_;
 }
@@ -831,6 +1041,9 @@ String^ StrAnalyze(String^ input, VarType type_, bool Add0x) {  /// in case it i
 		input = retvalue;
 	else
 		return "NULL/";
+	///
+	// case we have ads.xxxx
+	input = replace_ads(input);
 	///
 	if (Array::IndexOf(vars_, input->Substring(0, 1)) >= 0) {/// if (i=0) begin with vars defenations this we need to add it 
 
@@ -1029,7 +1242,7 @@ String^ StrAnalyze(String^ input, VarType type_, bool Add0x) {  /// in case it i
 		for (int i = 0; i < StrHolderList->Count; i++)
 		{
 			if (Array::IndexOf(token_, StrHolderList[i]) < 0) {
-				StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::str,Add0x);
+				StrHolderList[i] = GetArgValueByType(StrHolderList[i], VarType::str, Add0x);
 				StrHolder = StrHolder + StrHolderList[i];
 			}
 			else
@@ -1047,6 +1260,4 @@ String^ StrAnalyze(String^ input, VarType type_, bool Add0x) {  /// in case it i
 	return StrHolder;
 }
 
-String^ ads(String^ input) {
 
-}

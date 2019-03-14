@@ -128,6 +128,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("memdump", memdump, true);
 	////
 	registerCommand("writeStr", WriteStr, true);
+	registerCommand("ReadStr", ReadStr, true);
 
 	registerCommand("BPxx", BPxx, true);
 	registerCommand("bpcx", bpcx, true);
@@ -157,11 +158,12 @@ static bool test(int argc, char* argv[]) {
 	switch (arguments->Count)
 	{
 	case 1: {
+		duint x=Script::Memory::GetSize(Hex2duint(arguments[0]));
 		//char* text_ = new char[MAX_STRING_SIZE];
 		////DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
 		//_plugin_logprint(text_);
-		String^ AsmcommandStr = StringFormatInline_Str(arguments[0]);
-		DbgCmdExecDirect(Str2ConstChar("cmt " + AsmcommandStr));
+		/*String^ AsmcommandStr = StringFormatInline_Str(arguments[0]);
+		DbgCmdExecDirect(Str2ConstChar("cmt " + AsmcommandStr));*/
 		break;
 	}
 	case 2: {
@@ -989,6 +991,37 @@ static bool WriteStr(int argc, char* argv[]) { //WriteStr(duint address, String^
 	return true;
 }
 
+static bool ReadStr(int argc, char* argv[]) { //ReadStr(variable,duint address)
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ addr = StrAnalyze(arguments[1], VarType::str, true);
+		String^ intValue;
+
+		if (CheckHexIsValid(addr, intValue) == 0) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng address"));
+			return false;
+		}
+		char* Read_Str2_ = new char[MAX_STRING_SIZE];
+		if (DbgGetStringAt(Hex2duint(addr), Read_Str2_)) {
+			String^ Read_Str2 = CharArr2Str(Read_Str2_);
+			return ReadStr_(arguments[0], Read_Str2);
+		}
+		else {
+			_plugin_logputs(Str2ConstChar("Can't read the string at this address: " + addr));
+			return  false;
+		}		
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return false;
+}
 
 /// BP 
 

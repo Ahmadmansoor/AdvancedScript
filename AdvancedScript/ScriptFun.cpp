@@ -13,10 +13,11 @@ bool Varexist(String^ varname, String^% vartype_, int% index,int% arrayLength) {
 	if (varname->StartsWith("$")) {  // in case we pass variable with $ like $x
 		varname = varname->Substring(1, varname->Length - 1);
 	}
+	varname = varname->ToLower();
 	index = 0;  // clear index ( as it's a refrence variable)
 	for each (VarPara^ var in ScriptFunList::VarList)
 	{
-		if (var->varname == varname) {
+		if (var->varname->ToLower() == varname) {
 			vartype_ = var->vartype;
 			arrayLength = var->arrayLength;
 			return true;
@@ -736,6 +737,56 @@ bool WriteStr_(duint address, String^ text, bool replace) {
 	return true;
 }
 
+bool ReadStr_(String^ varname , String^ value_) {
+	varname = varname->Trim();
+	if (value_->Trim()->StartsWith("L\"")) {
+		value_ = value_->Substring(2, value_->Length - 2);  /// remove L"
+		if ( value_->EndsWith("\""))
+		value_ = value_->Substring(0, value_->Length - 1);  /// remove last "
+	}
+	if (value_->Trim()->StartsWith("\"")) {
+		value_ = value_->Substring(1, value_->Length - 1);  /// remove "
+		if (value_->EndsWith("\""))
+			value_ = value_->Substring(0, value_->Length - 1);  /// remove last "
+	}
+
+	if (!varname->StartsWith("$")) {
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "missing $"));
+		return false;
+	}
+	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+	if ((Varexist(varname->Trim(), retvartype, indexofVar, arrayLength)) && (varname->StartsWith("$"))) {
+		if (retvartype == "array") {
+			if ((varname->Contains("[")) && (varname->Contains("]"))) {  /// this mean it's array
+				String^  arrayIndex = varname->Substring(varname->IndexOf("[") + 1, varname->Length - (varname->IndexOf("[") + 1));
+				arrayIndex = arrayIndex->Substring(0, arrayIndex->LastIndexOf("]"));
+				arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
+				if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex)) || (Str2int(arrayIndex) > arrayLength - 1)) {
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng index of array"));
+					return false;
+				}
+				else
+				{  /// we checkd that array index is int, need to check the value of the array
+					ScriptFunList::VarList[indexofVar]->varvalue[Str2int(arrayIndex)] = value_;
+					return true;
+				}
+			}else {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "missing []"));
+				return false;
+			}
+		}
+		if (retvartype == "str") {
+			ScriptFunList::VarList[indexofVar]->varvalue[0] = value_;
+			return true;
+		}
+		if (retvartype == "int") {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "variable shloud not be int"));
+			return false;
+		}
+	}
+	return false;
+}
+
 bool gotox_(String^ input, String^% lineNumber) {
 	Generic::List<String^>^ arguments;
 	GetArg(input, arguments);
@@ -773,6 +824,8 @@ bool gotox_(String^ input, String^% lineNumber) {
 }
 
 bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),type (int, str ),line number if true ,line number if false
+	/// in case Str we have 3 type 
+	
 	Generic::List<String^>^ arguments;
 	GetArg(input, arguments);
 	String^ arrayIndex;
@@ -819,7 +872,7 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 				}
 			}
 		}							
-		String ^ ret = condtion_(arguments[0], arguments[1]);
+		String ^ ret = condtion_(arguments[0], arguments[1]->ToLower());
 		if (!ret->StartsWith("NULL/")) {
 			if (Str2bool(ret)) {
 				lineNumber = trueline;
@@ -839,16 +892,101 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 
 
 String^ condtion_(String^ input,String^ typo) {
+	// we add more options 
+	// strb ( if string begin with )	main_Str ? searched_Str
+	// stre ( if string begin with )	main_Str ? searched_Str
+	// strc ( if string begin with )	main_Str ? searched_Str
+	if (typo == "strb") {
+		if (!input->Contains("?")) {	 ///if ((!input->Contains("(")) && (!input->Contains(")"))) {
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command"));			
+			return "NULL/";
+		}
+		else
+		{
+			String^ input_ = input;
+			String^ left_ = input_->Substring(0, input_->IndexOf("?"))->Trim();
+			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("!=") + 1))->Trim();
+			left_ = StrAnalyze(left_, VarType::str);
+			right_ = StrAnalyze(right_, VarType::str);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
+				return "NULL/";
+			}
+			if (left_->StartsWith(right_)) {
+				return "1";  // true
+			}
+			else
+			{
+				return "0";  // true
+			}
+		}
+	}
+
+	if (typo == "stre") {
+		if (!input->Contains("?")) {	 ///if ((!input->Contains("(")) && (!input->Contains(")"))) {
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command"));
+			return "NULL/";
+		}
+		else
+		{
+			String^ input_ = input;
+			String^ left_ = input_->Substring(0, input_->IndexOf("?"))->Trim();
+			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("!=") + 1))->Trim();
+			left_ = StrAnalyze(left_, VarType::str);
+			right_ = StrAnalyze(right_, VarType::str);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
+				return "NULL/";
+			}
+			if (left_->EndsWith(right_)) {
+				return "1";  // true
+			}
+			else
+			{
+				return "0";  // true
+			}
+		}
+	}
+	if (typo == "strc") {
+		if (!input->Contains("?")) {	 ///if ((!input->Contains("(")) && (!input->Contains(")"))) {
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command"));
+			return "NULL/";
+		}
+		else
+		{
+			String^ input_ = input;
+			String^ left_ = input_->Substring(0, input_->IndexOf("?"))->Trim();
+			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("!=") + 1))->Trim();
+			left_ = StrAnalyze(left_, VarType::str);
+			right_ = StrAnalyze(right_, VarType::str);
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
+				return "NULL/";
+			}
+			if (left_->Contains(right_)) {
+				return "1";  // true
+			}
+			else
+			{
+				return "0";  // true
+			}
+		}
+	}
+	//// Comparing 
 	if ((input->Contains("!=")) && (!input->StartsWith("!="))) {
 		String^ left_ = input->Substring(0, input->IndexOf("!="))->Trim();
 		String^ right_ = input->Substring(input->IndexOf("!=") + 1, input->Length - (input->IndexOf("!=") + 1))->Trim();
 		if (typo == "int") {
 			left_ = StrAnalyze(left_, VarType::int_);
 			right_ = StrAnalyze(right_, VarType::int_);
-			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
-			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_))
+			}
+			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_)) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides not int"));
 				return "NULL/";
+			}
 			if (Conversion::Val(left_) != Conversion::Val(right_))
 				return "1";  // true
 			else
@@ -858,15 +996,17 @@ String^ condtion_(String^ input,String^ typo) {
 		{
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
-			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
+			}
 
 		/*	string.Compare(string1, string2);
 			If str1 is less than str2, it returns - 1.
 			If str1 is equal to str2, it returns 0.
 			If str1 is greater than str2, it returns 1.*/
 
-			if (String::Compare(left_, right_) == 0) // he we check not equal so the retun should be the oppsite.
+			if (String::Compare(left_->ToLower(), right_->ToLower()) == 0) // he we check not equal so the retun should be the oppsite.
 				return "0";  // false
 			else
 				return "1";  // true
@@ -879,10 +1019,14 @@ String^ condtion_(String^ input,String^ typo) {
 		if (typo == "int") {
 			left_ = StrAnalyze(left_,VarType::int_);
 			right_ = StrAnalyze(right_, VarType::int_);
-			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
-			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_))
+			}
+			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_)) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides not int"));
 				return "NULL/";
+			}
 			if (Conversion::Val(left_) == Conversion::Val(right_))
 				return "1";  // true
 			else
@@ -892,9 +1036,11 @@ String^ condtion_(String^ input,String^ typo) {
 		{
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
-			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
-			if (String::Compare(left_ ,right_)==0)
+			}
+			if (String::Compare(left_->ToLower(),right_->ToLower())==0)
 				return "1";  // true
 			else
 				return "0";  // false
@@ -907,10 +1053,14 @@ String^ condtion_(String^ input,String^ typo) {
 		if (typo == "int") {
 			left_ = StrAnalyze(left_, VarType::int_);
 			right_ = StrAnalyze(right_, VarType::int_);
-			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
-			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_))
+			}
+			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_)) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides not int"));
 				return "NULL/";
+			}
 			if (Conversion::Val(left_) > Conversion::Val(right_))
 				return "1";  // true
 			else
@@ -920,9 +1070,11 @@ String^ condtion_(String^ input,String^ typo) {
 		{
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
-			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
-			if (String::Compare(left_, right_) == 1)
+			}
+			if (String::Compare(left_->ToLower(), right_->ToLower()) == 1)
 				return "1";  // true
 			else
 				return "0";  // false
@@ -935,10 +1087,14 @@ String^ condtion_(String^ input,String^ typo) {
 		if (typo == "int") {
 			left_ = StrAnalyze(left_, VarType::int_);
 			right_ = StrAnalyze(right_, VarType::int_);
-			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
-			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_))
+			}
+			if (!Information::IsNumeric(left_) || !Information::IsNumeric(right_)) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides not int"));
 				return "NULL/";
+			}
 			if (Conversion::Val(left_) < Conversion::Val(right_))
 				return "1";  // true
 			else
@@ -948,9 +1104,11 @@ String^ condtion_(String^ input,String^ typo) {
 		{
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
-			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/")))
+			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
-			if (String::Compare(left_, right_) == -1)
+			}
+			if (String::Compare(left_->ToLower(), right_->ToLower()) == -1)
 				return "1";  // true
 			else
 				return "0";  // false
