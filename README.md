@@ -3,6 +3,7 @@
 just a try to add more feature's to x64dbg script system
 ![scriptwindow](https://user-images.githubusercontent.com/7176580/52273727-1d816b00-2964-11e9-83a5-2e587e7275c3.png)
 
+![screen](https://user-images.githubusercontent.com/7176580/54389247-17944d80-46b9-11e9-87ee-ef3e03d82423.jpg)
 
 ## use Scriptw command for showing the Script window and F12 for steping.
 ////////////////////////////////////////////////////////////////////////////
