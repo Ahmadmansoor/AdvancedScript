@@ -146,6 +146,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="adsLib.h" />
     <ClInclude Include="AdvancedScript.h" />
     <ClInclude Include="HelperFunctions.h" />
     <ClInclude Include="LogTemplate.h">
@@ -191,6 +192,7 @@
     <ClInclude Include="ScriptFun.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="adsLib.cpp" />
     <ClCompile Include="AdvancedScript.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="HelperFunctions.cpp" />

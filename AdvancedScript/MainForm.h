@@ -79,6 +79,10 @@ namespace AdvancedScript {
 	public:
 		String^ ScriptFileName = String::Empty;
 		bool Run = false;
+	private: System::Windows::Forms::PictureBox^  PB_wait;
+	public:
+
+	public:
 
 	public:
 
@@ -148,6 +152,7 @@ namespace AdvancedScript {
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle3 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
 			this->DGV1 = (gcnew System::Windows::Forms::DataGridView());
 			this->ID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Command = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
@@ -171,10 +176,12 @@ namespace AdvancedScript {
 			this->Bu_ClearVariable = (gcnew System::Windows::Forms::Button());
 			this->TrViewVariable = (gcnew System::Windows::Forms::TreeView());
 			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+			this->PB_wait = (gcnew System::Windows::Forms::PictureBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
 			this->CMT_TreeView->SuspendLayout();
 			this->groupBox1->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->PB_wait))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// DGV1
@@ -185,7 +192,7 @@ namespace AdvancedScript {
 			this->DGV1->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::Fill;
 			dataGridViewCellStyle1->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
 			dataGridViewCellStyle1->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			dataGridViewCellStyle1->ForeColor = System::Drawing::SystemColors::WindowText;
 			dataGridViewCellStyle1->SelectionBackColor = System::Drawing::SystemColors::Highlight;
@@ -200,7 +207,7 @@ namespace AdvancedScript {
 			this->DGV1->ContextMenuStrip = this->CMT1;
 			dataGridViewCellStyle3->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
 			dataGridViewCellStyle3->BackColor = System::Drawing::SystemColors::Window;
-			dataGridViewCellStyle3->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			dataGridViewCellStyle3->Font = (gcnew System::Drawing::Font(L"Courier New", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			dataGridViewCellStyle3->ForeColor = System::Drawing::SystemColors::ControlText;
 			dataGridViewCellStyle3->SelectionBackColor = System::Drawing::SystemColors::Highlight;
@@ -402,12 +409,23 @@ namespace AdvancedScript {
 			this->checkBox1->Text = L"Update Script Window";
 			this->checkBox1->UseVisualStyleBackColor = true;
 			// 
+			// PB_wait
+			// 
+			this->PB_wait->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"PB_wait.Image")));
+			this->PB_wait->Location = System::Drawing::Point(437, 182);
+			this->PB_wait->Name = L"PB_wait";
+			this->PB_wait->Size = System::Drawing::Size(193, 197);
+			this->PB_wait->TabIndex = 5;
+			this->PB_wait->TabStop = false;
+			this->PB_wait->Visible = false;
+			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::SlateGray;
 			this->ClientSize = System::Drawing::Size(1047, 534);
+			this->Controls->Add(this->PB_wait);
 			this->Controls->Add(this->checkBox1);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->DGV1);
@@ -420,6 +438,7 @@ namespace AdvancedScript {
 			this->CMT1->ResumeLayout(false);
 			this->CMT_TreeView->ResumeLayout(false);
 			this->groupBox1->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->PB_wait))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -454,10 +473,15 @@ namespace AdvancedScript {
 				DGV1->ClearSelection();
 				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
 				if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
+					if (Need_wait) {
+						PB_wait->Visible = true;
+					}
 					readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
 				}
-				else
+				else {
+					PB_wait->Visible = true;
 					readLine("", DGV1->Rows->Count);
+				}
 				
 			}
 			else
@@ -465,9 +489,11 @@ namespace AdvancedScript {
 				DGV1->ClearSelection();
 				DGV1->Rows[0]->Selected = true;
 				ScriptargumentClass::Scriptargument_->setLineNumber(0);
+				PB_wait->Visible = false;
 			}
 			if (reten_) { reten_ = false; }
 			FileVariableTreeView();
+			PB_wait->Visible = false;
 		}
 		if (e->KeyCode == Keys::F11) {
 			if (Run)
@@ -487,6 +513,9 @@ namespace AdvancedScript {
 					DGV1->ClearSelection();
 					DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
 					if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
+						if (Need_wait) {
+							PB_wait->Visible = true;
+						}
 						if (!readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count)) {
 							Run = false;
 						}
@@ -514,6 +543,7 @@ namespace AdvancedScript {
 					ScriptargumentClass::Scriptargument_->setLineNumber(0);
 					Run = false;
 				}
+				PB_wait->Visible = false;
 				FileVariableTreeView();
 				if (reten_) {   /// it mean it hit ret command
 					DGV1->Rows[0]->Selected = true;
@@ -521,6 +551,7 @@ namespace AdvancedScript {
 					reten_ = false;
 					Run = false;
 				}
+				PB_wait->Visible = false;
 				Application::DoEvents();
 			}
 

@@ -129,6 +129,9 @@
     <ClInclude Include="ScriptArgumentWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="adsLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdvancedScript.cpp">
@@ -159,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="ScriptFun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="adsLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

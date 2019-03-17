@@ -634,7 +634,7 @@ String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 		return "NULL/ ";
 }
 
-String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
+String^ findallmemx_(String^ base_, String^ Searchvalue_ , String^ Size_) {
 	String^ cmd_ = "findallmem ";
 	String^ base_s = StrAnalyze(base_, VarType::str, true);
 	if (!base_s->StartsWith("NULL/")) {		

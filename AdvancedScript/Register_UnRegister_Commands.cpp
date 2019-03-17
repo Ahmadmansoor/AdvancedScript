@@ -147,7 +147,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("Write2File", Write2File, false);
 	registerCommand("inputbox", InputBox, false);
 
-	registerCommand("cmtx", commentset, true);
+	registerCommand("commentset", commentset, true);
 
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 }
@@ -905,20 +905,62 @@ static bool findallx(int argc, char* argv[]) { // findallmemx(String^ base_, Str
 	return false;
 }
 
-static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,String^ Size_) 
+static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,array -optional-, String^ Size_) 
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
 
 	switch ((arguments->Count))
 	{
-	case 2: {
+	case 3: {
+		DbgCmdExecDirect(Str2ConstChar("setmaxfindresult 50000"));
 		String^ cmd = findallmemx_(arguments[0], arguments[1]);
-		return DbgCmdExecDirect(Str2ConstChar(cmd));
+		bool ret_ = DbgCmdExecDirect(Str2ConstChar(cmd));
+		String^ resultCount = StringFormatInline_Str("{$result}");
+		String^ ArrayVarname = arguments[2];
+		int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+		if ((Varexist(ArrayVarname->Trim(), retvartype, indexofVar, arrayLength)) && (ArrayVarname->StartsWith("$"))) {
+			if (retvartype == "array") {
+				ScriptFunList::VarList[indexofVar]->varvalue[0]= StringFormatInline_Str("{ref.addr(0)}");
+				int dd = Hex2duint(resultCount);
+				for (int i = 1; i < Hex2duint(resultCount); i++)
+				{
+					ScriptFunList::VarList[indexofVar]->ResizeArr(1);
+					ScriptFunList::VarList[indexofVar]->varvalue[i] = StringFormatInline_Str("{ref.addr(" + duint2Hex(i) +")}");
+				}
+			}
+			else
+			{
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "var not array"));
+				return false;
+			}
+		}
+		return ret_ ;
 		
 	}
-	case 3: {
-		String^ cmd = findallmemx_(arguments[0], arguments[1], arguments[2]);
-		return DbgCmdExecDirect(Str2ConstChar(cmd));
+	case 4: {
+		DbgCmdExecDirect(Str2ConstChar("setmaxfindresult 50000"));
+		String^ cmd = findallmemx_(arguments[0], arguments[1], arguments[3]);
+		bool ret_ = DbgCmdExecDirect(Str2ConstChar(cmd));
+		String^ resultCount = StringFormatInline_Str("{$result}");
+		String^ ArrayVarname = arguments[2];
+		int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+		if ((Varexist(ArrayVarname->Trim(), retvartype, indexofVar, arrayLength)) && (ArrayVarname->StartsWith("$"))) {
+			if (retvartype == "array") {
+				ScriptFunList::VarList[indexofVar]->varvalue[0] = StringFormatInline_Str("{ref.addr(0)}");
+				int dd = Hex2duint(resultCount);
+				for (int i = 1; i < Hex2duint(resultCount); i++)
+				{
+					ScriptFunList::VarList[indexofVar]->ResizeArr(1);
+					ScriptFunList::VarList[indexofVar]->varvalue[i] = StringFormatInline_Str("{ref.addr(" + i + ")}");
+				}
+			}
+			else
+			{
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "var not array"));
+				return false;
+			}
+		}
+		return ret_;
 		
 	}
 	default:
@@ -1025,13 +1067,48 @@ static bool ReadStr(int argc, char* argv[]) { //ReadStr(variable,duint address)
 
 /// BP 
 
-static bool BPxx(int argc, char* argv[]) {
+static bool BPxx(int argc, char* argv[]) { /// BPxx (  BP Address ,BP Name , BP type)
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
 
 	switch ((arguments->Count))
 	{
-	case 1: {
+	case 1: {	
+		GuiDisableLog();
+		String^ ArrayVarname = arguments[0];
+		int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
+		if ((Varexist(ArrayVarname->Trim(), retvartype, indexofVar, arrayLength)) && (ArrayVarname->StartsWith("$"))) {
+			if ( (retvartype == "array") && (!ArrayVarname->Contains("["))) {  /// if we have array without [] then it mean we will loop through this array and set BP
+				//GuiUpdateDisassemblyView();
+				for (int i = 0; i < arrayLength; i++)
+				{
+					//String^ cmd = "bp " + ScriptFunList::VarList[indexofVar]->varvalue[i];					
+					//if (!DbgCmdExecDirect(Str2ConstChar(cmd))) {
+					
+					duint addr_ =Hex2duint(ScriptFunList::VarList[indexofVar]->varvalue[i]);
+					if (Script::Memory::IsValidPtr(addr_)) {
+						//Application::DoEvents();
+						if (!Script::Debug::SetBreakpoint(addr_)) {
+							_plugin_logputs(Str2ConstChar(Environment::NewLine + duint2Hex(addr_) + "address worng to set BP"));
+							//Application::DoEvents();
+							GuiUpdateAllViews();
+							return false;
+						}
+					}
+					else
+					{
+						_plugin_logputs(Str2ConstChar(Environment::NewLine + duint2Hex(addr_) + "address worng to set BP"));
+						GuiUpdateAllViews();
+						return false;
+					}	
+					Threading::Thread::Sleep(50);
+					Application::DoEvents();
+				}
+				Application::DoEvents();
+				//GuiUpdateAllViews();
+				return true;
+			}
+		}
 		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bp " + cmd;
@@ -1039,10 +1116,11 @@ static bool BPxx(int argc, char* argv[]) {
 		}
 		else
 		{
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "worng arguments"));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd + "address worng "));
 			return false;
 		}
 		break;
+		GuiEnableLog();
 	}
 	case 2: {
 		String^ addr = StrAnalyze(arguments[0], VarType::str, true);

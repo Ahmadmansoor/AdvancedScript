@@ -52,6 +52,14 @@ namespace ScriptWindowArg {
 			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
 		};
 	public:
+		int CommandsNeedwait(String^ input_) {   /// this command need time to finish so we will make wait clock gif so user no thing it is not responding
+			array <String^>^ CommandsArray_ = {			
+				"BPxx",
+				"findallmemx"
+			};
+			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
+		};
+	public:
 		void setLineNumber(int LineNum) {
 			lineNumber = LineNum;
 		};
@@ -126,12 +134,12 @@ namespace ScriptWindowArg {
 			return true;
 		}
 		if (Line_->Trim()->IndexOf(" ") > 0) {  /// >0 it mean it has command at the begining			
-			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));
-
+			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));			
 			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
 			if (CmdExist >= 0) {
 				char* argv = new char[50];
 				strcpy(argv, Str2CharPTR(Line_));
+
 				switch (CmdExist)
 				{
 					/*case ScriptWindowArg::scriptw:
@@ -305,6 +313,16 @@ namespace ScriptWindowArg {
 			Application::DoEvents();
 		}
 
+	}
+
+	
+	bool Need_wait(String^ cmd_) {
+		cmd_ = cmd_->Substring(0, cmd_->IndexOf(" "));  /// get command
+		int Need_wait = ScriptargumentClass::Scriptargument_->CommandsNeedwait(cmd_->ToLower()->Trim());
+		if (Need_wait >= 0) {
+			return true;
+		}
+		return false;
 	}
 
 }
