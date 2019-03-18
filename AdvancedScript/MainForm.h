@@ -55,7 +55,7 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::ContextMenuStrip^  CMT_TreeView;
 	private: System::Windows::Forms::ToolStripMenuItem^  deletToolStripMenuItem;
 
-	private: System::Windows::Forms::CheckBox^  checkBox1;
+
 	private: System::Windows::Forms::TreeView^  TrViewVariable;
 	private: System::Windows::Forms::Button^  Bu_ClearVariable;
 	private: System::Windows::Forms::ToolStripMenuItem^  createCategoryToolStripMenuItem;
@@ -80,6 +80,12 @@ namespace AdvancedScript {
 		String^ ScriptFileName = String::Empty;
 		bool Run = false;
 	private: System::Windows::Forms::PictureBox^  PB_wait;
+
+
+	private: System::Windows::Forms::TextBox^  tb;
+
+
+
 	public:
 
 	public:
@@ -90,49 +96,38 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::ToolStripMenuItem^  saveAsToolStripMenuItem;
 	public:
 
-	/*public: ref class LableLine
+
+	public: ref class Variables
 	{
 	public:
-		LableLine(int LableLineNumber_, String^ Lable_) {
-			LableLineNumber = LableLineNumber_;
-			Lable = Lable_;
-		}
-
-	private:
-	public:
-		int LableLineNumber;
-		String^ Lable;
-	};
-	public:
-		static Generic::List<LableLine^>^ LableLines = gcnew Generic::List<LableLine^>;
-
-	public:static LableLine^ GetLineByLable(String^ input) {
-		for each (LableLine^ var in LableLines)
-		{
-			if (var->Lable == input) {
-				return var;
-			}
-		}
-		return gcnew LableLine(0, "");
-	}*/
-
-	public: ref class ArraySortAssist
-	{
-	public:
-		ArraySortAssist(int index_, String^ Cmd_, String^ disc_) {
+		Variables(int index_, String^ Cmd_) {
 			index = index_;
-			Cmd = Cmd_;
-			disc = disc_;
+			Cmd = Cmd_;			
 		}
-
 	public:
+		bool is_indexExist(int index_) {
+			if (index_ == index)
+				return true;
+			else
+				return false;
+		}
+	public: int GetIndex() {
+		return index;
+	}
+	public: String^ GetCmd() {
+		return Cmd;
+	}
+	public: void updateCmd(String^ cmd_) {
+		 Cmd=cmd_;
+	}
+	private:
 		int index;
-		String^ Cmd;
-		String^ disc;
+		String^ Cmd;		
 	};
 
-			/*public:
-				Generic::List<ArraySortAssist^>^ ArraySortAssist_ = gcnew Generic::List<ArraySortAssist^>;*/
+
+	public:
+	Generic::List<Variables^>^ Variables_List = gcnew Generic::List<Variables^>;
 
 
 	private:
@@ -175,8 +170,8 @@ namespace AdvancedScript {
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->Bu_ClearVariable = (gcnew System::Windows::Forms::Button());
 			this->TrViewVariable = (gcnew System::Windows::Forms::TreeView());
-			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
 			this->PB_wait = (gcnew System::Windows::Forms::PictureBox());
+			this->tb = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
 			this->CMT_TreeView->SuspendLayout();
@@ -214,13 +209,16 @@ namespace AdvancedScript {
 			dataGridViewCellStyle3->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
 			dataGridViewCellStyle3->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
 			this->DGV1->DefaultCellStyle = dataGridViewCellStyle3;
-			this->DGV1->Location = System::Drawing::Point(274, 26);
+			this->DGV1->Location = System::Drawing::Point(274, 11);
 			this->DGV1->Name = L"DGV1";
-			this->DGV1->Size = System::Drawing::Size(767, 504);
+			this->DGV1->Size = System::Drawing::Size(767, 387);
 			this->DGV1->TabIndex = 0;
+			this->DGV1->CellClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &MainForm::DGV1_CellClick);
 			this->DGV1->CellEndEdit += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &MainForm::DGV1_CellEndEdit);
+			this->DGV1->EditingControlShowing += gcnew System::Windows::Forms::DataGridViewEditingControlShowingEventHandler(this, &MainForm::DGV1_EditingControlShowing);
 			this->DGV1->RowsAdded += gcnew System::Windows::Forms::DataGridViewRowsAddedEventHandler(this, &MainForm::DGV1_RowsAdded);
 			this->DGV1->RowsRemoved += gcnew System::Windows::Forms::DataGridViewRowsRemovedEventHandler(this, &MainForm::DGV1_RowsRemoved);
+			this->DGV1->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::DGV1_KeyDown);
 			this->DGV1->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::DGV1_KeyUp);
 			// 
 			// ID
@@ -328,7 +326,7 @@ namespace AdvancedScript {
 			this->TrViewScript->Location = System::Drawing::Point(11, 19);
 			this->TrViewScript->Name = L"TrViewScript";
 			this->TrViewScript->Size = System::Drawing::Size(244, 168);
-			this->TrViewScript->TabIndex = 1;
+			this->TrViewScript->TabIndex = 0;
 			this->TrViewScript->NodeMouseDoubleClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &MainForm::TrViewScript_NodeMouseDoubleClick);
 			// 
 			// CMT_TreeView
@@ -370,8 +368,8 @@ namespace AdvancedScript {
 			this->groupBox1->Controls->Add(this->TrViewScript);
 			this->groupBox1->Location = System::Drawing::Point(7, 3);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(261, 524);
-			this->groupBox1->TabIndex = 4;
+			this->groupBox1->Size = System::Drawing::Size(261, 569);
+			this->groupBox1->TabIndex = 1;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Options";
 			// 
@@ -380,7 +378,7 @@ namespace AdvancedScript {
 			this->Bu_ClearVariable->Location = System::Drawing::Point(11, 193);
 			this->Bu_ClearVariable->Name = L"Bu_ClearVariable";
 			this->Bu_ClearVariable->Size = System::Drawing::Size(119, 26);
-			this->Bu_ClearVariable->TabIndex = 5;
+			this->Bu_ClearVariable->TabIndex = 1;
 			this->Bu_ClearVariable->Text = L"Clear Variable";
 			this->Bu_ClearVariable->UseVisualStyleBackColor = true;
 			this->Bu_ClearVariable->Click += gcnew System::EventHandler(this, &MainForm::Bu_ClearVariable_Click);
@@ -392,47 +390,43 @@ namespace AdvancedScript {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->TrViewVariable->Location = System::Drawing::Point(11, 225);
 			this->TrViewVariable->Name = L"TrViewVariable";
-			this->TrViewVariable->Size = System::Drawing::Size(244, 291);
-			this->TrViewVariable->TabIndex = 1;
-			// 
-			// checkBox1
-			// 
-			this->checkBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->checkBox1->AutoSize = true;
-			this->checkBox1->Checked = true;
-			this->checkBox1->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->checkBox1->Enabled = false;
-			this->checkBox1->Location = System::Drawing::Point(908, 3);
-			this->checkBox1->Name = L"checkBox1";
-			this->checkBox1->Size = System::Drawing::Size(133, 17);
-			this->checkBox1->TabIndex = 0;
-			this->checkBox1->Text = L"Update Script Window";
-			this->checkBox1->UseVisualStyleBackColor = true;
+			this->TrViewVariable->Size = System::Drawing::Size(244, 336);
+			this->TrViewVariable->TabIndex = 2;
 			// 
 			// PB_wait
 			// 
 			this->PB_wait->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"PB_wait.Image")));
-			this->PB_wait->Location = System::Drawing::Point(437, 182);
+			this->PB_wait->Location = System::Drawing::Point(827, 22);
 			this->PB_wait->Name = L"PB_wait";
 			this->PB_wait->Size = System::Drawing::Size(193, 197);
 			this->PB_wait->TabIndex = 5;
 			this->PB_wait->TabStop = false;
 			this->PB_wait->Visible = false;
 			// 
+			// tb
+			// 
+			this->tb->Location = System::Drawing::Point(460, 3);
+			this->tb->Name = L"tb";
+			this->tb->Size = System::Drawing::Size(55, 20);
+			this->tb->TabIndex = 2;
+			this->tb->Visible = false;
+			this->tb->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::tb_KeyUp);
+			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::SlateGray;
-			this->ClientSize = System::Drawing::Size(1047, 534);
+			this->ClientSize = System::Drawing::Size(1047, 579);
+			this->Controls->Add(this->tb);
 			this->Controls->Add(this->PB_wait);
-			this->Controls->Add(this->checkBox1);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->DGV1);
 			this->KeyPreview = true;
 			this->Name = L"MainForm";
 			this->Text = L"MainForm";
 			this->Load += gcnew System::EventHandler(this, &MainForm::MainForm_Load);
+			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyDown);
 			this->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyUp);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->EndInit();
 			this->CMT1->ResumeLayout(false);
@@ -450,14 +444,28 @@ namespace AdvancedScript {
 	}
 	private: System::Void IniLoadData() {   /// we use it to get all lable in the script to use it for Goto
 		LableLineClass::LableLines->Clear();
+		Variables_List->Clear();
 		for (int i = 0; i < DGV1->RowCount - 1; i++)
 		{
 			DGV1->Rows[i]->Cells[0]->Value = i; // duint2Hex(i) + "/" + i;   // fill first colume with number 0 1 2 3 ....
 			if (DGV1->Rows[i]->Cells[1]->Value != nullptr) {
-				if (DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->EndsWith(":")) {
+				if (DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->EndsWith(":")) {  // find lables
 					String^ LableHold = DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->Substring(0, DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->IndexOf(":"));
 					LableLine^ LaL = gcnew LableLine(i, LableHold);
 					LableLineClass::LableLines->Add(LaL);
+				}
+				if (DGV1->Rows[i]->Cells[1]->Value->ToString()->ToLower()->Trim()->StartsWith("varx")) {  // find variables
+					if (DGV1->Rows[i]->Cells[1]->Value->ToString()->Contains(",")) {
+						//String^ cmd = DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->Substring(0, DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->IndexOf(","));
+						String^ cmd = DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim();
+						Generic::List<String^>^ arguments;
+						GetArg(cmd, arguments);
+						if (arguments[0]->ToLower() == "array") {
+							arguments[1] = arguments[1]->Substring(0, arguments[1]->IndexOf("["));
+						}
+						Variables^ LaL = gcnew Variables(i, "$" + arguments[1]);
+						Variables_List->Add(LaL);
+					}
 				}
 			}
 		}
@@ -475,14 +483,18 @@ namespace AdvancedScript {
 				if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
 					if (Need_wait) {
 						PB_wait->Visible = true;
+						PB_wait->Top = this->Height / 2;
+						PB_wait->Left = this->Width / 2;
 					}
 					readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
 				}
 				else {
 					PB_wait->Visible = true;
+					PB_wait->Top = this->Height / 2;
+					PB_wait->Left = this->Width / 2;
 					readLine("", DGV1->Rows->Count);
 				}
-				
+
 			}
 			else
 			{
@@ -499,7 +511,7 @@ namespace AdvancedScript {
 			if (Run)
 				Run = false;
 			else
-				Run = true;			
+				Run = true;
 
 			while (Run)
 			{
@@ -522,7 +534,7 @@ namespace AdvancedScript {
 						else
 						{
 							//Script::Debug::Wait();  // problem in compile under x32 platform
-							waitPauseProcess();							
+							waitPauseProcess();
 						}
 					}
 					else
@@ -533,7 +545,7 @@ namespace AdvancedScript {
 						{
 							//Script::Debug::Wait();
 							waitPauseProcess();
-							
+
 						}
 				}
 				else
@@ -651,6 +663,7 @@ namespace AdvancedScript {
 		}*/
 		FillTrView();  // fill tree on load 
 
+
 	}
 
 	private:System::Void FillTrView() {  /// tp fill treeiew with category and files
@@ -704,6 +717,7 @@ namespace AdvancedScript {
 			}
 		}
 		IO::File::WriteAllText(filepath, HoldClipBoradStr);
+		Microsoft::VisualBasic::Interaction::MsgBox("Done", MsgBoxStyle::DefaultButton1, "Confirm");
 		//FillTrView();
 	}
 	private: System::Void TrViewScript_NodeMouseDoubleClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
@@ -919,6 +933,135 @@ namespace AdvancedScript {
 		}
 
 	}
-	
-};
+	private: AutoCompleteStringCollection^ Functions_AutoCompleteLoad()
+	{
+		AutoCompleteStringCollection^ str = gcnew AutoCompleteStringCollection();
+		str->Clear();
+		str->Add("Varx ");
+		str->Add("Getx ");
+		str->Add("Setx ");
+		str->Add("Movx ");
+		str->Add("addx ");
+		str->Add("subx ");
+		str->Add("mulx ");
+		str->Add("divx ");
+
+		str->Add("andx ");
+		str->Add("orx ");
+		str->Add("xorx ");
+		str->Add("shlx ");
+		str->Add("pushx ");
+		str->Add("popx ");
+		str->Add("cmpx ");
+		str->Add("findx ");
+		str->Add("findallx ");
+		str->Add("findallmemx ");
+		str->Add("VarxClear ");
+		str->Add("memdump ");
+
+		str->Add("writeStr ");
+		str->Add("ReadStr ");
+		str->Add("BPxx ");
+		str->Add("bpcx ");
+		str->Add("bpex ");
+		str->Add("bpdx ");
+		str->Add("bphx ");
+		str->Add("bphcx ");
+		str->Add("bphex ");
+		str->Add("bphdx ");
+		str->Add("bpmx ");
+		str->Add("asmx ");
+
+		str->Add("GetAPIName ");
+		str->Add("ResizeArray ");
+		str->Add("GetArraySize ");
+		str->Add("Write2File ");
+		str->Add("inputbox ");
+		str->Add("commentset ");
+
+		return str;
+	}
+
+	private: AutoCompleteStringCollection^ Ads_Variables_AutoCompleteLoad()
+	{
+		AutoCompleteStringCollection^ str = gcnew AutoCompleteStringCollection();
+		//str->Clear();
+		str->Add("ads.exebase ");
+		str->Add("ads.modulebase( ");
+		str->Add("ads.SectionSize( ");
+		str->Add("ads.exefolderpath ");
+		str->Add("ads.exename ");
+		str->Add("ads.SectionBegin( ");
+		str->Add("ads.SectionEnd( ");
+		for (int i = 0; i < Variables_List->Count; i++)
+		{
+			str->Add(Variables_List[i]->GetCmd());
+		}
+		return str;
+	}
+	private: System::Void MainForm_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+		if (e->Modifiers == Keys::Control) {
+			/// send save Script
+			if (e->KeyCode == Keys::S) {
+				if (ScriptFileName != "") {
+					SaveScriptFile(Application::StartupPath + "\\Script\\" + ScriptFileName);
+				}
+				else
+				{
+					saveAsToolStripMenuItem_Click(sender, e);
+				}
+				Microsoft::VisualBasic::Interaction::MsgBox("Done", MsgBoxStyle::DefaultButton1, "Confirm");
+			}
+			/// send Get Function list
+			if (e->KeyCode == Keys::J) {
+				tb->AutoCompleteMode = AutoCompleteMode::SuggestAppend;
+				tb->AutoCompleteCustomSource = Ads_Variables_AutoCompleteLoad();
+				tb->AutoCompleteSource = AutoCompleteSource::CustomSource;
+				tb->Location = DGV1->GetCellDisplayRectangle(1, DGV1->CurrentRow->Index, false).Location;
+				tb->Location = Point(DGV1->Left + tb->Left, DGV1->Top + tb->Top + DGV1->CurrentRow->Height);
+				tb->Visible = true;
+				tb->Width = DGV1->Columns[1]->Width /2 ;
+				tb->Focus();
+			}
+		}
+	}
+	private: System::Void DGV1_CellClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+		tb->Visible = false;
+	}
+	private: System::Void DGV1_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+		if ((e->KeyCode == Keys::Tab)) {
+			if (DGV1->CurrentRow->Cells[1]->Value == nullptr)
+				DGV1->CurrentRow->Cells[1]->Value = String::Empty;
+			DGV1->CurrentRow->Cells[1]->Value = DGV1->CurrentRow->Cells[1]->Value->ToString()->Insert(DGV1->CurrentRow->Cells[1]->Value->ToString()->Length, tb->Text);					//TEXT->Insert(selectionStart, "GG");
+			DGV1->BeginEdit(true);
+			tb->Visible = false;
+		}
+	}
+
+	private: System::Void tb_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+		if ((e->KeyCode == Keys::Enter)) {
+			if (DGV1->CurrentRow->Cells[1]->Value == nullptr)
+				DGV1->CurrentRow->Cells[1]->Value = String::Empty;
+			DGV1->CurrentRow->Cells[1]->Value = DGV1->CurrentRow->Cells[1]->Value->ToString()->Insert(DGV1->CurrentRow->Cells[1]->Value->ToString()->Length, tb->Text);					//TEXT->Insert(selectionStart, "GG");
+			tb->Visible = false;
+			DGV1->Focus();
+			DGV1->CurrentCell = DGV1->CurrentRow->Cells[1];
+			DGV1->BeginEdit(true);
+		}
+	}
+
+
+	private: System::Void DGV1_EditingControlShowing(System::Object^  sender, System::Windows::Forms::DataGridViewEditingControlShowingEventArgs^  e) {
+		int column = DGV1->CurrentCell->ColumnIndex;
+		String^ headerText = DGV1->Columns[column]->HeaderText;
+		if (headerText->Equals("Command")) {
+			TextBox^ tb1 = (TextBox^)e->Control;
+			if (tb1 != nullptr) {
+				tb1->AutoCompleteMode = AutoCompleteMode::SuggestAppend;
+				tb1->AutoCompleteCustomSource = Functions_AutoCompleteLoad();
+				tb1->AutoCompleteSource = AutoCompleteSource::CustomSource;
+			}
+		}
+	}
+	};
 }

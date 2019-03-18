@@ -226,6 +226,7 @@ static bool cbMainForm(int argc, char* argv[])
 	// we used this (New Thread) to Create our Form in new Thread so we able to comunicated with x64dbg
 	// and be able to send command let go to address or do some  other commands 
 	System::Threading::Thread^ thread_ = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(&ShowDialog_Script));
+	thread_->SetApartmentState(Threading::ApartmentState::STA);
 	thread_->Start();
 
 	return true;
