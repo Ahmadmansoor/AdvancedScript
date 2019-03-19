@@ -1,6 +1,9 @@
 # AdvancedScript
 
 just a try to add more feature's to x64dbg script system
+
+![ScriptWindow 4 0](https://user-images.githubusercontent.com/7176580/54612768-fc3b9080-4a72-11e9-9339-806d3d2ea055.png)
+
 ![scriptwindow](https://user-images.githubusercontent.com/7176580/52273727-1d816b00-2964-11e9-83a5-2e587e7275c3.png)
 
 ![screen](https://user-images.githubusercontent.com/7176580/54389247-17944d80-46b9-11e9-87ee-ef3e03d82423.jpg)
