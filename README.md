@@ -170,7 +170,7 @@ Setx P1, P2
 print the value of the virables .
 ```
 Parameter:
-SetVarx P1, P2 
+Getx P1 
       P1: variable name, it must begin with $, because we need to get the value .
             for the array we put [array_index] if not used then it will print first 
             element in the array.
@@ -195,9 +195,18 @@ it's collection of edit functions from x64dbg system, but it accept variables in
 - (Movx , addx , subx , mulx , divx , andx , orx , xorx , shlx ) : first parameter will not analyzed, just the second one.
 - (pushx , popx):parameter will analyzed
 - (BPxx , bpcx ,bpex ,bpdx ,bphx ,bphcx ,bphex ,bphdx ,bpmx) 	parallel commands for break point commands, 
-								   parameters will not analyzed.
+								   parameters will analyzed.
 - cmpx : both parameter will analyzed  /// replaced with (if) commands on the new Script window,
-						but can be used at x64dbg Script Screen 
+						but can be used at x64dbg Script Screen
+-note :
+	in new Update BPxx for one parameter can set on array of address directly 
+	sample :
+	- varx str,IATCall,"E8????????90"			//define the search pattern
+	- varx int,TxSecBegin,{rip}				//define begin of section and set rip address
+	- setx $TxSecBegin,ads.SectionBegin($TxSecBegin)	//Get section begin address by ads libary 
+	- varx array,IatCallList[1]				//define array of call xxx
+	- findallmemx $TxSecBegin,$IATCall,$IatCallList		//search for the pattern and fill IatCallList list
+	- bpxx $MagicLineList		  			///set BP at IatCallList list fo the address 
 ```
 sample :
      - again:
@@ -227,31 +236,38 @@ sample :
 ```
 ### 5- findallmemx : 
 it's same findallmem in x64dbg system, but it accept variables in the parameter.
+Find all occurrences of a pattern in the entire memory map.
 ```
 Parameter:
-SetVarx P1, P2, P3 
+findallmemx P1, P2, P3 ,P4
       P1: The address to start searching from.
       P2: The byte pattern to search for. This byte pattern can contain wildcards (?)
-            for example: EB0?90??8D
-      P3: The size of the data to search in. Default is the entire memory map..
+            for example: EB0?90??8D   or  "EB0?90??8D"
+      P3: array variable it recommended to define array with 1 elements because this function will fill the array    
+      P4: The size of the data to search in. Default is the entire memory map.. (optional)
                   >>all variable can used AVS<<
 <<<<<<note: you can find the count of result by get {$result}>>>>>>>>
-
-   sample :
+    sample :
          - varx str, search, "4533C94533C033"  << or >> varx str, search, 4533C94533C033
            varx str, base, { rdx }
-           findallmemx $base, $search
-	or:   findallmemx $base,4533C94533C033
-	or:   findallmemx $base,"4533C94533C033"
-           mov rdi, ref.addr(0)
+	   varx array,y[1]
+           findallmemx $base, $search ,$y
+	or:   findallmemx $base,4533C94533C033 ,$y
+	or:   findallmemx $base,"4533C94533C033" ,$y   // recomanded 
+           //mov rdi, ref.addr(0)		       // old way  u can still used it 
 	   
+   
 	- varx str, search, "4533C94533C033"
 	  varx str, base, { rdx }
-	  findallmemx $base, $search  
-	  log {ref.addr(500)}
+	  varx array,z[1]
+	  findallmemx $base, $search,$z
+	  	log {ref.addr(500)}
+	  or 	getx $z[500]
 	  varx int,k,0
-	  setx $k,{ref.addr(500)}
-	  setx $k,{$result} //result hold the array length
+	  	setx $k,{ref.addr(500)}
+	  or	
+	  setx $k,{$result} //result hold the array length    old way
+	  or  GetArraySize $z,$k   // return the length of arry	  
 	  mov rdi, ref.addr(0)
 	  varx int, x0, 90
 	  varx int, x1, 5
@@ -260,8 +276,7 @@ SetVarx P1, P2, P3
 	  varx array, y, 1
 	  setx $y, 110, 100
 	  getx $y, 10 + $x + $x1 + 5
-
-         
+ 
 ```
 ### 6- memdump : 
 dump memory to log window like windbg style
@@ -270,7 +285,7 @@ dump memory to log window like windbg style
 	//00007ff8`02f42290  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
 
 Parameter:
-SetVarx P1, P2, P3 
+memdump P1, P2 
       P1: The address to start dump.
       P2: size of data   
    sample :
@@ -298,8 +313,8 @@ Good for maintenance.
 ```
 ### 8- asmx : 
 it's mirror of asm command in x64dbg, it accept variables.
-Parameter  asmx(addr , Instruction , fill with nops)
-	Instruction: if you define it as var no problem if u but "" or not 
+Parameter  asmx  addr , Instruction , fill with nops
+	For Instruction: if you define it as var no problem if u but "" or not 
 			but if you define it direct it good to surrounded it by ""
 	fill with nops : just put 1 that enough and it will fill the rest with nops.
 ``` 
@@ -325,14 +340,28 @@ Parameter  asmx(addr , Instruction , fill with nops)
 this Function write any string to address of memory, in case replace is true, it read the string ( Asci or unicode )
 then it zero the string memory and replace it with new string according the string type ( Asci or unicode ).
 ```
-WriteStr(duint address, String^ text, bool replace)
+WriteStr  duint address, String^ text, bool replace
+
+	- writeStr {rdx},"This is test" ,0
+	- writeStr {rdx},"This is test" ,1
 ```
 ### 10- if / goto: 
 (if) this Function as any if, its good for short the work of cmp jne .
 (goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
- if condtion ( > < = != ) , type (int, str ) , line number if true , line number if false
- - in parameter 1 :we can make any compare with variables ( >  <  =  != ).
+ if condtion ( > < = != ?) , type (int, str/strb,stre,strc ) , line number if true , line number if false
+ - in parameter 1 :we can make any compare with variables ( >  <  =  != )  (?) just for string compare and should use 
+ 	one of the comapre string which is :
+	strb : if string begin with 
+	stre : if string end with 
+	strc : if string contain
+	sample :
+		if mainStr?"string_",strb,5d,7d /// check if mainStr begin with (string_)
  - in parameter 2 :we define the type of variable we need to compare. we can compare int with int or string to string
+ 		int	
+		str
+		strb	string begin with
+		stre	string end with
+		strc	string contain with
  - Line number : there are 3 way to set it 
  
  		1- number + d : it mean the number is int not hex value Like 10d = line number 10
@@ -368,6 +397,13 @@ note : we can mix this tow commands and we get a loop good for IAT read write fi
 		goto 1d
 		Finish:
 
+	-varx str,Rstr
+	 again:
+	 run
+ 	 ReadStr $Rstr,{rdx}
+	 if $Rstr?"ImmIMPGetIMEA",strc,5d,2d
+	 ret
+
 ```
 ### 11- GetAPIName: 
 this Function get API name of the address and set it to variable .
@@ -402,19 +438,25 @@ GetArraySize  varArrName, varname
 	-GetArraySize $temp,$sizeArray	
 ```
 ### 14- Write2File: 
-this Function used to write data to file .
+this Function used to write data to file and can write array to file too .
 write2File path,over_append(false/true),data
  - in parameter 1 :set the path of the file it can be done by variable other wise use "" surrounded path.
  - in parameter 2 :
  		- false: to over write file . ( u can use false or 0 or off )
 		- true: to append to file . ( u can use true or 1 or on )
- - in parameter 3 : the data you want to write to the file it will analyzed if it have variables.
+ - in parameter 3 : the data you want to write to the file it will analyzed if it have variables can be array .
 ```
 	-varx str,path,"E:\temp1\log.txt"
 	 varx array,x[2]
 	 GetAPIName $x[0],{rax}
 	 write2file $path,1,$x[0]	here it will append data to the log file
-	 write2file $path,0,"API Name:" $x[0]
+	 write2file $path,0,"API Name:" $x[0]     this will write the value of x[0]
+	 
+	 -varx array,x[2]
+	  setx $x[0],test
+	  setx $x[1],again
+  	  Write2File "D:\t.txt",0,$x   	this will write all x aary to t.txt file
+
 ```
 ### 15- InputBox: 
 this Function used to get data from the user like address , it could be used as dialog to see if user say
@@ -425,11 +467,60 @@ inputBox  variable, message, title
  		- false: to over write file . ( u can use false or 0 or off )
 		- true: to append to file . ( u can use true or 1 or on )
 ```
-	-varx str,path,"E:\temp1\log.txt"
-	 varx array,x[2]
-	 GetAPIName $x[0],{rax}
-	 write2file $path,1,$x[0]	here it will append data to the log file
+	-varx array,x[2],10
+	 InputBox $x[1],this is $x[0],"info"
+	 varx int,z,0
+ 	 InputBox $z,int test,test
+
 ```
+### 16- ReadStr: 
+this Function used to read string at address.
+ReadStr  variable , duint address
+ - in parameter 1 :the variable which will hold string.
+ - in parameter 2 :the address which have the string
+```
+	-varx str,Rstr
+	 again:
+	 run
+ 	 ReadStr $Rstr,{rdx}
+	 if $Rstr?"ImmIMPGetIMEA",strc,5d,2d
+	 ret
+
+```
+### 17- commentset: 
+this Function set comment at address.
+commentset  address,String comment
+
+- in parameter 1 :address where we will set the comment at .
+ - in parameter 2 :comment string
+```
+	-varx int,x,{rip+4}	
+	 varx str,z	
+	 GetApiName $z,{rax}	
+	 commentset $x,$z	
+
+```
+### 18- ads library: 
+this library is used for fast get info like exebase or Sctionbase .....
+ads.Command
+commands Like :exebase,	modulebase,SectionSize,	exefolderpath,exename,SectionBegin,SectionEnd,
+form :
+ads.exebase				get exe base
+ads.modulebase(Modulename or address) 	get the base of module by name or address ( any address from the section)
+ads.SectionSize(address) 		get Section base by address ( any address from the section)
+ads.exefolderpath			get exe folder path
+ads.exename				get exe name
+ads.SectionBegin			get begin of the section by address ( any address from the section)
+ads.SectionEnd				get End of the section by address ( any address from the section)
+
+```
+	-varx int,x,{rip+4}	
+	 varx str,z	
+	 GetApiName $z,{rax}	
+	 commentset $x,$z	
+
+```
+
 Sample Scripts :
 
 	-tracer :
