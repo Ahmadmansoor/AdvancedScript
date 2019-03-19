@@ -197,8 +197,9 @@ it's collection of edit functions from x64dbg system, but it accept variables in
 - (BPxx , bpcx ,bpex ,bpdx ,bphx ,bphcx ,bphex ,bphdx ,bpmx) 	parallel commands for break point commands, 
 								   parameters will analyzed.
 - cmpx : both parameter will analyzed  /// replaced with (if) commands on the new Script window,
-						but can be used at x64dbg Script Screen
--note :
+						but can be used at x64dbg Script Screen.
+ 
+ -note :
 	in new Update BPxx for one parameter can set on array of address directly 
 	sample :
 	- varx str,IATCall,"E8????????90"			//define the search pattern
