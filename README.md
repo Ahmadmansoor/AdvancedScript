@@ -447,7 +447,10 @@ GetArraySize  varArrName, varname
 ```
 	-GetArraySize $temp,$sizeArray	
 ```
-### 14- Write2File: 
+### 14- Write2File:
+write2File path,over_append(false/true),data (Can be array )
+
+
 this Function used to write data to file and can write array to file too .
 write2File path,over_append(false/true),data
  - in parameter 1 :set the path of the file it can be done by variable other wise use "" surrounded path.
@@ -469,6 +472,8 @@ write2File path,over_append(false/true),data
 
 ```
 ### 15- InputBox: 
+inputBox  variable, message, title
+
 this Function used to get data from the user like address , it could be used as dialog to see if user say
 yes or no or (y/n).
 inputBox  variable, message, title
@@ -484,6 +489,8 @@ inputBox  variable, message, title
 
 ```
 ### 16- ReadStr: 
+ReadStr  variable , duint address
+
 this Function used to read string at address.
 ReadStr  variable , duint address
  - in parameter 1 :the variable which will hold string.
@@ -498,6 +505,8 @@ ReadStr  variable , duint address
 
 ```
 ### 17- commentset: 
+commentset  address,String comment
+
 this Function set comment at address.
 commentset  address,String comment
 
