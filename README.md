@@ -514,13 +514,31 @@ ads.SectionBegin			get begin of the section by address ( any address from the se
 ads.SectionEnd				get End of the section by address ( any address from the section)
 
 ```
-	-varx int,x,{rip+4}	
-	 varx str,z	
-	 GetApiName $z,{rax}	
-	 commentset $x,$z	
+	-varx str,IATCall,"E8????????90" //search for all call xxxx  nop in text section
+	 varx str,MagicLine,"xxxxxx" //search for all magic line in Themida section
+	 varx int,TxSecBegin,0 //text sction begin address
+	 varx int,ThemidaSecBegin,0 //Themida sction begin address
+	 varx int,TxSecEnd,0 //text sction End address
+	 varx int,ThemidaSecEnd,0 //Themida sction End address
+	 varx array,IatCallList[1] //list of Call emulated IAT, it's 1 because it will Auto refill later
+	 varx array,MagicLineList[1] //list of magic line
+	 varx int,i,0 //counter
+	 inputbox $TxSecBegin,Please paste any address from text Section,Text Section //get address form text section to use it later to get Begin and End Section
+	 inputbox $ThemidaSecBegin,Please paste any address from Themida Section,Themida Section //get address form Themida section to use it later to get Begin and End Section
+	setx $TxSecBegin,ads.SectionBegin($TxSecBegin) //Get address of text Section begin
+	setx $TxSecEnd,ads.SectionEnd($TxSecBegin) //Get address of text Section end
+	setx $ThemidaSecBegin,ads.SectionBegin($ThemidaSecBegin) //Get address of Themida Section begin
+	setx $ThemidaSecEnd,ads.SectionEnd($ThemidaSecBegin) //Get address of Themida Section End
+	findallmemx $TxSecBegin,$IATCall,$IatCallList //Find all Call xxxx nop and fill the list with result
+	findallmemx $ThemidaSecBegin,$MagicLine,$MagicLineList //Find all magic line and fill the list with result
+	bpxx $MagicLineList //set breack point on all items in the list
+	varx int,tempAddr,0
+	if $ThemidaSecBegin=$ThemidaSecEnd,int,17d,13d //begin check
+	
 
 ```
 
+```
 Sample Scripts :
 
 	-tracer :
@@ -545,7 +563,7 @@ Sample Scripts :
 		setx $sizeArray,$sizeArray -1
 		goto 16d
 
-
+```
 
 ////////////////////////////////////////////////////////////////////////////
 ## Log Section:
