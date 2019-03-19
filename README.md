@@ -198,7 +198,7 @@ it's collection of edit functions from x64dbg system, but it accept variables in
 								   parameters will analyzed.
 - cmpx : both parameter will analyzed  /// replaced with (if) commands on the new Script window,
 						but can be used at x64dbg Script Screen.
- 
+ ```
  -note :
 	in new Update BPxx for one parameter can set on array of address directly 
 	sample :
@@ -208,6 +208,7 @@ it's collection of edit functions from x64dbg system, but it accept variables in
 	- varx array,IatCallList[1]				//define array of call xxx
 	- findallmemx $TxSecBegin,$IATCall,$IatCallList		//search for the pattern and fill IatCallList list
 	- bpxx $MagicLineList		  			///set BP at IatCallList list fo the address 
+```
 ```
 sample :
      - again:
@@ -236,6 +237,8 @@ sample :
          
 ```
 ### 5- findallmemx : 
+findallmemx address, byte pattern to search, array variable to handle result ,  size of the data to search in
+
 it's same findallmem in x64dbg system, but it accept variables in the parameter.
 Find all occurrences of a pattern in the entire memory map.
 ```
@@ -280,6 +283,8 @@ findallmemx P1, P2, P3 ,P4
  
 ```
 ### 6- memdump : 
+memdump  address , size of data
+
 dump memory to log window like windbg style
 ```
 	//00007ff8`02f42280  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
@@ -313,6 +318,8 @@ Good for maintenance.
          - VarxClear           
 ```
 ### 8- asmx : 
+asmx 	Address ,Instruction text, filled with NOPs
+
 it's mirror of asm command in x64dbg, it accept variables.
 Parameter  asmx  addr , Instruction , fill with nops
 	For Instruction: if you define it as var no problem if u but "" or not 
@@ -338,6 +345,8 @@ Parameter  asmx  addr , Instruction , fill with nops
 
 ```
 ### 9- writeStr : 
+writeStr  address , text to write , replace old string
+
 this Function write any string to address of memory, in case replace is true, it read the string ( Asci or unicode )
 then it zero the string memory and replace it with new string according the string type ( Asci or unicode ).
 ```
