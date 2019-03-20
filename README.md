@@ -534,7 +534,7 @@ ads.exefolderpath			get exe folder path
 ads.exename				get exe name
 ads.SectionBegin			get begin of the section by address ( any address from the section)
 ads.SectionEnd				get End of the section by address ( any address from the section)
-
+ads.GetAPIName				get API name from address
 ```
 	-varx str,IATCall,"E8????????90" //search for all call xxxx  nop in text section
 	 varx str,MagicLine,"xxxxxx" //search for all magic line in Themida section
@@ -558,6 +558,7 @@ ads.SectionEnd				get End of the section by address ( any address from the secti
 	if $ThemidaSecBegin=$ThemidaSecEnd,int,17d,13d //begin check
 	
 
+	- varx str,x,ads.GetAPIName({rax})   // u can get the API name directly
 ```
 
 ```
