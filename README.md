@@ -535,6 +535,7 @@ ads.exename				get exe name
 ads.SectionBegin			get begin of the section by address ( any address from the section)
 ads.SectionEnd				get End of the section by address ( any address from the section)
 ads.GetAPIName				get API name from address
+ads.GetArraySize			get the array size
 ```
 	-varx str,IATCall,"E8????????90" //search for all call xxxx  nop in text section
 	 varx str,MagicLine,"xxxxxx" //search for all magic line in Themida section
@@ -559,6 +560,10 @@ ads.GetAPIName				get API name from address
 	
 ```
 	- varx str,x,ads.GetAPIName({rax})   // u can get the API name directly
+```
+```
+	- varx array,x[20],30
+	  varx int,y,ads.GetArraySize( $x)   // get array size direct
 ```
 
 ```
