@@ -534,10 +534,11 @@ ads.modulebase(Modulename or address) 	get the base of module by name or address
 ads.SectionSize(address) 		get Section base by address ( any address from the section)
 ads.exefolderpath			get exe folder path
 ads.exename				get exe name
-ads.SectionBegin			get begin of the section by address ( any address from the section)
-ads.SectionEnd				get End of the section by address ( any address from the section)
-ads.GetAPIName				get API name from address
-ads.GetArraySize			get the array size
+ads.SectionBegin(address)		get begin of the section by address ( any address from the section)
+ads.SectionEnd(address)			get End of the section by address ( any address from the section)
+ads.GetAPIName(address)			get API name from address
+ads.GetArraySize($arrayName)		get the array size
+ads.ReadStr(address)			get string at address
 ```
 	-varx str,IATCall,"E8????????90" //search for all call xxxx  nop in text section
 	 varx str,MagicLine,"xxxxxx" //search for all magic line in Themida section
@@ -566,6 +567,7 @@ ads.GetArraySize			get the array size
 ```
 	- varx array,x[20],30
 	  varx int,y,ads.GetArraySize( $x)   // get array size direct
+	  varx str,z,ads.ReadStr({rax})      // read string at address
 ```
 Sample Scripts :
 
