@@ -522,7 +522,9 @@ commentset  address,String comment
 	 commentset $x,$z	
 
 ```
-### 18- ads library: 
+////////////////////////////////////////////////////////////////////////////
+## ads library: 
+
 this library is used for fast get info like exebase or Sctionbase .....
 ads.Command
 commands Like :exebase,	modulebase,SectionSize,	exefolderpath,exename,SectionBegin,SectionEnd,
@@ -564,8 +566,6 @@ ads.GetArraySize			get the array size
 ```
 	- varx array,x[20],30
 	  varx int,y,ads.GetArraySize( $x)   // get array size direct
-```
-
 ```
 Sample Scripts :
 
