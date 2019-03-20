@@ -532,6 +532,7 @@ this library is used for fast get info like exebase or Sctionbase .....
 ads.Command
 commands Like :exebase,	modulebase,SectionSize,	exefolderpath,exename,SectionBegin,SectionEnd,
 form :
+```
 ads.exebase				get exe base
 ads.modulebase(Modulename or address) 	get the base of module by name or address ( any address from the section)
 ads.SectionSize(address) 		get Section base by address ( any address from the section)
@@ -542,6 +543,7 @@ ads.SectionEnd(address)			get End of the section by address ( any address from t
 ads.GetAPIName(address)			get API name from address
 ads.GetArraySize($arrayName)		get the array size
 ads.ReadStr(address)			get string at address
+
 ```
 	-varx str,IATCall,"E8????????90" //search for all call xxxx  nop in text section
 	 varx str,MagicLine,"xxxxxx" //search for all magic line in Themida section
