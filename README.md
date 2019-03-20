@@ -88,7 +88,8 @@ just a try to add more feature's to x64dbg script system
       	  so if u want to write a command for some functions like asm command u can define the asm command 
 	  with coma like "mov rax,1".
 ```
-### 1- Varx: 
+### 1- Varx:
+Varx      variable type ,  variable name, value
 it's Like Var in x64dbg system, for defining variable's which can used in Script commands.
 ```
 Parameter:
@@ -138,6 +139,7 @@ Varx P1, P2 , P3(optional)
 	  getx $z[0]
 ```
 ### 2- Setx : 
+Setx  varname, value
 set value to the virables in AdvancedScript vriable system or x64dbg system.
 you can make add sub or multi or divide and you can nested arguments as you like.
 
@@ -170,6 +172,7 @@ Setx P1, P2
 	 
 ```
 ### 3- Getx / Printx : 
+Getx   variable name
 print the value of the virables .
 ```
 Parameter:
