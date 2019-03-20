@@ -547,17 +547,17 @@ ads.GetAPIName				get API name from address
 	 varx int,i,0 //counter
 	 inputbox $TxSecBegin,Please paste any address from text Section,Text Section //get address form text section to use it later to get Begin and End Section
 	 inputbox $ThemidaSecBegin,Please paste any address from Themida Section,Themida Section //get address form Themida section to use it later to get Begin and End Section
-	setx $TxSecBegin,ads.SectionBegin($TxSecBegin) //Get address of text Section begin
-	setx $TxSecEnd,ads.SectionEnd($TxSecBegin) //Get address of text Section end
-	setx $ThemidaSecBegin,ads.SectionBegin($ThemidaSecBegin) //Get address of Themida Section begin
-	setx $ThemidaSecEnd,ads.SectionEnd($ThemidaSecBegin) //Get address of Themida Section End
-	findallmemx $TxSecBegin,$IATCall,$IatCallList //Find all Call xxxx nop and fill the list with result
-	findallmemx $ThemidaSecBegin,$MagicLine,$MagicLineList //Find all magic line and fill the list with result
-	bpxx $MagicLineList //set breack point on all items in the list
-	varx int,tempAddr,0
-	if $ThemidaSecBegin=$ThemidaSecEnd,int,17d,13d //begin check
+	 setx $TxSecBegin,ads.SectionBegin($TxSecBegin) //Get address of text Section begin
+	 setx $TxSecEnd,ads.SectionEnd($TxSecBegin) //Get address of text Section end
+	 setx $ThemidaSecBegin,ads.SectionBegin($ThemidaSecBegin) //Get address of Themida Section begin
+	 setx $ThemidaSecEnd,ads.SectionEnd($ThemidaSecBegin) //Get address of Themida Section End
+	 findallmemx $TxSecBegin,$IATCall,$IatCallList //Find all Call xxxx nop and fill the list with result
+	 findallmemx $ThemidaSecBegin,$MagicLine,$MagicLineList //Find all magic line and fill the list with result
+	 bpxx $MagicLineList //set breack point on all items in the list
+	 varx int,tempAddr,0
+	 if $ThemidaSecBegin=$ThemidaSecEnd,int,17d,13d //begin check
 	
-
+```
 	- varx str,x,ads.GetAPIName({rax})   // u can get the API name directly
 ```
 
