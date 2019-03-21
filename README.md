@@ -516,13 +516,26 @@ commentset  address,String comment
 this Function set comment at address.
 commentset  address,String comment
 
-- in parameter 1 :address where we will set the comment at .
- - in parameter 2 :comment string
+- P1 parameter 1 :address where we will set the comment at .
+- P2 parameter 2 :comment string
 ```
 	-varx int,x,{rip+4}	
 	 varx str,z	
 	 GetApiName $z,{rax}	
 	 commentset $x,$z	
+
+```
+### 18- GetdesCallJmp: 
+GetdesCallJmp   variable, address of call
+
+this Function get the address of (Call xxxxx  or Jmp xxxx )and store it in a variable.
+GetdesCallJmp   variable, address of call
+
+- P1 parameter 1 :variable which gold the value .
+- P2 parameter 2 :address of Call or jmp 
+```
+	-varx int,x,0	
+	 GetdesCallJmp $x,{rip}		
 
 ```
 ////////////////////////////////////////////////////////////////////////////
