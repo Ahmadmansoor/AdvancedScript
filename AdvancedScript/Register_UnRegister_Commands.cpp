@@ -76,7 +76,7 @@ void registerCommand(const char* command, CBPLUGINCOMMAND cbCommand, bool debugo
 ////////////////////////////////////////////////////////  WE NEED to fill this List of Template's at fist load
 void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
-	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript 2.8 ] || Coded By AhmadMansoor /exetools "));
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript " + CharArr2Str(ads_version) + "] || Coded By AhmadMansoor /exetools "));
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 
 	registerCommand("Scriptw", cbMainForm, false);
@@ -147,8 +147,8 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("Write2File", Write2File, false);
 	registerCommand("inputbox", InputBox, false);
 
-	registerCommand("commentset", commentset, true);
-
+	registerCommand("commentsetx", commentset, true);
+	registerCommand("GetdesCallJmp", GetdesCallJmp, true);
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ static bool test(int argc, char* argv[]) {
 	switch (arguments->Count)
 	{
 	case 1: {
-		duint x=Script::Memory::GetSize(Hex2duint(arguments[0]));
+		//duint x=Script::Memory::GetSize(Hex2duint(arguments[0]));
 		//char* text_ = new char[MAX_STRING_SIZE];
 		////DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
 		//_plugin_logprint(text_);
@@ -167,6 +167,8 @@ static bool test(int argc, char* argv[]) {
 		break;
 	}
 	case 2: {
+		BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
+		DbgDisasmFastAt(Hex2duint(arguments[0]), basicinfo);
 		break;
 	}
 	default:
@@ -211,7 +213,16 @@ static bool test(int argc, char* argv[]) {
 static void ShowDialog_Script()
 {
 	AdvancedScript::MainForm ScriptWindow;
-	ScriptWindow.ShowDialog();
+	try
+	{
+		if (!ScriptWindow.Visible)
+			ScriptWindow.ShowDialog();
+	}
+	catch (const std::exception&)
+	{
+
+	}
+	
 }
 
 static bool cbMainForm(int argc, char* argv[])
@@ -602,7 +613,7 @@ static bool addx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 	case 2: {
 		String^ cmd = addx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -626,7 +637,7 @@ static bool subx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 	case 2: {
 		String^ cmd = subx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -651,7 +662,7 @@ static bool mulx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		String^ cmd = mulx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -676,7 +687,7 @@ static bool divx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		String^ cmd = divx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -701,7 +712,7 @@ static bool cmpx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		String^ cmd = cmpx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -725,7 +736,7 @@ static bool andx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 	case 2: {
 		String^ cmd = andx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -750,7 +761,7 @@ static bool orx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varna
 		String^ cmd = orx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -775,7 +786,7 @@ static bool xorx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		String^ cmd = xorx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -800,7 +811,7 @@ static bool shlx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 		String^ cmd = shlx_(arguments[0], arguments[1]);
 		if (!cmd->Contains("NULL/")) {
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -825,7 +836,7 @@ static bool pushx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ var
 		String^ cmd = pushx_(arguments[0]);
 		if (!cmd->Contains("NULL/")) {
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -849,7 +860,7 @@ static bool popx(int argc, char* argv[]) { //Varx_(String^ vartype, String^ varn
 	case 1: {
 		String^ cmd = popx_(arguments[0]);
 		if (!cmd->Contains("NULL/")) {
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -872,11 +883,11 @@ static bool findx(int argc, char* argv[]) { // findallmemx(String^ base_, String
 	{
 	case 2: {
 		String^ cmd = findx_(arguments[0], arguments[1]);
-		return DbgCmdExecDirect(Str2ConstChar(cmd));		
+		return DbgCmdExecDirect(Str2ConstChar(cmd));
 	}
 	case 3: {
 		String^ cmd = findx_(arguments[0], arguments[1], arguments[2]);
-		return DbgCmdExecDirect(Str2ConstChar(cmd));		
+		return DbgCmdExecDirect(Str2ConstChar(cmd));
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
@@ -893,11 +904,11 @@ static bool findallx(int argc, char* argv[]) { // findallmemx(String^ base_, Str
 	{
 	case 2: {
 		String^ cmd = findallx_(arguments[0], arguments[1]);
-		return DbgCmdExecDirect(Str2ConstChar(cmd));		
+		return DbgCmdExecDirect(Str2ConstChar(cmd));
 	}
 	case 3: {
 		String^ cmd = findallx_(arguments[0], arguments[1], arguments[2]);
-		return DbgCmdExecDirect(Str2ConstChar(cmd));		
+		return DbgCmdExecDirect(Str2ConstChar(cmd));
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
@@ -906,7 +917,7 @@ static bool findallx(int argc, char* argv[]) { // findallmemx(String^ base_, Str
 	return false;
 }
 
-static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,array -optional-, String^ Size_) 
+static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, String^ Searchvalue_,array variable, String^ Size_) 
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
 
@@ -921,12 +932,12 @@ static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, 
 		int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
 		if ((Varexist(ArrayVarname->Trim(), retvartype, indexofVar, arrayLength)) && (ArrayVarname->StartsWith("$"))) {
 			if (retvartype == "array") {
-				ScriptFunList::VarList[indexofVar]->varvalue[0]= StringFormatInline_Str("{ref.addr(0)}");
-				int dd = Hex2duint(resultCount);
+				ScriptFunList::VarList[indexofVar]->varvalue[0] = StringFormatInline_Str("{ref.addr(0)}");
+				//int dd = Hex2duint(resultCount);
 				for (int i = 1; i < Hex2duint(resultCount); i++)
 				{
 					ScriptFunList::VarList[indexofVar]->ResizeArr(1);
-					ScriptFunList::VarList[indexofVar]->varvalue[i] = StringFormatInline_Str("{ref.addr(" + duint2Hex(i) +")}");
+					ScriptFunList::VarList[indexofVar]->varvalue[i] = StringFormatInline_Str("{ref.addr(" + duint2Hex(i) + ")}");
 				}
 			}
 			else
@@ -935,8 +946,8 @@ static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, 
 				return false;
 			}
 		}
-		return ret_ ;
-		
+		return ret_;
+
 	}
 	case 4: {
 		DbgCmdExecDirect(Str2ConstChar("setmaxfindresult 50000"));
@@ -962,7 +973,7 @@ static bool findallmemx(int argc, char* argv[]) { // findallmemx(String^ base_, 
 			}
 		}
 		return ret_;
-		
+
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
@@ -1056,7 +1067,7 @@ static bool ReadStr(int argc, char* argv[]) { //ReadStr(variable,duint address)
 		else {
 			_plugin_logputs(Str2ConstChar("Can't read the string at this address: " + addr));
 			return  false;
-		}		
+		}
 		break;
 	}
 	default:
@@ -1074,19 +1085,19 @@ static bool BPxx(int argc, char* argv[]) { /// BPxx (  BP Address ,BP Name , BP 
 
 	switch ((arguments->Count))
 	{
-	case 1: {	
+	case 1: {
 		GuiDisableLog();
 		String^ ArrayVarname = arguments[0];
 		int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
 		if ((Varexist(ArrayVarname->Trim(), retvartype, indexofVar, arrayLength)) && (ArrayVarname->StartsWith("$"))) {
-			if ( (retvartype == "array") && (!ArrayVarname->Contains("["))) {  /// if we have array without [] then it mean we will loop through this array and set BP
+			if ((retvartype == "array") && (!ArrayVarname->Contains("["))) {  /// if we have array without [] then it mean we will loop through this array and set BP
 				//GuiUpdateDisassemblyView();
 				for (int i = 0; i < arrayLength; i++)
 				{
 					//String^ cmd = "bp " + ScriptFunList::VarList[indexofVar]->varvalue[i];					
 					//if (!DbgCmdExecDirect(Str2ConstChar(cmd))) {
-					
-					duint addr_ =Hex2duint(ScriptFunList::VarList[indexofVar]->varvalue[i]);
+
+					duint addr_ = Hex2duint(ScriptFunList::VarList[indexofVar]->varvalue[i]);
 					if (Script::Memory::IsValidPtr(addr_)) {
 						//Application::DoEvents();
 						if (!Script::Debug::SetBreakpoint(addr_)) {
@@ -1101,7 +1112,7 @@ static bool BPxx(int argc, char* argv[]) { /// BPxx (  BP Address ,BP Name , BP 
 						_plugin_logputs(Str2ConstChar(Environment::NewLine + duint2Hex(addr_) + "address worng to set BP"));
 						GuiUpdateAllViews();
 						return false;
-					}	
+					}
 					Threading::Thread::Sleep(50);
 					Application::DoEvents();
 				}
@@ -1113,7 +1124,7 @@ static bool BPxx(int argc, char* argv[]) { /// BPxx (  BP Address ,BP Name , BP 
 		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bp " + cmd;
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -1129,7 +1140,7 @@ static bool BPxx(int argc, char* argv[]) { /// BPxx (  BP Address ,BP Name , BP 
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bp " + addr + "," + BPname;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1146,7 +1157,7 @@ static bool BPxx(int argc, char* argv[]) { /// BPxx (  BP Address ,BP Name , BP 
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bp " + addr + "," + BPname + "," + BPType;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1174,7 +1185,7 @@ static bool bpcx(int argc, char* argv[]) {
 		if (!cmd->Contains("NULL")) {
 			cmd = "bpc " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1201,7 +1212,7 @@ static bool bpex(int argc, char* argv[]) {
 		if (!cmd->Contains("NULL")) {
 			cmd = "bpe " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1228,7 +1239,7 @@ static bool bpdx(int argc, char* argv[]) {
 		if (!cmd->Contains("NULL")) {
 			cmd = "bpd " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1255,7 +1266,7 @@ static bool bphx(int argc, char* argv[]) {
 		if (!cmd->Contains("NULL")) {
 			cmd = "bph " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1270,7 +1281,7 @@ static bool bphx(int argc, char* argv[]) {
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bph " + addr + "," + BPname;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1286,7 +1297,7 @@ static bool bphx(int argc, char* argv[]) {
 		String^ BPType = StrAnalyze(arguments[2], VarType::str);
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bph " + addr + "," + BPname + "," + BPType;
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -1313,7 +1324,7 @@ static bool bphcx(int argc, char* argv[]) {
 		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bphc " + cmd;
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -1339,7 +1350,7 @@ static bool bphex(int argc, char* argv[]) {
 		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bphe " + cmd;
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -1366,7 +1377,7 @@ static bool bphdx(int argc, char* argv[]) {
 		String^ cmd = StrAnalyze(arguments[0], VarType::str, true);
 		if (!cmd->Contains("NULL")) {
 			cmd = "bphd " + cmd;
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -1393,7 +1404,7 @@ static bool bpmx(int argc, char* argv[]) {
 		if (!cmd->Contains("NULL")) {
 			cmd = "bpm " + cmd;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1408,7 +1419,7 @@ static bool bpmx(int argc, char* argv[]) {
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bpm " + addr + "," + BPname;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1425,7 +1436,7 @@ static bool bpmx(int argc, char* argv[]) {
 		if ((!addr->Contains("NULL")) && (!BPname->Contains("NULL")) && (!BPname->Contains("NULL"))) {
 			String^ cmd = "bpm " + addr + "," + BPname + "," + BPType;
 			return DbgCmdExecDirect(Str2ConstChar(cmd));
-			
+
 		}
 		else
 		{
@@ -1460,8 +1471,8 @@ static bool asmx(int argc, char* argv[]) { // asmx ( addr , Instruction , fill w
 			Instruction = "\"" + Instruction + "\"";
 		}
 		if ((!addr->Contains("NULL")) && (!Instruction->Contains("NULL"))) {
-			String^ cmd =  "asm " + addr + "," + Instruction ;			
-			return DbgCmdExecDirect(Str2ConstChar(cmd));			 
+			String^ cmd = "asm " + addr + "," + Instruction;
+			return DbgCmdExecDirect(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -1482,8 +1493,8 @@ static bool asmx(int argc, char* argv[]) { // asmx ( addr , Instruction , fill w
 		}
 		//String^ BPType = StrAnalyze(arguments[2], VarType::str);
 		if ((!addr->Contains("NULL")) && (!Instruction->Contains("NULL")) && (!Instruction->Contains("NULL"))) {
-			String^ cmd = "asm " + addr + "," + Instruction + ",\"" + "1\""  ;
-			return DbgCmdExec(Str2ConstChar(cmd));			 
+			String^ cmd = "asm " + addr + "," + Instruction + ",\"" + "1\"";
+			return DbgCmdExec(Str2ConstChar(cmd));
 		}
 		else
 		{
@@ -1613,7 +1624,7 @@ static bool Write2File(int argc, char* argv[]) {  // write2File(path,over_append
 				if (!path_->EndsWith(".txt")) {
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + "not ended with .txt"));
 					return false;
-				}				
+				}
 				if (!IO::Directory::Exists(IO::Path::GetDirectoryName(path_))) {
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
 					return false;
@@ -1647,7 +1658,7 @@ static bool Write2File(int argc, char* argv[]) {  // write2File(path,over_append
 		}
 
 
-		return Write2File_(pathfile, Str2bool(arguments[1]),arguments[2]);
+		return Write2File_(pathfile, Str2bool(arguments[1]), arguments[2]);
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
@@ -1686,23 +1697,63 @@ static bool InputBox(int argc, char* argv[]) {  // inputBox ( variable,String me
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
 		return false;
-	}	
+	}
 	return false;
 
 }
 
-static bool commentset(int argc, char* argv[]) {  // commentset ( Addr , String message)
+static bool commentset(int argc, char* argv[]) {  // commentset  address,String comment
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments);
 	switch ((arguments->Count))
 	{
-	case 2: {		
+	case 2: {
 		String^ Addr = StrAnalyze(arguments[0], VarType::int_);
 		if (Information::IsNumeric(Addr)) {
 			return DbgCmdExecDirect(Str2ConstChar("cmt " + str2Hex(Addr, VarType::int_, true) + "," + StrAnalyze(arguments[1], VarType::str)));
-		}	
+		}
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "can't resolve Address"));
 		return false;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return false;
+}
+
+static bool GetdesCallJmp(int argc, char* argv[]) {  // GetdesCallJmp   variable, address of call
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments);
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ addr_ = StrAnalyze(arguments[1], VarType::str, true);
+		if (!arguments[0]->StartsWith("$")) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "wrong variable name"));
+			return false;
+		}
+		if (!arguments[0]->Contains("[")) {  /// this mean it's int or str
+			return GetdesCallJmp_(arguments[0], addr_);
+		}
+		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) {  /// this mean it's array
+			String^  arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("[") + 1));
+			arrayIndex = arrayIndex->Substring(0, arrayIndex->LastIndexOf("]"));
+			arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
+			if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex))) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng index of array"));
+				return false;
+			}
+			else
+			{  /// we checkd that array index is int, need to check the value of the array
+				return GetdesCallJmp_(arguments[0]->Substring(0, arguments[0]->IndexOf("[")), addr_, Str2int(arrayIndex));
+			}
+		}
+		else {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "missing []"));
+			return false;
+		}
+
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));

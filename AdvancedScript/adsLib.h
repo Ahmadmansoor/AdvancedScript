@@ -12,4 +12,10 @@ enum ads_Enum
 	exename,
 	SectionBegin,
 	SectionEnd,
+	GetAPIName_,
+	GetArraySize__,
+	ReadStr__,
+	GetdesCallJmp__,
+	isInArray_,
+	isAddrBelongSection,
 };

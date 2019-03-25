@@ -701,8 +701,13 @@ String^ GetArgValueByType(String^ argument, VarType type_, bool Add0x) {  /// re
 		}
 		if ((argument->IndexOf("{") >= 0) && (argument->IndexOf("}", argument->IndexOf("{")) >= 0)) {
 			while (argument->IndexOf("{") >= 0) {
-				String^ replaceValue = "";
-				String^ oldvalue = argument->Substring(argument->IndexOf("{"), argument->IndexOf("}") + 1);
+				String^ replaceValue = ""; String^ oldvalue;
+				//if (argument->IndexOf("}") + 1 > argument->Length) {
+				oldvalue = argument->Substring(argument->IndexOf("{"), argument->Length - argument->IndexOf("{"));
+				oldvalue = oldvalue->Substring(0, oldvalue->IndexOf("}") + 1);
+				//}
+				//else
+				//	oldvalue = argument->Substring(argument->IndexOf("{"), argument->Length);
 				replaceValue = findScriptSystemVarValue(oldvalue);
 				if (!replaceValue->StartsWith("NULL/")) {
 					argument = ReplaceAtIndex(argument, oldvalue, replaceValue);
@@ -731,7 +736,7 @@ String^ GetArgValueByType(String^ argument, VarType type_, bool Add0x) {  /// re
 						if (Add0x) {
 							if (!tempInput->Trim()->ToLower()->StartsWith("0x")) {  // check if there are 0x at begining 
 								tempInput = "0x" + tempInput->Trim();
-							}							
+							}
 						}
 						tempInput = tempInput->Trim();
 					}
@@ -999,19 +1004,19 @@ String^ replaceValueBetweenBrackets(String^ input_) {
 
 String^ replace_ads(String^ input_) {
 	String^ tempstr; int EndB; int beginB;
-	String^ Tinput = input_;
-	if (!input_->Contains("ads."))
+	String^ Tinput = input_->Trim()->ToLower();
+	if (!Tinput->Contains("ads."))
 		return input_;
 
-	beginB = input_->IndexOf("ads.");
-	while ((beginB >= 0) && (beginB < input_->Length))
-	{			
+	beginB = Tinput->IndexOf("ads.");
+	while ((beginB >= 0) && (beginB < Tinput->Length))
+	{
 		beginB = Tinput->IndexOf("ads.");
 		tempstr = Tinput->Substring(beginB, Tinput->Length - beginB);
-		String^ restStr = tempstr->Substring( 4, tempstr->Length -  4);
+		String^ restStr = tempstr->Substring(4, tempstr->Length - 4);
 		String^ value_ = Get_adsValue(restStr, EndB);
-		restStr = restStr->Substring(0, EndB);
-		if (!value_->StartsWith("NULL/")) {			
+		if (!value_->StartsWith("NULL/")) {
+			restStr = restStr->Substring(0, EndB);
 			Tinput = ReplaceAtIndex(Tinput, "ads." + restStr, value_);
 			beginB += 4;
 			if (!Tinput->Contains("ads."))
@@ -1019,9 +1024,12 @@ String^ replace_ads(String^ input_) {
 		}
 		else
 		{
-			return input_;
+			if (Interaction::MsgBox("error in resolve ads,continue or stop to fix the problem", MsgBoxStyle::YesNo, "Error") == MsgBoxResult::Yes)
+				return input_;
+			else
+				return "NULL/";
 		}
-	}	
+	}
 
 	return input_;
 }
@@ -1046,6 +1054,34 @@ String^ StrAnalyze(String^ input, VarType type_, bool Add0x) {  /// in case it i
 	///
 	// case we have ads.xxxx
 	input = replace_ads(input);
+	///
+	// in case we got directly hex value or numerical value 
+	String^ intValue;
+	if (CheckHexIsValid(input, intValue) != 0) {
+		if (type_ == VarType::int_)
+			return intValue;
+		if (type_ == VarType::str) {
+			if (Add0x) {
+				if (input->Trim()->ToLower()->StartsWith("0x")) {
+					return input->Trim();
+				}
+				else
+				{
+					return "0x" + input->Trim();
+				}
+			}
+			else
+			{
+				if (input->Trim()->ToLower()->StartsWith("0x")) {
+					return input->Trim()->Substring(2, input->Trim()->Length - 2);   /// remove 0x
+				}
+				else
+				{
+					return  input->Trim();
+				}
+			}
+		}
+	}
 	///
 	if (Array::IndexOf(vars_, input->Substring(0, 1)) >= 0) {/// if (i=0) begin with vars defenations this we need to add it 
 

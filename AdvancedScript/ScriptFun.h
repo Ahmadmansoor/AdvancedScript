@@ -178,7 +178,7 @@ bool Write2File_(String^ filepath, bool append_, String^ data_);
 bool ReadStr_(String^ varname, String^ value_);
 bool InputBox_(String^ varname, int index_, String^ message_, String^ title);
 
-bool ifCond(String^ input, String^% lineNumber);
+bool ifCond(String^ input, String^% lineNumber,int currentLine);
 bool gotox_(String^ input, String^% lineNumber);
-
+bool GetdesCallJmp_(String^ varname, String^ command_, int Arrayindex_=0);
 //String^ BPxx_(String^ addr, String^ BPname = "", String^ BPType = "");

@@ -137,8 +137,8 @@ namespace ScriptWindowArg {
 			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));			
 			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
 			if (CmdExist >= 0) {
-				char* argv = new char[50];
-				strcpy(argv, Str2CharPTR(Line_));
+				//char* argv = new char[50];
+				//strcpy(argv, Str2CharPTR(Line_));
 
 				switch (CmdExist)
 				{
@@ -224,7 +224,7 @@ namespace ScriptWindowArg {
 				case ScriptWindowArg::ifx:
 				{
 					String^ Line2Jmp_;
-					ret_ = ifCond(Line_, Line2Jmp_);
+					ret_ = ifCond(Line_, Line2Jmp_, ScriptargumentClass::Scriptargument_->GetLineNumber());
 					if (!ret_) {
 						break;
 					}

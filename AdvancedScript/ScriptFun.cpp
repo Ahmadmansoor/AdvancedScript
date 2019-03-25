@@ -1,5 +1,5 @@
 #include "ScriptFun.h"
-
+#include "adsLib.h"
 
 
 void VarListClear() {
@@ -9,7 +9,7 @@ VarPara_temp^ GetVarx_byIndex(String^ varname, int index_) {
 	VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[index_]->vartype, ScriptFunList::VarList[index_]->varname, ScriptFunList::VarList[index_]->varvalue[index_], index_);
 	return x;
 }
-bool Varexist(String^ varname, String^% vartype_, int% index,int% arrayLength) {	// true there is variable with same name
+bool Varexist(String^ varname, String^% vartype_, int% index, int% arrayLength) {	// true there is variable with same name
 	if (varname->StartsWith("$")) {  // in case we pass variable with $ like $x
 		varname = varname->Substring(1, varname->Length - 1);
 	}
@@ -29,29 +29,29 @@ bool Varexist(String^ varname, String^% vartype_, int% index,int% arrayLength) {
 
 // defealt value for varvalue="" and will chnaged later to "0" when var is int
 bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
-	vartype = vartype->ToLower();		
-	if ( (varname->Contains(" ")) ) { // || (varname->Contains("$")) ) {
+	vartype = vartype->ToLower();
+	if ((varname->Contains(" "))) { // || (varname->Contains("$")) ) {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
 		return false;
-	}		
+	}
 	// in case var type is not array so the name of variable should not have [array index]
 	if ((vartype != "array") && (varname->Contains("[")) && (varname->Contains("]"))) {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + vartype + ":is not array to have [ or ]"));
 		return false;
 	}
-	if ( (vartype == "array") && (!varname->Contains("[")) && (!varname->Contains("]")) ) {
+	if ((vartype == "array") && (!varname->Contains("[")) && (!varname->Contains("]"))) {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "array should have [ ]"));
 		return false;
 	}
 	String^ retvartype = "";
-	
+
 	if (vartype == "str") {
-		if ((varname->Contains("$")) ) {
+		if ((varname->Contains("$"))) {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
 			return false;
 		}
-		String^ resolveVarValue = StrAnalyze(varvalue, VarType::str, true);
-		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue,1);
+		String^ resolveVarValue = StrAnalyze(varvalue, VarType::str, false);
+		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue, 1);
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
 			_plugin_logprint(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "= " + resolveVarValue + " :has been added"));
@@ -61,7 +61,7 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 			int indexofVar = 0;	int arrayLength;
 			if (!Varexist(varname, retvartype, indexofVar, arrayLength)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " +VarPara_->varname  + "= " + resolveVarValue + " :has been added"));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "= " + resolveVarValue + " :has been added"));
 				return true;
 			}
 			else {
@@ -72,12 +72,12 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		}
 	};
 	/////////////////////////////
-	if (vartype == "array") {		
+	if (vartype == "array") {
 		///find array length
 		String^ arrayLen = varname->Substring(varname->IndexOf("[") + 1, varname->Length - (varname->IndexOf("[") + 1));  /// extrect array length
 		arrayLen = arrayLen->Substring(0, arrayLen->LastIndexOf("]"));  // we used LastIndexOf in case index value calculated from array var 
 		arrayLen = StrAnalyze(arrayLen, VarType::int_);
-		if ((arrayLen == "NULL/") || (arrayLen=="") || (arrayLen == "0")){
+		if ((arrayLen == "NULL/") || (arrayLen == "") || (arrayLen == "0")) {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Array Length not valid"));
 			return false;
 		}
@@ -86,8 +86,8 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
 			return false;
 		}
-		String^ resolveVarValue = StrAnalyze(varvalue, VarType::str, true);
-		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue,Str2duint(arrayLen));
+		String^ resolveVarValue = StrAnalyze(varvalue, VarType::str, false);
+		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, resolveVarValue, Str2duint(arrayLen));
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "[" + duint2Hex(Str2duint(arrayLen)) + "]" + "= " + resolveVarValue + " :has been added"));
@@ -108,29 +108,29 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 		}
 	};
 	/////////////////////////////
-	if (vartype == "int") {		
+	if (vartype == "int") {
 		if ((varname->Contains("$"))) {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Variable must not have spaces or $"));
 			return false;
 		}
 		/// varValue_Int : resolve vriable value as Int we will used to store it in Int variable 					 
-		String^ varValue_Int = StrAnalyze(varvalue, VarType::int_);  		 
+		String^ varValue_Int = StrAnalyze(varvalue, VarType::int_);
 		if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
 			//Script::Gui::Message("This value can't resolve as int, it will not defined");
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));			
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));
 			return false;
-		}		
+		}
 		VarPara^ VarPara_ = gcnew VarPara(vartype, varname, varValue_Int, 1);  // we store varvalue as int 
 		if (ScriptFunList::VarList->Count == 0) {
 			ScriptFunList::VarList->Add(VarPara_);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " "+ VarPara_->varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\"+ varValue_Int + " :has been added"));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
 			return true;
 		}
 		else {
 			int indexofVar = 0; int arrayLength;
 			if (!Varexist(varname, retvartype, indexofVar, arrayLength)) {
 				ScriptFunList::VarList->Add(VarPara_);
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname  + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + VarPara_->vartype + " " + VarPara_->varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int + " :has been added"));
 				return true;
 			}
 			else {
@@ -139,7 +139,7 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 				return false;
 			}
 		}
-	};	
+	};
 	/////////////////////////////
 	_plugin_logputs(Str2ConstChar(Environment::NewLine + "No variable type "));
 	return false;
@@ -147,14 +147,14 @@ bool Varx_(String^ vartype, String^ varname, String^ varvalue) {
 
 bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is index of element at array
 	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
-	if ( (Varexist(varname, retvartype, indexofVar, arrayLength)) && (varname->StartsWith("$")) ) {
+	if ((Varexist(varname, retvartype, indexofVar, arrayLength)) && (varname->StartsWith("$"))) {
 		varname = varname->Substring(1, varname->Length - 1);
 		if (index_ > 0 && retvartype == "array") {  // it is a array then all elements are string 			
-			if (index_ > arrayLength-1) {  /// check if the requested index beyond array length
+			if (index_ > arrayLength - 1) {  /// check if the requested index beyond array length
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "index out of the boundary"));
 				return false;
 			}
-			String^ resolveVarValue = StrAnalyze(value_, VarType::str, true);
+			String^ resolveVarValue = StrAnalyze(value_, VarType::str, false);
 			ScriptFunList::VarList[indexofVar]->varvalue[index_] = resolveVarValue;
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "[" + duint2Hex(index_) + "]= " + resolveVarValue));
 			return true;
@@ -167,19 +167,21 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 					//Script::Gui::Message("This value can't resolve as int, it will not defined");
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " :not been added"));
 					return false;
-				}else {  
-					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int ));
 				}
-			}else {  /// case str				
-				String^ resolveVarValue = StrAnalyze(value_, VarType::str, true);
+				else {
+					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int));
+				}
+			}
+			else {  /// case str				
+				String^ resolveVarValue = StrAnalyze(value_, VarType::str, false);
 				ScriptFunList::VarList[indexofVar]->varvalue[0] = resolveVarValue;
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + resolveVarValue));
 			}
 			return true;
 		}
 		if (index_ == 0) {
-			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {				
+			if (ScriptFunList::VarList[indexofVar]->vartype == "int") {
 				String^ varValue_Int = StrAnalyze(value_, VarType::int_);
 				if ((varValue_Int->StartsWith("NULL/")) || (!Information::IsNumeric(varValue_Int))) {
 					//Script::Gui::Message("This value can't resolve as int, it will not defined");
@@ -190,8 +192,9 @@ bool SetVarx_(String^ varname, int index_, String^ value_) {  /// index_ is inde
 					ScriptFunList::VarList[indexofVar]->varvalue[0] = varValue_Int;
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= 0x" + duint2Hex(Str2duint(varValue_Int)) + "\\" + varValue_Int));
 				}
-			}else {  /// case str				
-				String^ resolveVarValue = StrAnalyze(value_, VarType::str, true);
+			}
+			else {  /// case str				
+				String^ resolveVarValue = StrAnalyze(value_, VarType::str, false);
 				ScriptFunList::VarList[indexofVar]->varvalue[0] = resolveVarValue;
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + "= " + resolveVarValue));
 			}
@@ -213,12 +216,12 @@ bool GetVarx_(String^ varname, int Arrayindex_) {
 	int indexofVar = 0;	String^ retvartype = ""; int arrayLength;
 	if (Varexist(varname, retvartype, indexofVar, arrayLength)) {
 		if (Arrayindex_ > 0 && retvartype == "array") {
-			if (Arrayindex_ > arrayLength-1) {  /// check if the requested index beyond array length
+			if (Arrayindex_ > arrayLength - 1) {  /// check if the requested index beyond array length
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "index out of the boundary"));
 				return false;
 			}
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[Arrayindex_], indexofVar);
-			_plugin_logputs (Str2ConstChar(Environment::NewLine + x->varname + "[" + (duint2Hex(Arrayindex_))->Trim() + "]= " + x->varvalue));
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "[" + (duint2Hex(Arrayindex_))->Trim() + "]= " + x->varvalue));
 			return true;
 		}
 		if (Arrayindex_ > 0 && retvartype != "array") {  // that's mean it's int or str  // so we will make Arrayindex_=0 as it'not array
@@ -226,16 +229,16 @@ bool GetVarx_(String^ varname, int Arrayindex_) {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "This type not need second agruments"));
 			//_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
 			if (x->vartype == "int") {
-				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= 0x" + duint2Hex(Str2duint(x->varvalue)) + "\\" + x->varvalue )) ;
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= 0x" + duint2Hex(Str2duint(x->varvalue)) + "\\" + x->varvalue));
 			}
 			else { /// it mean str
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "= " + x->varvalue));
-				}
+			}
 			return true;
 		}
 		if (Arrayindex_ == 0) {  // this mean it's str or int
 			VarPara_temp^ x = gcnew VarPara_temp(ScriptFunList::VarList[indexofVar]->vartype, ScriptFunList::VarList[indexofVar]->varname, ScriptFunList::VarList[indexofVar]->varvalue[0], indexofVar);
-			if (x->vartype=="array")
+			if (x->vartype == "array")
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + x->varname + "[" + (duint2Hex(Arrayindex_))->Trim() + "]= " + x->varvalue));
 			else {
 				if (x->vartype == "int") {
@@ -248,12 +251,12 @@ bool GetVarx_(String^ varname, int Arrayindex_) {
 			return true;
 		}
 		if (Arrayindex_ < 0) {
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));			
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Index less than Zero!!"));
 			return false;
 		}
 	}
 	else {
-		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));		
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
 		return false;
 	}
 }
@@ -266,7 +269,7 @@ String^ Movx_(String^ p1, String^ p2) {
 	//p2 = argumentValue(p2, oldvalue);  /// we will get p1 as int stored in str var , so we need to changed it to hex later
 	p2 = StrAnalyze(p2, VarType::str, true);
 	if (!p2->StartsWith("NULL/ ")) {
-		cmd_ = cmd_ + str2Hex(p2,VarType::hex,true);
+		cmd_ = cmd_ + str2Hex(p2, VarType::hex, true);
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + cmd_));
 		return cmd_;
 	}
@@ -429,7 +432,7 @@ bool GetArraySize_(String^ varArrName, String^ varname) {
 			else
 			{
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varArrName + ": 0x" + duint2Hex(ScriptFunList::VarList[indexofVarArr]->arrayLength) + "/" + int2Str(ScriptFunList::VarList[indexofVarArr]->arrayLength)));
-				ScriptFunList::VarList[indexofVar]->varvalue[0]=int2Str(ScriptFunList::VarList[indexofVarArr]->arrayLength);
+				ScriptFunList::VarList[indexofVar]->varvalue[0] = int2Str(ScriptFunList::VarList[indexofVarArr]->arrayLength);
 				return true;
 			}
 		}
@@ -447,16 +450,16 @@ bool GetArraySize_(String^ varArrName, String^ varname) {
 
 }
 
-bool InputBox_(String^ varname,int index_, String^ message_ , String^ title) {
+bool InputBox_(String^ varname, int index_, String^ message_, String^ title) {
 	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
 	if ((Varexist(varname->Trim(), retvartype, indexofVar, arrayLength))) {
-		varname = varname->Substring(1, varname->Length - 1);		
+		varname = varname->Substring(1, varname->Length - 1);
 		if (retvartype == "array") {
 			if (index_ > ScriptFunList::VarList[indexofVar]->arrayLength - 1) {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "value out of array index"));
 				return false;
 			}
-			message_ = StrAnalyze(message_,VarType::str, true);
+			message_ = StrAnalyze(message_, VarType::str, true);
 			String^ userInput = Interaction::InputBox(message_, title, "", System::Windows::Forms::Application::OpenForms[0]->Width / 2, System::Windows::Forms::Application::OpenForms[0]->Height / 2);
 			ScriptFunList::VarList[indexofVar]->varvalue[index_] = userInput;
 			return true;
@@ -490,11 +493,11 @@ bool InputBox_(String^ varname,int index_, String^ message_ , String^ title) {
 	return false;
 }
 
-bool ResizeArray_(String^ varname, int AddSub ) {	// resizeArr(array, added amount)
+bool ResizeArray_(String^ varname, int AddSub) {	// resizeArr(array, added amount)
 	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
 	if ((Varexist(varname->Trim(), retvartype, indexofVar, arrayLength)) && (varname->StartsWith("$"))) {
 		varname = varname->Substring(1, varname->Length - 1);
-		if (retvartype == "array") { 			
+		if (retvartype == "array") {
 			if (ScriptFunList::VarList[indexofVar]->arrayLength + AddSub <= 0) {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Array length can't be less or equal 0"));
 				return false;
@@ -505,7 +508,7 @@ bool ResizeArray_(String^ varname, int AddSub ) {	// resizeArr(array, added amou
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + varname + " index: 0x" + duint2Hex(ScriptFunList::VarList[indexofVar]->arrayLength) + "/" + int2Str(ScriptFunList::VarList[indexofVar]->arrayLength)));
 				return true;
 			}
-			
+
 		}
 		else
 		{
@@ -516,21 +519,21 @@ bool ResizeArray_(String^ varname, int AddSub ) {	// resizeArr(array, added amou
 	else {
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "No Value for this var, or unknown Varibale"));
 		return false;
-	}	
+	}
 }
 
-bool Write2File_(String^ filepath, bool append_,String^ data_) {	//  write2File(path,over_append(true),data
+bool Write2File_(String^ filepath, bool append_, String^ data_) {	//  write2File(path,over_append(true),data
 	//add case data_ is array without []
 	int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
-	if ((Varexist(data_->Trim(), retvartype, indexofVar, arrayLength)) && (data_->StartsWith("$"))) {
+	if ((Varexist(data_->Trim(), retvartype, indexofVar, arrayLength)) && (data_->StartsWith("$")) && (!data_->Contains("["))) {
 		if (retvartype == "array") {
 			if (append_) {
 				for (int i = 0; i < arrayLength; i++)
 				{
 
-					IO::File::AppendAllText(filepath, Environment::NewLine +ScriptFunList::VarList[indexofVar]->varvalue[i]);
+					IO::File::AppendAllText(filepath, Environment::NewLine + ScriptFunList::VarList[indexofVar]->varvalue[i]);
 				}
-				
+
 				return true;
 			}
 			else
@@ -540,18 +543,18 @@ bool Write2File_(String^ filepath, bool append_,String^ data_) {	//  write2File(
 				{
 					IO::File::AppendAllText(filepath, Environment::NewLine + ScriptFunList::VarList[indexofVar]->varvalue[i]);
 				}
-				
+
 				return true;
 			}
 		}
 	}
 	////// if it's not array
-	String^ data_x= StrAnalyze(data_, VarType::str, true);
+	String^ data_x = StrAnalyze(data_, VarType::str, true);
 	if (data_x->Contains("NULL/")) {
 		return false;
 	}
 	if (append_) {
-		IO::File::AppendAllText( filepath, Environment::NewLine + data_x);
+		IO::File::AppendAllText(filepath, Environment::NewLine + data_x);
 		return true;
 	}
 	else
@@ -562,10 +565,10 @@ bool Write2File_(String^ filepath, bool append_,String^ data_) {	//  write2File(
 }
 
 String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
-	String^ cmd_ = "find ";	
-	String^ base_s = StrAnalyze(base_,VarType::str, true);
-	if (!base_s->StartsWith("NULL/")) {		
-		cmd_ = cmd_ + base_s + ",";			
+	String^ cmd_ = "find ";
+	String^ base_s = StrAnalyze(base_, VarType::str, true);
+	if (!base_s->StartsWith("NULL/")) {
+		cmd_ = cmd_ + base_s + ",";
 		String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str, true);
 		if (Searchvalue_x->StartsWith("0x")) {
 			Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
@@ -590,7 +593,7 @@ String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 			}
 		}
 		else
-			return "NULL/ ";		
+			return "NULL/ ";
 	}
 	else
 		return "NULL/ ";
@@ -599,8 +602,8 @@ String^ findx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findall ";
 	String^ base_s = StrAnalyze(base_, VarType::str, true);
-	if (!base_s->StartsWith("NULL/")) {		
-		cmd_ = cmd_ + base_s + ",";		
+	if (!base_s->StartsWith("NULL/")) {
+		cmd_ = cmd_ + base_s + ",";
 		String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
 		if (Searchvalue_x->StartsWith("0x")) {
 			Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
@@ -634,51 +637,52 @@ String^ findallx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 		return "NULL/ ";
 }
 
-String^ findallmemx_(String^ base_, String^ Searchvalue_ , String^ Size_) {
+String^ findallmemx_(String^ base_, String^ Searchvalue_, String^ Size_) {
 	String^ cmd_ = "findallmem ";
 	String^ base_s = StrAnalyze(base_, VarType::str, true);
-	if (!base_s->StartsWith("NULL/")) {		
+	if (!base_s->StartsWith("NULL/")) {
 		cmd_ = cmd_ + base_s + ",";
-			String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
-			if (Searchvalue_x->StartsWith("0x")) {
-				Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
-			}
-			if ((!Searchvalue_x->StartsWith("\"")) && (!Searchvalue_x->EndsWith("\""))) {   /// check if it between comma ""
-				Searchvalue_x = "\"" + Searchvalue_x + "\"";
-			}
-			if (!Searchvalue_x->StartsWith("NULL/")) {
-				cmd_ = cmd_ + Searchvalue_x;
-				if (Size_ != "") {    /// if user define the size
-					//duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
-					String^ Size_x = StrAnalyze(Size_, VarType::str);
-					if (!Size_x->StartsWith("NULL/")) {
-						cmd_ = cmd_ + "," + Size_x;
-						return cmd_;
-					}
-					else
-						return "NULL/ ";
-				}
-				else {
+		String^ Searchvalue_x = StrAnalyze(Searchvalue_, VarType::str);
+		if (Searchvalue_x->StartsWith("0x")) {
+			Searchvalue_x = Searchvalue_x->Substring(2, Searchvalue_x->Length - 2);
+		}
+		if ((!Searchvalue_x->StartsWith("\"")) && (!Searchvalue_x->EndsWith("\""))) {   /// check if it between comma ""
+			Searchvalue_x = "\"" + Searchvalue_x + "\"";
+		}
+		if (!Searchvalue_x->StartsWith("NULL/")) {
+			cmd_ = cmd_ + Searchvalue_x;
+			if (Size_ != "") {    /// if user define the size
+				//duint Size_x = Hex2duint(argumentValue(Size_, OldValue_));
+				String^ Size_x = StrAnalyze(Size_, VarType::str);
+				if (!Size_x->StartsWith("NULL/")) {
+					cmd_ = cmd_ + "," + Size_x;
 					return cmd_;
 				}
+				else
+					return "NULL/ ";
 			}
-			else
-				return "NULL/ ";
+			else {
+				return cmd_;
+			}
+		}
+		else
+			return "NULL/ ";
 		/*}
 		else
 			return "NULL/ ";*/
-	}else
+	}
+	else
 		return "NULL/ ";
 }
 
 
 
-bool dumpmem(String^ addr , String^ size,String^ para) {
+bool dumpmem(String^ addr, String^ size, String^ para) {
 	String^ mem = StringFormatInline_Str("{mem;" + size + "@" + addr + "}");
 	String^ addr_ = AddZero2Addr(addr);
-	for (int i = 0; i < mem->Length; i+=32)
+	for (int i = 0; i < mem->Length; i += 32)
 	{
-		String^ temp = Environment::NewLine + addr_ + "         "+ mem->Substring(i, 32) + "        " + str2Asci(mem->Substring(i, 32)) ;
+		String^ temp = Environment::NewLine + addr_ + "         " + mem->Substring(i, 32) + "        " + str2Asci(mem->Substring(i, 32));
 		AdvancedScript::LogWindow::LogWindow_->Log_Str = AdvancedScript::LogWindow::Log_Str + Environment::NewLine + temp;
 		if (AdvancedScript::LogWindow::LogWindow_->FormLoaded) {
 			AdvancedScript::LogWindow::LogWindow_->RTBAppendText(temp);
@@ -695,24 +699,24 @@ bool WriteStr_(duint address, String^ text, bool replace) {
 	const char* text_ = Str2ConstChar(text);
 	if (CheckHexIsValid(duint2Hex(address), intValue)>0) {
 		if (!replace) {
-			return Script::Memory::Write(address, text_, sizeof(text_),&address);
+			return Script::Memory::Write(address, text_, strlen(text_), &address);
 		}
 		else
 		{
-			char* temptext = new char[MAX_STRING_SIZE];			
+			char* temptext = new char[MAX_STRING_SIZE];
 			if (DbgGetStringAt(address, temptext)) {
 				int dd = strlen(temptext);
-				String^ temptext_ = CharArr2Str(temptext);				
+				String^ temptext_ = CharArr2Str(temptext);
 				if (temptext_->StartsWith("L\"")) {
 					temptext_ = temptext_->Substring(2, temptext_->Length - 2);  // remove L"
 					temptext_ = temptext_->Substring(0, temptext_->Length - 1);	 // remove last "				 
 					for (int i = 0; i < (temptext_->Length * 2) + 1; i++)  // 0 terminate
 					{
 						duint v = address + i;
-						byte zero = Convert::ToChar(0);						
-						Script::Memory::Write(v , &zero, 1, &v);	//temptext[i] = 0;
-					}					
-					return Script::Memory::Write(address, text_, sizeof(text_), &address);									
+						byte zero = Convert::ToChar(0);
+						Script::Memory::Write(v, &zero, 1, &v);	//temptext[i] = 0;
+					}
+					return Script::Memory::Write(address, text_, strlen(text_), &address);
 				}
 				else
 				{
@@ -724,7 +728,7 @@ bool WriteStr_(duint address, String^ text, bool replace) {
 						byte zero = Convert::ToChar(0);
 						Script::Memory::Write(v, &zero, 1, &v);	//temptext[i] = 0;
 					}
-					return Script::Memory::Write(address, text_, sizeof(text_), &address);
+					return Script::Memory::Write(address, text_, strlen(text_), &address);
 				}
 			}
 			else
@@ -737,12 +741,12 @@ bool WriteStr_(duint address, String^ text, bool replace) {
 	return true;
 }
 
-bool ReadStr_(String^ varname , String^ value_) {
+bool ReadStr_(String^ varname, String^ value_) {
 	varname = varname->Trim();
 	if (value_->Trim()->StartsWith("L\"")) {
 		value_ = value_->Substring(2, value_->Length - 2);  /// remove L"
-		if ( value_->EndsWith("\""))
-		value_ = value_->Substring(0, value_->Length - 1);  /// remove last "
+		if (value_->EndsWith("\""))
+			value_ = value_->Substring(0, value_->Length - 1);  /// remove last "
 	}
 	if (value_->Trim()->StartsWith("\"")) {
 		value_ = value_->Substring(1, value_->Length - 1);  /// remove "
@@ -770,7 +774,8 @@ bool ReadStr_(String^ varname , String^ value_) {
 					ScriptFunList::VarList[indexofVar]->varvalue[Str2int(arrayIndex)] = value_;
 					return true;
 				}
-			}else {
+			}
+			else {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "missing []"));
 				return false;
 			}
@@ -793,7 +798,7 @@ bool gotox_(String^ input, String^% lineNumber) {
 	String^ arrayIndex;
 	switch ((arguments->Count))
 	{
-	case 1: {		
+	case 1: {
 		/// first we check if its decimal it should hold d at the end 
 		if ((arguments[0]->EndsWith("d")) && (Information::IsNumeric((arguments[0]->Substring(0, arguments[0]->Length - 1))))) {
 			lineNumber = arguments[0]->Substring(0, arguments[0]->Length - 1);
@@ -814,7 +819,7 @@ bool gotox_(String^ input, String^% lineNumber) {
 					return false;
 				}
 			}
-		}	
+		}
 		break;
 	}
 	default:
@@ -823,9 +828,12 @@ bool gotox_(String^ input, String^% lineNumber) {
 	}
 }
 
-bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),type (int, str ),line number if true ,line number if false
-	/// in case Str we have 3 type 
-	
+bool ifCond(String^ input, String^% lineNumber, int currentLine) {  // if condtion ( > < = != ),type (int, str ),line number if true ,line number if false
+												   // we add more options 
+												   // strb ( if string begin with )	main_Str ? searched_Str
+												   // stre ( if string end with )	main_Str ? searched_Str
+												   // strc ( if string contain with )	main_Str ? searched_Str
+
 	Generic::List<String^>^ arguments;
 	GetArg(input, arguments);
 	String^ arrayIndex;
@@ -833,45 +841,56 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 	{
 	case 4: {
 		String^ trueline; String^ falseline;
-		/// first we check if its decimal it should hold d at the end 
-		if ( (arguments[2]->EndsWith("d")) && (Information::IsNumeric((arguments[2]->Substring(0, arguments[2]->Length - 1))))) {
-			trueline = arguments[2]->Substring(0, arguments[2]->Length - 1);			
-		}
-		else  /// if its not decimal then we should analyze the string if it's hex value 
-		{
-			trueline = StrAnalyze(arguments[2], VarType::int_);
-			if (!Information::IsNumeric(trueline)) {   /// in case the value not numric that mean it could be a Lable				
-				LableLine^ LLine = GetLineByLable(arguments[2]);
-				if (LLine->Lable != ""){
-					trueline = int2Str(LLine->LableLineNumber);
-				}
-				else
-				{
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + trueline +  " : true line is incorect"));
-					return false;
-				}
-			}			
-		}
-
-		/// first we check if its decimal it should hold d at the end 
-		if ((arguments[3]->EndsWith("d")) && (Information::IsNumeric((arguments[3]->Substring(0, arguments[3]->Length - 1))))) {
-			falseline = arguments[3]->Substring(0, arguments[3]->Length - 1);
-		}
-		else  /// if its not decimal then we should analyze the string if it's hex value 
-		{
-			falseline = StrAnalyze(arguments[3], VarType::int_);
-			if (!Information::IsNumeric(falseline)) {   /// in case the value not numric that mean it could be a Lable				
-				LableLine^ LLine = GetLineByLable(arguments[3]);
-				if (LLine->Lable != "") {
-					falseline = int2Str(LLine->LableLineNumber);
-				}
-				else
-				{
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + falseline + " : true line is incorect"));
-					return false;
+		if (arguments[2]->Trim() != "0") {   /// we add option if 0 then go next line
+			/// first we check if its decimal it should hold d at the end 
+			if ((arguments[2]->EndsWith("d")) && (Information::IsNumeric((arguments[2]->Substring(0, arguments[2]->Length - 1))))) {
+				trueline = arguments[2]->Substring(0, arguments[2]->Length - 1);
+			}
+			else  /// if its not decimal then we should analyze the string if it's hex value 
+			{
+				trueline = StrAnalyze(arguments[2], VarType::int_);
+				if (!Information::IsNumeric(trueline)) {   /// in case the value not numric that mean it could be a Lable				
+					LableLine^ LLine = GetLineByLable(arguments[2]);
+					if (LLine->Lable != "") {
+						trueline = int2Str(LLine->LableLineNumber);
+					}
+					else
+					{
+						_plugin_logputs(Str2ConstChar(Environment::NewLine + trueline + " : true line is incorect"));
+						return false;
+					}
 				}
 			}
-		}							
+		}
+		else
+		{
+			trueline = int2Str(currentLine + 1);
+		}
+		if (arguments[3]->Trim() != "0") {   /// we add option if 0 then go next line
+		/// first we check if its decimal it should hold d at the end 
+			if ((arguments[3]->EndsWith("d")) && (Information::IsNumeric((arguments[3]->Substring(0, arguments[3]->Length - 1))))) {
+				falseline = arguments[3]->Substring(0, arguments[3]->Length - 1);
+			}
+			else  /// if its not decimal then we should analyze the string if it's hex value 
+			{
+				falseline = StrAnalyze(arguments[3], VarType::int_);
+				if (!Information::IsNumeric(falseline)) {   /// in case the value not numric that mean it could be a Lable				
+					LableLine^ LLine = GetLineByLable(arguments[3]);
+					if (LLine->Lable != "") {
+						falseline = int2Str(LLine->LableLineNumber);
+					}
+					else
+					{
+						_plugin_logputs(Str2ConstChar(Environment::NewLine + falseline + " : true line is incorect"));
+						return false;
+					}
+				}
+			}
+		}
+		else
+		{
+			falseline = int2Str(currentLine + 1);
+		}
 		String ^ ret = condtion_(arguments[0], arguments[1]->ToLower());
 		if (!ret->StartsWith("NULL/")) {
 			if (Str2bool(ret)) {
@@ -882,6 +901,10 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 				lineNumber = falseline;
 			}
 		}
+		else
+		{
+			return false;
+		}
 		return true;
 	}
 	default:
@@ -891,21 +914,31 @@ bool ifCond(String^ input, String^% lineNumber) {  // if condtion ( > < = != ),t
 }
 
 
-String^ condtion_(String^ input,String^ typo) {
+String^ condtion_(String^ input, String^ typo) {
+
+	if (input->Trim()->ToLower()->StartsWith("ads.")) {  /// check for ads lib
+		input = input->Trim()->ToLower();
+		int te = 0;
+		int beginB = input->IndexOf("ads.");
+		input = input->Substring(beginB, input->Length - beginB);
+		String^ restStr = input->Substring(4, input->Length - 4);
+		return Get_adsValue(restStr, te);
+	}
+
 	// we add more options 
 	// strb ( if string begin with )	main_Str ? searched_Str
-	// stre ( if string begin with )	main_Str ? searched_Str
-	// strc ( if string begin with )	main_Str ? searched_Str
+	// stre ( if string end with )	main_Str ? searched_Str
+	// strc ( if string contain with )	main_Str ? searched_Str
 	if (typo == "strb") {
 		if (!input->Contains("?")) {	 ///if ((!input->Contains("(")) && (!input->Contains(")"))) {
-			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command"));			
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + "no () After command"));
 			return "NULL/";
 		}
 		else
 		{
 			String^ input_ = input;
 			String^ left_ = input_->Substring(0, input_->IndexOf("?"))->Trim();
-			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("!=") + 1))->Trim();
+			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("?") + 1))->Trim();
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
 			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
@@ -931,7 +964,7 @@ String^ condtion_(String^ input,String^ typo) {
 		{
 			String^ input_ = input;
 			String^ left_ = input_->Substring(0, input_->IndexOf("?"))->Trim();
-			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("!=") + 1))->Trim();
+			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("?") + 1))->Trim();
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
 			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
@@ -956,7 +989,7 @@ String^ condtion_(String^ input,String^ typo) {
 		{
 			String^ input_ = input;
 			String^ left_ = input_->Substring(0, input_->IndexOf("?"))->Trim();
-			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("!=") + 1))->Trim();
+			String^ right_ = input_->Substring(input_->IndexOf("?") + 1, input_->Length - (input_->IndexOf("?") + 1))->Trim();
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
 			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
@@ -1001,10 +1034,10 @@ String^ condtion_(String^ input,String^ typo) {
 				return "NULL/";
 			}
 
-		/*	string.Compare(string1, string2);
-			If str1 is less than str2, it returns - 1.
-			If str1 is equal to str2, it returns 0.
-			If str1 is greater than str2, it returns 1.*/
+			/*	string.Compare(string1, string2);
+				If str1 is less than str2, it returns - 1.
+				If str1 is equal to str2, it returns 0.
+				If str1 is greater than str2, it returns 1.*/
 
 			if (String::Compare(left_->ToLower(), right_->ToLower()) == 0) // he we check not equal so the retun should be the oppsite.
 				return "0";  // false
@@ -1015,9 +1048,9 @@ String^ condtion_(String^ input,String^ typo) {
 
 	if ((input->Contains("=")) && (!input->StartsWith("="))) {
 		String^ left_ = input->Substring(0, input->IndexOf("="))->Trim();
-		String^ right_ = input->Substring(input->IndexOf("=")+1,input->Length - (input->IndexOf("=") + 1))->Trim();
+		String^ right_ = input->Substring(input->IndexOf("=") + 1, input->Length - (input->IndexOf("=") + 1))->Trim();
 		if (typo == "int") {
-			left_ = StrAnalyze(left_,VarType::int_);
+			left_ = StrAnalyze(left_, VarType::int_);
 			right_ = StrAnalyze(right_, VarType::int_);
 			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
 				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
@@ -1040,11 +1073,11 @@ String^ condtion_(String^ input,String^ typo) {
 				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
 				return "NULL/";
 			}
-			if (String::Compare(left_->ToLower(),right_->ToLower())==0)
+			if (String::Compare(left_->ToLower(), right_->ToLower()) == 0)
 				return "1";  // true
 			else
 				return "0";  // false
-		}		
+		}
 	}
 
 	if ((input->Contains(">")) && (!input->StartsWith(">"))) {
@@ -1114,5 +1147,59 @@ String^ condtion_(String^ input,String^ typo) {
 				return "0";  // false
 		}
 	}
+	return "NULL/";
+}
+
+bool GetdesCallJmp_(String^ varname, String^ command_, int Arrayindex_) {  //GetdesCallJmp   variable, address of call
+	String^ addr_;
+	BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
+	DbgDisasmFastAt(Hex2duint(command_), basicinfo);
+	String^ CallCommand = CharArr2Str(basicinfo->instruction);
+	if ((!CallCommand->Trim()->ToLower()->StartsWith("call")) && (!CallCommand->Trim()->ToLower()->StartsWith("jmp"))) {
+		return false;
+	}
+	if (CallCommand->Trim()->ToLower()->StartsWith("call")) {
+		addr_ = CallCommand->Substring(4, CallCommand->Length - 4);
+	}
+	if (CallCommand->Trim()->ToLower()->StartsWith("jmp")) {
+		addr_ = CallCommand->Substring(3, CallCommand->Length - 3);
+	}
+	String^ intvalue;
+	addr_ = addr_->Trim();
+	if (CheckHexIsValid(addr_, intvalue) == 0) {
+		_plugin_logprint(Str2ConstChar(Environment::NewLine + "value after Call/Jmp is not numric: " + CallCommand));
+		return false;
+	}
+
+	int indexofVar = 0;	String^ retvartype = ""; int arrayLength;
+	if (Varexist(varname, retvartype, indexofVar, arrayLength)) {
+		if (Arrayindex_ > 0 && retvartype == "array"  && Arrayindex_ < arrayLength) {
+			ScriptFunList::VarList[indexofVar]->varvalue[Arrayindex_] = addr_;
+			_plugin_logprint(Str2ConstChar(Environment::NewLine + varname + "[" + int2Str(Arrayindex_) + "]" + "=" + addr_));
+			return true;
+		}
+		else
+		{
+			if (retvartype == "str") {
+				ScriptFunList::VarList[indexofVar]->varvalue[0] = addr_;
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + varname + "=" + addr_));
+				return true;
+			}
+			if (retvartype == "int") {
+				ScriptFunList::VarList[indexofVar]->varvalue[Arrayindex_] = intvalue;
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + varname + "=" + addr_));
+				return true;
+			}
+		}
+		_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't find var"));
+		return false;
+	}
+	else
+	{
+		_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't find var"));
+		return false;
+	}
+
+
 }
 

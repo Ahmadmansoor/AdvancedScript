@@ -119,3 +119,4 @@ PLUG_EXPORT void plugsetup(PLUG_SETUPSTRUCT* setupStruct)
 	hMenuStack = setupStruct->hMenuStack;
 
 }
+
