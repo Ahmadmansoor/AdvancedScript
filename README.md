@@ -2,7 +2,7 @@
 
 just a try to add more feature's to x64dbg script system
 
-![ScriptWindow 4 0](https://user-images.githubusercontent.com/7176580/54612768-fc3b9080-4a72-11e9-9339-806d3d2ea055.png)
+![ScriptWindow 3 0](https://user-images.githubusercontent.com/7176580/54919824-30073200-4f1b-11e9-9221-7e94496583d7.png)
 
 ![scriptwindow](https://user-images.githubusercontent.com/7176580/52273727-1d816b00-2964-11e9-83a5-2e587e7275c3.png)
 
@@ -12,6 +12,19 @@ just a try to add more feature's to x64dbg script system
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 3.0 :
+	1- add help file and command help on the form.
+	2- add ads lib like ("GetAPIName","GetArraySize","ReadStr","GetdesCallJmp","isInArray","isAddrBelongSection").
+	3- Write2File_ can write array directly.
+	4- add commentset  command.
+	5- replace Script::Debug::Wait();  with waitPauseProcess();
+	6- at ret command .
+	7- AutoComplete for Functions and variables and ads lib.
+	8- add log box for future work.
+	9- add AutoUpdate checkbox for enable disable update of variables list.
+	10- fix some bug and improve some others like (findallmemx  .
+	
+
 - version 2.8 :
 	1- fix a lot of bugs in calculations and get values.
 	2- F11 run/stop script now Enabled, F12 step script.
@@ -70,7 +83,12 @@ just a try to add more feature's to x64dbg script system
 	4-sometime you think it's hange,but check if the Plugin send error messageBox for some lines.
 	5-when you use F11 if the software in run mode ( not suspended) ,you have to pause it to work with Script window,
 	  as it use wait Function form x64dbg which will not respond till the process is suspended.
-	
+	6-AutoComplete will show the Function name when typing and help box will show info, just press right arrow to finish
+		but for get Variable name of call ads library press Ctrl + j and you will get textbox just type $ for variables
+		name or type ads to get ads lib then press Enter and the command will set to end of line ( i didn't find a way 
+		to insert text inside command :( ).
+	7-when u use F11 try to not check AutoUpdate checkBox because the process will be heavy ( when fill array ).
+	8-when u use BP at array list maybe x64dbg will take time to respond i DON'T Know why !!.
 	
 -arguments value system (AVS): all argument pass through Parser system recognizer,how it work:
       1- all numbers are in hex shape ( setx $x,50  == setx $x,0x50). 
@@ -93,7 +111,7 @@ Varx      variable type ,  variable name, value
 it's Like Var in x64dbg system, for defining variable's which can used in Script commands.
 ```
 Parameter:
-Varx P1, P2 , P3(optional) 
+Varx P1, P2 , P3(optional just for array and str) 
       P1: variable type it holde ( str , int , array )  /// array is just string elements.
       P2: variable name it should not have spaces or begin with $ , 
         >>>>>>but when resolve it's value, we should add $ before it.<<<< like this $x  >> value of x 
@@ -206,7 +224,8 @@ it's collection of edit functions from x64dbg system, but it accept variables in
 						but can be used at x64dbg Script Screen.
  ```
  -note :
-	in new Update BPxx for one parameter can set on array of address directly 
+	in new Update BPxx for one parameter can set on array of address directly , but for some resone x64dbg will take 
+	time to respond ( I don't know why ) so u can go to refrence and set BP on all finded items.
 	sample :
 	- varx str,IATCall,"E8????????90"			//define the search pattern
 	- varx int,TxSecBegin,{rip}				//define begin of section and set rip address
@@ -247,6 +266,8 @@ findallmemx address, byte pattern to search, array variable to handle result ,  
 
 it's same findallmem in x64dbg system, but it accept variables in the parameter.
 Find all occurrences of a pattern in the entire memory map.
+note : in the new update now we can assign the result directly to ArrayList
+
 ```
 Parameter:
 findallmemx P1, P2, P3 ,P4
@@ -364,25 +385,40 @@ WriteStr  duint address, String^ text, bool replace
 ### 10- if / goto: 
 (if) this Function as any if, its good for short the work of cmp jne .
 (goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
+
  if condtion ( > < = != ?) , type (int, str/strb,stre,strc ) , line number if true , line number if false
+ 
+ - note : if you set line number to 0 that mean step to next line.
+ - note : in new version we can use ads lib like some commands which return true or false 
+ 	  like ( ads.isInArray  , ads.isAddrBelongSection  ) WILL explain later
  - in parameter 1 :we can make any compare with variables ( >  <  =  != )  (?) just for string compare and should use 
  	one of the comapre string which is :
 	strb : if string begin with 
 	stre : if string end with 
 	strc : if string contain
+	
 	sample :
 		if mainStr?"string_",strb,5d,7d /// check if mainStr begin with (string_)
+		
  - in parameter 2 :we define the type of variable we need to compare. we can compare int with int or string to string
  		int	
 		str
 		strb	string begin with
 		stre	string end with
 		strc	string contain with
+		
  - Line number : there are 3 way to set it 
  
  		1- number + d : it mean the number is int not hex value Like 10d = line number 10
 		2- number : it mean the number hex value Like 10 = line number 16
 		3- string lable : it mean there are lable in the script it will jmp to 
+		4- set one of them to 0 mean jmp to next line
+		sample :
+		1	varx int,x,0
+		2	varx int,y,10
+		3	if $x>$y,int,0,5d     /// if x>y then it will go to line 4 otherwise go to line 5
+		4	........
+		5	........
 		
 note : we can mix this tow commands and we get a loop good for IAT read write fix Loop
 	or for search 
