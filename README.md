@@ -363,9 +363,10 @@ Parameter  asmx  addr , Instruction , fill with nops
      -  varx str,addr,{rip}
 	varx str,IAT,0x000000014004C408  or varx str,IAT,{rax}
  	varx str,call,"call qword ptr ds:["
- 	setx $call,$call$IAT ]		Don't forget the spaces before ] :), so the it mix with var IAT name
+ 	setx $call,$call 0x$IAT ]		Don't forget 0x before $IAT ,and Don't forget the spaces before ] :), 
+						so the it mix with var IAT name
 	asmx $addr,$call   << this asm without fill with nops
-	asmx $addr,$call,1 << this asm with fill with nops	
+	asmx $addr,$call,"1" << this asm with fill with nops	
 	
 	asmx 0x0000000140EA0010,"call qword ptr ds:[0x777259C0]",1
      - 
