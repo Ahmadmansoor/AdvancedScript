@@ -391,6 +391,7 @@ WriteStr  duint address, String^ text, bool replace
  - note : if you set line number to 0 that mean step to next line.
  - note : in new version we can use ads lib like some commands which return true or false 
  	  like ( ads.isInArray  , ads.isAddrBelongSection  ) WILL explain later
+ - note : when use ads lib parameter type will be ignored so u set it as str.
  - in parameter 1 :we can make any compare with variables ( >  <  =  != )  (?) just for string compare and should use 
  	one of the comapre string which is :
 	strb : if string begin with 
@@ -491,7 +492,7 @@ GetArraySize  varArrName, varname
 ```
 ### 14- Write2File:
 write2File path,over_append(false/true),data (Can be array )
-
+note: you can write array directly to file by write the array name see sample
 
 this Function used to write data to file and can write array to file too .
 write2File path,over_append(false/true),data
@@ -510,7 +511,7 @@ write2File path,over_append(false/true),data
 	 -varx array,x[2]
 	  setx $x[0],test
 	  setx $x[1],again
-  	  Write2File "D:\t.txt",0,$x   	this will write all x aary to t.txt file
+  	  Write2File "D:\t.txt",0,$x   	this will write all x array to t.txt file
 
 ```
 ### 15- InputBox: 
@@ -576,10 +577,13 @@ GetdesCallJmp   variable, address of call
 ```
 ////////////////////////////////////////////////////////////////////////////
 ## ads library: 
-
+ads.____		/// ____ mean command
 this library is used for fast get info like exebase or Sctionbase .....
 ads.Command
 commands Like :exebase,	modulebase,SectionSize,	exefolderpath,exename,SectionBegin,SectionEnd,
+note : don't use nested command with ads lib which have brackets  ( it is not support yet )  .
+like : ads.____ (ads.____(),____)    this not allow
+but  : ads.____(ads.exebase,____)   this no problem      
 form :
 ```
 ads.exebase				get exe base
@@ -592,6 +596,14 @@ ads.SectionEnd(address)			get End of the section by address ( any address from t
 ads.GetAPIName(address)			get API name from address
 ads.GetArraySize($arrayName)		get the array size
 ads.ReadStr(address)			get string at address
+ads.GetdesCallJmp(address of Call)	get the destination of call or Jmp :Like 
+					0000000140EA4000 call 0x01F50304 
+					ads.GetdesCallJmp(0000000140EA4000) >> return 0x01F50304 
+ads.isInArray(text , arrayName)		used with if command it return true or false if the text exist in the array.
+					ads.isInArray(GetProcAddress,$x)  or  ads.isInArray($z,$x)
+					
+ads.isAddrBelongSection((addr,any addr of the section)  used with if command it return true or false if this command belong to this
+							section, 
 
 ```
 	-varx str,IATCall,"E8????????90" //search for all call xxxx  nop in text section
