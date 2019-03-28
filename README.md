@@ -4,9 +4,12 @@ just a try to add more feature's to x64dbg script system
 
 ![ScriptWindow 3 0](https://user-images.githubusercontent.com/7176580/54919824-30073200-4f1b-11e9-9221-7e94496583d7.png)
 
-![scriptwindow](https://user-images.githubusercontent.com/7176580/52273727-1d816b00-2964-11e9-83a5-2e587e7275c3.png)
+[![AdvancedScript How to](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/hku8Is8-Z34)
 
-![screen](https://user-images.githubusercontent.com/7176580/54389247-17944d80-46b9-11e9-87ee-ef3e03d82423.jpg)
+[![Script How to fix IAT](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/37gTCNIAIAM)
+
+[![Themida API Comment Script Good for Static Analyzing](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/SKustnN7qEY)
+
 
 ## use Scriptw command for showing the Script window and F12 for steping and F11 for Auto run.
 ////////////////////////////////////////////////////////////////////////////
