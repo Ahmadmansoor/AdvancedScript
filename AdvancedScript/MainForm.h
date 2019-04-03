@@ -642,6 +642,7 @@ namespace AdvancedScript {
 			if (CB_AutoUpdate->Checked)
 				FileVariableTreeView();
 			PB_wait->Visible = false;
+			DGV1->FirstDisplayedScrollingRowIndex = DGV1->SelectedRows[0]->Index;
 		}
 		if (e->KeyCode == Keys::F11) {
 			if (Run)
@@ -701,6 +702,8 @@ namespace AdvancedScript {
 					Run = false;
 				}
 				PB_wait->Visible = false;
+				DGV1->FirstDisplayedScrollingRowIndex = DGV1->SelectedRows[0]->Index;
+
 				Application::DoEvents();
 			}
 
@@ -796,9 +799,9 @@ namespace AdvancedScript {
 			IO::Directory::CreateDirectory(Application::StartupPath + "\\Script");
 			//IO::Directory::CreateDirectory(Application::StartupPath + "\\Script\\temp");
 		}
-		if (IO::File::Exists(Application::StartupPath + "\\plugins\\Help.txt")) {  // load help command
+		if (IO::File::Exists(Application::StartupPath + "\\plugins\\HelpAdvancedScript.txt")) {  // load help command
 			//LoadAllText_== IO::File::ReadAllText(Application::StartupPath + "\\plugins\\Help.txt");
-			array<String^>^ LoadText = IO::File::ReadAllLines(Application::StartupPath + "\\plugins\\Help.txt");
+			array<String^>^ LoadText = IO::File::ReadAllLines(Application::StartupPath + "\\plugins\\HelpAdvancedScript.txt");
 			for (int i = 0; i < LoadText->Length; i++)
 			{
 				String^ temp = LoadText[i];
@@ -893,6 +896,8 @@ namespace AdvancedScript {
 		//FillTrView();
 	}
 	private: System::Void TrViewScript_NodeMouseDoubleClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
+		if (TrViewScript->SelectedNode == nullptr)
+			return;
 		if (TrViewScript->SelectedNode->Level != 0) {
 			LoadScriptFile(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text);
 			ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line just in case update script through run
@@ -901,6 +906,8 @@ namespace AdvancedScript {
 	}
 
 	private: System::Void deletToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		if (TrViewScript->SelectedNode == nullptr)
+			return;
 		if (Interaction::MsgBox("Are you sure??!!", MsgBoxStyle::OkCancel, "Delete") == MsgBoxResult::Ok) {
 			if (TrViewScript->SelectedNode->Level == 0) {
 				IO::Directory::Delete(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Text, true);
@@ -967,6 +974,8 @@ namespace AdvancedScript {
 	}
 	private: System::Void renameToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		String^ renamed;
+		if (TrViewScript->SelectedNode == nullptr)
+			return;
 		if (TrViewScript->SelectedNode->Level == 0) {
 
 			String^ Category_ = Interaction::InputBox("Enter Category Name", "Category Name", TrViewScript->SelectedNode->Text, this->Width / 2, this->Height / 2);
@@ -1178,8 +1187,8 @@ namespace AdvancedScript {
 		str->Add("ads.GetArraySize( ");
 		str->Add("ads.ReadStr( ");
 		str->Add("ads.GetdesCallJmp( ");
-		str->Add("ads.isInArray");
-		str->Add("ads.isAddrBelongSection");
+		str->Add("ads.isInArray( ");
+		str->Add("ads.isAddrBelongSection( ");
 		for (int i = 0; i < Variables_List->Count; i++)
 		{
 			str->Add(Variables_List[i]->GetCmd());
@@ -1241,6 +1250,8 @@ namespace AdvancedScript {
 	private:
 		void dataGridViewTextBox_KeyPress(Object^ /*o*/, KeyPressEventArgs^ e)
 		{
+			if (tb1 == nullptr)
+				return;
 			String^ cmd_ = tb1->Text;
 			for (int i = 0; i < HelpLoad_List->Count; i++)
 			{

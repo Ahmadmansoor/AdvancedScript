@@ -161,7 +161,7 @@ String^ findVarValue(String^ input, VarType retAsVartype, String^% VarString) {
 			if (retAsVartype == VarType::str) {/// if we need ret var value as string it will back as str no need to change the value
 				//return ScriptFunList::VarList[indexofVar]->varvalue[0];
 				if (vartype_ == "int") {  /// if retAsVartype is string and vartype_ is int then we convert it to hex value
-					return  int2Str(Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as it
+					return  duint2Hex(Str2duint(ScriptFunList::VarList[indexofVar]->varvalue[0])); // return the value of the int var as hex
 				}
 				else { /// case str 
 					return  ScriptFunList::VarList[indexofVar]->varvalue[0]; // return var string as it

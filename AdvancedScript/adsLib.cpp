@@ -55,7 +55,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 				//return  "0x" + duint2Hex(Script::Module::BaseFromName(Str2ConstChar(findrest)));
 				String^ intvalue;  /// first if it is hex value
 				if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
-					return  "0x" + duint2Hex(Script::Module::BaseFromAddr(Str2int(intvalue)));  // resolve it as hex address 
+					return  "0x" + duint2Hex(Script::Memory::GetBase(Str2int(intvalue)));  // resolve it as hex address 
 				}
 				else
 				{
@@ -64,7 +64,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 			}
 			String^ intvalue;
 			if (CheckHexIsValid(findrest, intvalue) > 0) {  /// it mean it is address ( hex value)
-				return  "0x" + duint2Hex(Script::Module::BaseFromAddr(Str2int(intvalue)));
+				return  "0x" + duint2Hex(Script::Memory::GetBase(Str2int(intvalue)));
 			}
 			else
 			{

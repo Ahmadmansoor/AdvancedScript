@@ -53,6 +53,10 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 		}
 		if (input->Substring(i, 1) != ",") {
 			if (input->Substring(i, 1) == "(") {  /// in case we find function call inside
+				if (input->LastIndexOf(")") < 0) {
+					_plugin_logprint("missing ) in brackets Phrase");
+					return;
+				}
 				do
 				{
 					temp = temp + input->Substring(i, 1);
@@ -65,18 +69,18 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 			}
 			if (input->Substring(i, 1) == "\"") {  /// case some arguments have (") like a string >> "Test.txt"
 				String^ restTemp = input->Substring(i + 1, input->Length - (i + 1)); // get the rest of the string (input)
-				int indexOfNextcomma= restTemp->LastIndexOf("\"");
+				int indexOfNextcomma = restTemp->LastIndexOf("\"");
 				if (indexOfNextcomma > 0) {       ///if (indexOfNextcomma < 1) {
 					/*Script::Gui::Message("Something Wrong in the arguments");
 					return;*/
 					if ((temp != "") && (temp != "\"")) {
-						temp = temp->Substring(0,temp->IndexOf("\"")) + restTemp->Substring(0, indexOfNextcomma);  // temp->Substring(0,temp->IndexOf("\"")) to remove comma at end
+						temp = temp->Substring(0, temp->IndexOf("\"")) + restTemp->Substring(0, indexOfNextcomma);  // temp->Substring(0,temp->IndexOf("\"")) to remove comma at end
 					}
 					else
 					{
 						arguments->Add(restTemp->Substring(0, indexOfNextcomma));
 						temp = "";
-					}							
+					}
 					i = i + indexOfNextcomma + 1;
 				}
 				/*arguments->Add(restTemp->Substring(0, indexOfNextcomma));
@@ -85,9 +89,9 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 			}
 		}
 		else {
-			if ( (temp != "") && (temp != " ") ){
-			arguments->Add(temp->Trim());
-			temp = "";
+			if ((temp != "") && (temp != " ")) {
+				arguments->Add(temp->Trim());
+				temp = "";
 			}
 		}
 	}
@@ -124,7 +128,7 @@ const char* Str2ConstChar(System::String^ string_) {
 	return linkStr;
 }
 
-char* Str2CharPTR(System::String^ string_) {	
+char* Str2CharPTR(System::String^ string_) {
 	try
 	{
 		char* str2 = (char*)(void*)Marshal::StringToHGlobalAnsi(string_);
@@ -134,7 +138,7 @@ char* Str2CharPTR(System::String^ string_) {
 	{
 
 	}
-	
+
 }
 
 //bool OnlyHexInString(String^ test) {  // it will remove 0x if it's at the beganing of the string
@@ -154,22 +158,48 @@ char* Str2CharPTR(System::String^ string_) {
 /// <summary> 
 /// 0 not hex not numeric // 1 is numeric // 2 is hex 
 /// </summary> 
-int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is in int store in str var
+int CheckHexIsValid(String^ input_, String^% intValue) {   // the return value is in int store in str var
 	input_ = input_->Trim();
 	// For C-style hex notation (0xFF) you can use @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z"
 	array <String^>^ c = { "0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","a","b","c","d","e","f" };
 #ifdef _WIN64
-	//if ((input_->Length < 5) || (input_->Length > 16)) {		
-	if (Information::IsNumeric(input_)) {		
+	String^ ss = input_->ToLower();
+	if (ss->StartsWith("0x")) {
+		ss = ss->Substring(2, input_->Length - 2);
+		if ((ss->Length > 8)) {
+			return 0;
+		}
+	}
+	else
+	{
+		if (input_->Length > 16) {
+			return 0;
+		}
+
+	}
+	if (Information::IsNumeric(input_)) {
 		intValue = (int2Str(Hex2duint(input_)))->Trim();
 		return 1;
-	}	
+	}
 #else
-	//if ((input_->Length < 5) || (input_->Length > 8)) {
-	if (Information::IsNumeric(input_)) {		
+	String^ ss = input_->ToLower();
+	if (ss->StartsWith("0x")) {
+		ss = ss->Substring(2, input_->Length - 2);
+		if (ss->Length > 8) {
+			return 0;
+		}
+	}
+	else
+	{
+		if (ss->Length > 8) {
+			return 0;
+		}
+	}
+
+	if (Information::IsNumeric(input_)) {
 		intValue = int2Str(Hex2duint(input_));
 		return 1;
-	}	
+	}
 #endif // _WIN64
 	if (input_->Length > 2) {
 		if (input_->Substring(0, 2)->ToLower() == "0x") {   /// in case have 0x at begin we removed 
@@ -183,7 +213,7 @@ int CheckHexIsValid(String^ input_,String^% intValue) {   // the return value is
 			return 0;
 		}
 
-	}	
+	}
 	intValue = (int2Str(Hex2duint(input_)))->Trim();
 	return 2;
 }
@@ -218,21 +248,21 @@ String^ charPTR2String(char* input) {
 /// it return hex from string if avalible 
 /// in case the input value is int it will be converted to hex 
 /// 
-String^ str2Hex(String^ input,VarType inputType_, bool addx0) {
+String^ str2Hex(String^ input, VarType inputType_, bool addx0) {
 	String^ intValue;
 	if (input->StartsWith("0x")) {  /// it mean its hex value
-		if (CheckHexIsValid(input->Substring(2, input->Length-2), intValue) > 0) {
-			if (addx0) 
-				return input;			
-			else			
-				return input->Substring(2, input->Length - 2);			
-		}		
+		if (CheckHexIsValid(input->Substring(2, input->Length - 2), intValue) > 0) {
+			if (addx0)
+				return input;
+			else
+				return input->Substring(2, input->Length - 2);
+		}
 	}
 	else
 	{
 		int check_ = CheckHexIsValid(input, intValue);
 		switch (check_)
-		{		
+		{
 		case 1: {   /// the value is numaric so we don't know if it's hex or int so user define it
 			if (inputType_ == VarType::int_) {   /// the input value is int not hex value 
 				if (addx0)
@@ -247,7 +277,7 @@ String^ str2Hex(String^ input,VarType inputType_, bool addx0) {
 				else
 					return  "0x" + input;
 			}
-			
+
 		}
 		case 2: {  ///  the value is valid hex 
 			if (addx0)
@@ -257,7 +287,7 @@ String^ str2Hex(String^ input,VarType inputType_, bool addx0) {
 		}
 		default:
 			return "NULL /";
-		}	
+		}
 	}
 	return "NULL/";
 }
@@ -270,7 +300,7 @@ duint Hex2duint(String^ input_) {
 	}
 	String^ input_temp = input_->Trim();
 	for (int i = 0; i < input_temp->Length; i++)
-	{		
+	{
 		if (!Information::IsNumeric(input_temp->Substring(i, 1)) && !Char::IsLetter(input_temp->Substring(i, 1), 0)) {
 			return -1;
 		}
@@ -283,7 +313,7 @@ duint Hex2duint(String^ input_) {
 #endif //_WIN64
 
 
-}
+	}
 
 
 String^ duint2Hex(duint input_) {
@@ -296,7 +326,7 @@ String^ duint2Hex(duint input_) {
 		return Conversion::Hex(tem);
 #endif //_WIN64
 
-	}
+}
 	catch (const std::exception&)
 	{
 		return "";
@@ -384,7 +414,7 @@ duint Str2duint(String^ input_) {
 	}
 #endif // _WIN64
 
-	
+
 }
 
 String^ str2Asci(String^ input) {
@@ -436,7 +466,7 @@ String^ AddZero2Addr(String^ input) {
 	}
 	//input = "0x" + input;
 	return input;
-}
+	}
 
 bool IsAllSpaces(String^ input_) {
 	for (int i = 0; i < input_->Length; i++)
@@ -465,7 +495,7 @@ Generic::List<String^>^ GetClipBoard() {
 	//HANDLE clip;
 	if (!OpenClipboard(NULL))
 		Script::Gui::Message("Can't open clipboard");
-	char* clip =(char*) GetClipboardData(CF_TEXT);
+	char* clip = (char*)GetClipboardData(CF_TEXT);
 	CloseClipboard();
 	String^ text = CharArr2Str(clip);
 	String^ tem;
@@ -474,7 +504,7 @@ Generic::List<String^>^ GetClipBoard() {
 	for (int i = 0; i < text->Length; i++)
 	{
 		int dd = Microsoft::VisualBasic::Strings::Asc(text->Substring(i, 1));
-		if (( Microsoft::VisualBasic::Strings::Asc(text->Substring(i,1)) != 10) && (Microsoft::VisualBasic::Strings::Asc(text->Substring(i, 1)) != 13)) { //10 is new line char
+		if ((Microsoft::VisualBasic::Strings::Asc(text->Substring(i, 1)) != 10) && (Microsoft::VisualBasic::Strings::Asc(text->Substring(i, 1)) != 13)) { //10 is new line char
 			tem += text->Substring(i, 1);
 		}
 		else
@@ -483,8 +513,8 @@ Generic::List<String^>^ GetClipBoard() {
 				if (tem->Trim() != "") {
 					temp->Add(tem);
 					tem = "";
-				}				
-			}			
+				}
+			}
 		}
 		if (i == text->Length - 1) {
 			if (tem->Trim() != "") {
@@ -492,7 +522,7 @@ Generic::List<String^>^ GetClipBoard() {
 				tem = "";
 			}
 		}
-	}	
+	}
 	return temp;
 }
 

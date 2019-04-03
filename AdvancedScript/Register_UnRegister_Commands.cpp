@@ -164,6 +164,14 @@ static bool test(int argc, char* argv[]) {
 		//_plugin_logprint(text_);
 		/*String^ AsmcommandStr = StringFormatInline_Str(arguments[0]);
 		DbgCmdExecDirect(Str2ConstChar("cmt " + AsmcommandStr));*/
+		String^ intvalue;  /// first if it is hex value
+		if (CheckHexIsValid(arguments[0], intvalue) > 0) {  /// it mean it is address ( hex value)
+			
+			duint x = Script::Memory::GetBase(Str2int(intvalue));
+			int xxx;
+			xxx = 5;
+		}
+		
 		break;
 	}
 	case 2: {
