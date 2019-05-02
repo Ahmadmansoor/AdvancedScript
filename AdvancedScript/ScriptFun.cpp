@@ -942,8 +942,21 @@ String^ condtion_(String^ input, String^ typo) {
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
 			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
-				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides"));
-				return "NULL/";
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides" + "left_="+ left_ + " - right_:"+ right_));
+				MsgBoxResult MsgRet = Interaction::MsgBox("can't resolve sides" + Environment::NewLine + "left_=" + left_ + " - right_:" + right_ + Environment::NewLine + "Yes to ret true" + Environment::NewLine + "No to ret false" + Environment::NewLine + "Cancel to Stop", MsgBoxStyle::YesNoCancel, "Error");
+				switch (MsgRet)
+				{				
+				case Microsoft::VisualBasic::MsgBoxResult::Cancel:				
+					return "NULL/";										
+				case Microsoft::VisualBasic::MsgBoxResult::Yes:
+					return "1";
+				case Microsoft::VisualBasic::MsgBoxResult::No:
+					return "0";
+				default:
+					break;
+				}
+
+				
 			}
 			if (left_->StartsWith(right_)) {
 				return "1";  // true

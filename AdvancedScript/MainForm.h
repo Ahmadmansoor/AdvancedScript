@@ -126,6 +126,11 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::ListBox^  LB_Function;
 	private: System::Windows::Forms::Button^  Bu_VarListRefresh;
 	private: System::Windows::Forms::CheckBox^  CB_AutoUpdate;
+	private: System::Windows::Forms::ContextMenuStrip^  CMT_VariableList;
+	private: System::Windows::Forms::ToolStripMenuItem^  removeVariableToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  followToCPUToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  followToDumpToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  copyToClipboardToolStripMenuItem;
 	public:
 		///////////
 
@@ -200,9 +205,15 @@ namespace AdvancedScript {
 			this->renameToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->deletToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->CB_AutoUpdate = (gcnew System::Windows::Forms::CheckBox());
 			this->Bu_VarListRefresh = (gcnew System::Windows::Forms::Button());
 			this->Bu_ClearVariable = (gcnew System::Windows::Forms::Button());
 			this->TrViewVariable = (gcnew System::Windows::Forms::TreeView());
+			this->CMT_VariableList = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->removeVariableToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->followToCPUToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->followToDumpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->copyToClipboardToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->PB_wait = (gcnew System::Windows::Forms::PictureBox());
 			this->tb = (gcnew System::Windows::Forms::TextBox());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
@@ -210,11 +221,11 @@ namespace AdvancedScript {
 			this->LB_Function = (gcnew System::Windows::Forms::ListBox());
 			this->TB_CommandHelp = (gcnew System::Windows::Forms::TextBox());
 			this->tabPage_Log = (gcnew System::Windows::Forms::TabPage());
-			this->CB_AutoUpdate = (gcnew System::Windows::Forms::CheckBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
 			this->CMT1->SuspendLayout();
 			this->CMT_TreeView->SuspendLayout();
 			this->groupBox1->SuspendLayout();
+			this->CMT_VariableList->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->PB_wait))->BeginInit();
 			this->tabControl1->SuspendLayout();
 			this->tabPage_CommandHelp->SuspendLayout();
@@ -416,6 +427,16 @@ namespace AdvancedScript {
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Options";
 			// 
+			// CB_AutoUpdate
+			// 
+			this->CB_AutoUpdate->AutoSize = true;
+			this->CB_AutoUpdate->Location = System::Drawing::Point(92, 199);
+			this->CB_AutoUpdate->Name = L"CB_AutoUpdate";
+			this->CB_AutoUpdate->Size = System::Drawing::Size(83, 17);
+			this->CB_AutoUpdate->TabIndex = 7;
+			this->CB_AutoUpdate->Text = L"AutoUpdate";
+			this->CB_AutoUpdate->UseVisualStyleBackColor = true;
+			// 
 			// Bu_VarListRefresh
 			// 
 			this->Bu_VarListRefresh->Location = System::Drawing::Point(10, 193);
@@ -441,10 +462,48 @@ namespace AdvancedScript {
 			this->TrViewVariable->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
+			this->TrViewVariable->ContextMenuStrip = this->CMT_VariableList;
 			this->TrViewVariable->Location = System::Drawing::Point(11, 225);
 			this->TrViewVariable->Name = L"TrViewVariable";
 			this->TrViewVariable->Size = System::Drawing::Size(244, 373);
 			this->TrViewVariable->TabIndex = 2;
+			// 
+			// CMT_VariableList
+			// 
+			this->CMT_VariableList->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {
+				this->removeVariableToolStripMenuItem,
+					this->followToCPUToolStripMenuItem, this->followToDumpToolStripMenuItem, this->copyToClipboardToolStripMenuItem
+			});
+			this->CMT_VariableList->Name = L"CMT_VariableList";
+			this->CMT_VariableList->Size = System::Drawing::Size(172, 92);
+			// 
+			// removeVariableToolStripMenuItem
+			// 
+			this->removeVariableToolStripMenuItem->Name = L"removeVariableToolStripMenuItem";
+			this->removeVariableToolStripMenuItem->Size = System::Drawing::Size(171, 22);
+			this->removeVariableToolStripMenuItem->Text = L"Remove Variable";
+			this->removeVariableToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::removeVariableToolStripMenuItem_Click);
+			// 
+			// followToCPUToolStripMenuItem
+			// 
+			this->followToCPUToolStripMenuItem->Name = L"followToCPUToolStripMenuItem";
+			this->followToCPUToolStripMenuItem->Size = System::Drawing::Size(171, 22);
+			this->followToCPUToolStripMenuItem->Text = L"Follow to CPU";
+			this->followToCPUToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::followToCPUToolStripMenuItem_Click);
+			// 
+			// followToDumpToolStripMenuItem
+			// 
+			this->followToDumpToolStripMenuItem->Name = L"followToDumpToolStripMenuItem";
+			this->followToDumpToolStripMenuItem->Size = System::Drawing::Size(171, 22);
+			this->followToDumpToolStripMenuItem->Text = L"Follow to Dump";
+			this->followToDumpToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::followToDumpToolStripMenuItem_Click);
+			// 
+			// copyToClipboardToolStripMenuItem
+			// 
+			this->copyToClipboardToolStripMenuItem->Name = L"copyToClipboardToolStripMenuItem";
+			this->copyToClipboardToolStripMenuItem->Size = System::Drawing::Size(171, 22);
+			this->copyToClipboardToolStripMenuItem->Text = L"CopyTo Clipboard";
+			this->copyToClipboardToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::copyToClipboardToolStripMenuItem_Click);
 			// 
 			// PB_wait
 			// 
@@ -528,16 +587,6 @@ namespace AdvancedScript {
 			this->tabPage_Log->TabIndex = 1;
 			this->tabPage_Log->Text = L"Log";
 			// 
-			// CB_AutoUpdate
-			// 
-			this->CB_AutoUpdate->AutoSize = true;
-			this->CB_AutoUpdate->Location = System::Drawing::Point(92, 199);
-			this->CB_AutoUpdate->Name = L"CB_AutoUpdate";
-			this->CB_AutoUpdate->Size = System::Drawing::Size(83, 17);
-			this->CB_AutoUpdate->TabIndex = 7;
-			this->CB_AutoUpdate->Text = L"AutoUpdate";
-			this->CB_AutoUpdate->UseVisualStyleBackColor = true;
-			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -560,6 +609,7 @@ namespace AdvancedScript {
 			this->CMT_TreeView->ResumeLayout(false);
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox1->PerformLayout();
+			this->CMT_VariableList->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->PB_wait))->EndInit();
 			this->tabControl1->ResumeLayout(false);
 			this->tabPage_CommandHelp->ResumeLayout(false);
@@ -571,6 +621,8 @@ namespace AdvancedScript {
 #pragma endregion
 	private: System::Void MainForm_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::F12)
+			DGV1->Focus();
+		if (e->KeyCode == Keys::F11)
 			DGV1->Focus();
 	}
 	private: System::Void IniLoadData() {   /// we use it to get all lable in the script to use it for Goto
@@ -1283,6 +1335,62 @@ namespace AdvancedScript {
 	}
 	private: System::Void Bu_VarListRefresh_Click(System::Object^  sender, System::EventArgs^  e) {
 		FileVariableTreeView();
+	}
+	private: System::Void removeVariableToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		if (TrViewVariable->SelectedNode != nullptr) {
+			if (TrViewVariable->SelectedNode->Level == 0) {
+				ScriptFunList::VarList->RemoveAt(TrViewVariable->SelectedNode->Index);
+				TrViewVariable->SelectedNode->Remove();
+			}
+			else
+			{
+				ScriptFunList::VarList->RemoveAt(TrViewVariable->SelectedNode->Parent->Index);
+				TrViewVariable->SelectedNode->Parent->Remove();
+			}
+		}
+	}
+	private: System::Void followToCPUToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		if (TrViewVariable->SelectedNode != nullptr) {
+			if (TrViewVariable->SelectedNode->Level != 0) {
+				String^ intValue;
+				if (CheckHexIsValid(TrViewVariable->SelectedNode->Text, intValue) > 0)
+					DbgCmdExecDirect(Str2ConstChar("dis " + TrViewVariable->SelectedNode->Text));
+			}
+		}
+	}
+	private: System::Void followToDumpToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		if (TrViewVariable->SelectedNode != nullptr) {
+			if (TrViewVariable->SelectedNode->Level != 0) {
+				String^ intValue;
+				if (CheckHexIsValid(TrViewVariable->SelectedNode->Text, intValue) > 0)
+					DbgCmdExecDirect(Str2ConstChar("dump " + TrViewVariable->SelectedNode->Text));
+			}
+		}
+	}
+	private: System::Void copyToClipboardToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		if (TrViewVariable->SelectedNode != nullptr) {
+			if (TrViewVariable->SelectedNode->Level == 0) {
+				VarPara^ x = ScriptFunList::VarList[TrViewVariable->SelectedNode->Index];
+				if (x->vartype == "array") {
+					String^ temp = String::Empty;
+					for (int i = 0; i < x->arrayLength; i++)
+					{
+						temp = temp + x->varvalue[i] + Environment::NewLine;
+					}
+					SetClipBoard(temp);
+				}
+				else
+				{
+					SetClipBoard(x->varvalue[0]);
+				}
+			}
+			else
+			{
+				SetClipBoard(TrViewVariable->SelectedNode->Text);
+
+			}
+		}
+
 	}
 	};
 }

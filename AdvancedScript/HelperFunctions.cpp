@@ -166,7 +166,7 @@ int CheckHexIsValid(String^ input_, String^% intValue) {   // the return value i
 	String^ ss = input_->ToLower();
 	if (ss->StartsWith("0x")) {
 		ss = ss->Substring(2, input_->Length - 2);
-		if ((ss->Length > 8)) {
+		if ((ss->Length > 16)) {
 			return 0;
 		}
 	}
@@ -305,6 +305,8 @@ duint Hex2duint(String^ input_) {
 			return -1;
 		}
 	}
+	if (input_ == "") 
+		return -1;
 
 #ifdef _WIN64
 	return __int64::Parse(reMoveSpaces(input_temp), System::Globalization::NumberStyles::HexNumber);

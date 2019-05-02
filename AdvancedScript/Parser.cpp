@@ -1218,6 +1218,8 @@ String^ StrAnalyze(String^ input, VarType type_, bool Add0x) {  /// in case it i
 					else
 					{
 						int cc = input->IndexOf("\"", i + 1, input->Length - (i + 1));
+						if (cc<0)
+							return "NULL/ ";
 						temp = temp + input->Substring(i, (cc - i) + 1);  /// we collect all "..."
 						if (temp != "") {
 							StrHolderList->Add(temp);
