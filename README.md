@@ -2,6 +2,8 @@
 
 just a try to add more feature's to x64dbg script system
 
+![ScriptWindow 3 1](https://user-images.githubusercontent.com/7176580/57080514-b9243c80-6d03-11e9-99bf-3615c81cf88b.png)
+
 ![ScriptWindow 3 0](https://user-images.githubusercontent.com/7176580/54919824-30073200-4f1b-11e9-9221-7e94496583d7.png)
 
 [![AdvancedScript How to](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/hku8Is8-Z34)
