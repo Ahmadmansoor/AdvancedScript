@@ -15,6 +15,11 @@ just a try to add more feature's to x64dbg script system
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 3.1 :
+ 	1- fix CheckHexIsValid ( fix length ).
+	2- add menu to (copy - follow - delete) variables .
+	3- add more check for StrAnalyze.
+	4- add MsgBox for if command in case not resolve arguments .
 - version 3.0 :
 	1- add help file and command help on the form.
 	2- add ads lib like ("GetAPIName","GetArraySize","ReadStr","GetdesCallJmp","isInArray","isAddrBelongSection").
