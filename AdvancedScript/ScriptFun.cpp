@@ -1021,7 +1021,7 @@ String^ condtion_(String^ input, String^ typo) {
 	//// Comparing 
 	if ((input->Contains("!=")) && (!input->StartsWith("!="))) {
 		String^ left_ = input->Substring(0, input->IndexOf("!="))->Trim();
-		String^ right_ = input->Substring(input->IndexOf("!=") + 1, input->Length - (input->IndexOf("!=") + 1))->Trim();
+		String^ right_ = input->Substring(input->IndexOf("!=") + 2, input->Length - (input->IndexOf("!=") + 2))->Trim();
 		if (typo == "int") {
 			left_ = StrAnalyze(left_, VarType::int_);
 			right_ = StrAnalyze(right_, VarType::int_);
