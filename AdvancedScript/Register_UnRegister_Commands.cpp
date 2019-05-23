@@ -5,6 +5,7 @@
 #include "LogWindow.h"
 #include "ScriptFun.h"
 #include "MainForm.h"
+#include "RegexSearch.h"
 
 using namespace System;
 using namespace System::ComponentModel;
@@ -34,6 +35,18 @@ public:
 	static String^ TraceTemplate = "";
 	static String^ logxTraceArg2 = ""; // we used we need to pass it to callback Show_DialogSave because pass parameter is a little complex :(
 	static String^ temp = "";
+};
+
+public ref class search__
+{
+public:
+	search__(String^ addr_1,String^ disass1) {
+		addr_ = addr_1;
+		disass = disass1;
+	}
+private:
+	String^ addr_;
+	String^ disass;
 };
 
 const char* TraceFile_ = new char[MAX_STRING_SIZE]; // to get Trace file Path+name
@@ -80,6 +93,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 
 	registerCommand("Scriptw", cbMainForm, false);
+	registerCommand("RegExSearch", cbRegExSearchForm, true);
 	registerCommand("test_", test, false);
 
 	/////////Logx....
@@ -167,9 +181,21 @@ static bool test(int argc, char* argv[]) {
 		String^ intvalue;  /// first if it is hex value
 		if (CheckHexIsValid(arguments[0], intvalue) > 0) {  /// it mean it is address ( hex value)
 			
-			duint x = Script::Memory::GetBase(Str2int(intvalue));
-			int xxx;
-			xxx = 5;
+			duint base = Script::Memory::GetBase(Str2int(intvalue));
+			duint size_ = Script::Memory::GetSize(Str2int(intvalue));
+			BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
+						
+			Generic::List<search__^>^ Datax =gcnew Generic::List<search__^>;
+			duint temp=base;
+			while (temp<base+size_)
+			{
+				DbgDisasmFastAt(temp, basicinfo);
+				search__^ ser = gcnew search__(duint2Hex(temp), CharArr2Str(basicinfo->instruction));
+				Datax->Add(ser);
+				temp += basicinfo->size;
+			}
+			
+			
 		}
 		
 		break;
@@ -245,6 +271,39 @@ static bool cbMainForm(int argc, char* argv[])
 	// we used this (New Thread) to Create our Form in new Thread so we able to comunicated with x64dbg
 	// and be able to send command let go to address or do some  other commands 
 	System::Threading::Thread^ thread_ = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(&ShowDialog_Script));
+	thread_->SetApartmentState(Threading::ApartmentState::STA);
+	thread_->Start();
+
+	return true;
+}
+
+static void ShowDialog_Regex()
+{
+	AdvancedScript::RegexSearch RegexWindow;
+	try
+	{
+		if (!RegexWindow.Visible)
+			RegexWindow.ShowDialog();
+	}
+	catch (const std::exception&)
+	{
+
+	}
+
+}
+
+static bool cbRegExSearchForm(int argc, char* argv[])
+{
+	_plugin_logputs("[regex Window] Loading.......!");
+	///////////////////////////////////////////////////////////////////////////////////////
+	// this will keep form activate and x64dbg unable to do it's work by excuted commands 
+	//ScriptS::IATFixer IATFixer;
+	//IATFixer.ShowDialog();
+	///////////////////////////////////////////////////////////////////////////////////////
+
+	// we used this (New Thread) to Create our Form in new Thread so we able to comunicated with x64dbg
+	// and be able to send command let go to address or do some  other commands 
+	System::Threading::Thread^ thread_ = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(&ShowDialog_Regex));
 	thread_->SetApartmentState(Threading::ApartmentState::STA);
 	thread_->Start();
 

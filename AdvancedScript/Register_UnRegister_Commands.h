@@ -4,6 +4,7 @@
 extern int pluginHandle;
 void RegisterCommands(PLUG_INITSTRUCT* initStruct);
 static bool cbMainForm(int argc, char* argv[]);
+static bool cbRegExSearchForm(int argc, char* argv[]);
 static bool cbLogxJustAtBP(int argc, char* argv[]);
 static bool test(int argc, char* argv[]);
 static bool LogxTemplateManager(int argc, char* argv[]);

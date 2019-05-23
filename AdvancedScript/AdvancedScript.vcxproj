@@ -186,6 +186,9 @@
     <ClInclude Include="pluginsdk\_scriptapi_stack.h" />
     <ClInclude Include="pluginsdk\_scriptapi_symbol.h" />
     <ClInclude Include="Parser.h" />
+    <ClInclude Include="RegexSearch.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="Register_UnRegister_Commands.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptArgumentWindow.h" />
@@ -201,6 +204,7 @@
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="PluginBasic.cpp" />
     <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="RegexSearch.cpp" />
     <ClCompile Include="Register_UnRegister_Commands.cpp" />
     <ClCompile Include="ScriptFun.cpp" />
   </ItemGroup>
@@ -229,6 +233,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RegexSearch.resx">
+      <DependentUpon>RegexSearch.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

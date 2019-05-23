@@ -132,6 +132,9 @@
     <ClInclude Include="adsLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RegexSearch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdvancedScript.cpp">
@@ -165,6 +168,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="adsLib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RegexSearch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
