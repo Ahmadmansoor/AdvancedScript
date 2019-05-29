@@ -176,6 +176,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="AdvSconfig.txt" />
+    <Text Include="HelpAdvancedScript.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -202,6 +204,9 @@
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RegexSearch.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>

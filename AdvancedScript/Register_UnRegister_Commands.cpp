@@ -246,7 +246,19 @@ static bool test(int argc, char* argv[]) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static void ShowDialog_Script()
 {
-	AdvancedScript::MainForm ScriptWindow;
+	//copy AutocompleteMenu.dll in case it not in the root folder
+	//String^ x = Application::StartupPath + "\\AutocompleteMenu.dll";
+	if (!IO::File::Exists(Application::StartupPath + "\\plugins\\AutocompleteMenu.dll")) {
+		Interaction::MsgBox("AutocompleteMenu.dll File Not found ", MsgBoxStyle::OkOnly, "Error");
+	}
+	else
+	{
+		//if (!IO::File::Exists(Application::StartupPath + "\\AutocompleteMenu.dll")) {
+			IO::File::Copy(Application::StartupPath + "\\plugins\\AutocompleteMenu.dll", Application::StartupPath + "\\AutocompleteMenu.dll", true);
+		//}
+	}
+	
+	AdvancedScript::MainForm ScriptWindow;	
 	try
 	{
 		if (!ScriptWindow.Visible)

@@ -101,6 +101,16 @@
       <AdditionalDependencies>user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <CustomBuildStep>
+      <Command>copy $("HelpAdvancedScript.txt") $(OutDir)</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>$("HelpAdvancedScript.txt");%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>copy  "$(ProjectDir)\AdvSconfig.txt" "$(OutDir)"
+copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -115,6 +125,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>/rt %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PreBuildEvent>
+      <Command>copy  "$(ProjectDir)\AdvSconfig.txt" "$(OutDir)"
+copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"
+</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -125,6 +140,16 @@
     <Link>
       <AdditionalDependencies>user32.lib</AdditionalDependencies>
     </Link>
+    <CustomBuildStep>
+      <Command>copy $("HelpAdvancedScript.txt") $(OutDir)</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>$("HelpAdvancedScript.txt");%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>copy  "$(ProjectDir)\AdvSconfig.txt" "$(OutDir)"
+copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -135,8 +160,16 @@
     <Link>
       <AdditionalDependencies>user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy  "$(ProjectDir)\AdvSconfig.txt" "$(OutDir)"
+copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"
+</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Reference Include="AutocompleteMenu">
+      <HintPath>AutocompleteMenu.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -209,6 +242,12 @@
     <ClCompile Include="ScriptFun.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="AdvSconfig.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="HelpAdvancedScript.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
