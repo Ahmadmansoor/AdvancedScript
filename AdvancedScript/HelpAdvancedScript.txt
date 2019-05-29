@@ -1,0 +1,787 @@
+﻿/////
+Varx 
+Varx      variable type ,  variable name, value
+Parameter:
+Varx P1, P2 , P3(optional just for array and str) 
+      P1: variable type it holde ( str , int , array )  /// array is just string elements.
+      P2: variable name it should not have spaces or begin with $ , 
+        >>>>>>but when resolve it's value, we should add $ before it.<<<< like this $x  >> value of x 
+	For array variable we add [size] after the varible like this :
+	 - varx array,x[10]		Create array with 16 elements
+	 - varx array,x[10],test	Create array with 16 elements and set the first element value to (test)
+      P3: the value of the variable it's optional for str and array only and the value will be null
+            for int type it should be have a value and must be int 
+            note : you can use variables as a value of the variable like this  $x or {rax}.
+            no need to use "" in general, but if it had comma (,) we should but "" to define it as one string
+	    like :
+	    - varx str,x,this is test comma,done     >>this is wrong because it contain comma ",", so it should be 
+	    - varx str,x,"this is test comma,done"
+	    in some cases for some commands like findallmemx command we should use ""
+	    like :
+	    - varx str, search, "4533C94533C033"	here we should use comma
+	    - varx str, base, { rdx }
+	    - findallmemx $base, $search    
+	    - mov rdi, ref.addr(0)
+ Variable type is :
+ - int: all value will saved as int value but it will show as hex or printed with two value hex/decimal.
+ - str.
+ - array with n string elements ( it's just string).
+  sample :
+         - varx int, x, 90
+           varx array, y[1],10	       array with 1 elemnt with value =10 we get it by getx y[0]
+		   getx y[0]			as array index is begin from 0
+           varx str, x, {rax}
+           varx array, y[10]	array with 16 elemnts 
+           varx str, x
+         //////////
+         - varx int, x, 0x45fa
+           varx int,x1,25+30    	 /// 0x55 /85
+           varx array, z[$x],10		<<<you can use variable or equation in the index of the array>>>
+	       varx array,cx[z[0]+$x+6]
+           setx $z[10],test
+           varx int,x2,$x +$x1+$z[0]
+	   
+	- varx array,x[1]
+	  setx $x[0],10
+	  getx $x[0]
+	  varx array,z[$x[0]+1],t3
+	  getx $z[0]
+	  
+/////
+Setx 
+Setx  varname, value
+Setx P1, P2 
+      P1: variable name, it must (not) begin with $, because we need to assigned new value .
+      for the array variable we use [Array_index] , no need this for int and str or Array_index=0
+       array_index can accept variable's value
+      P2: the value of the variable can used AVS, no need to use "".
+      
+   sample :
+         - varx int, x, 90                x=0x90
+           Setx x,10                      x=0x10
+           
+         - varx str, x, {rax}             x=rax value
+           Setx $x,test                   x=test
+           varx array,z[23],10            z[0]=10     because all elements are string       
+           setx $z[5],$x$z[0]             z[5]=test10
+           setx $z[5],$x $z[0]            z[5]=test 10
+           setx $z[5],$x+$z[0]            z[5]=test+10
+           setx $x,$z[0]                  x=0x10
+           setx $x,$z[5]                  wrong value can't converted to int
+           
+         - varx int, x, 0x45fa            int x= 0x45FA\17914 :has been added
+           varx str, z, 0xaa              str z= 0xaa :has been added
+           setx $x, $z + 0x33 - 25        x= 0xB8\184
+           varx array, y[6], 0x10         array y[0]= 0x10 :has been added
+           setx $x, $x + $y[0]            x= 0xC8\200
+/////
+Getx
+Getx   variable name 
+      P1: variable name, it must begin with $, because we need to get the value .
+            for the array we put [array_index] if not used then it will print first 
+            element in the array.
+            array_index can accept variable's value
+          the value of the variable can used AVS, no need to use comma "".
+      
+   sample :
+         - varx int, x, 90          x=0x90
+           SetVarx $x,10            x=0x10
+           getx $x                  x=0x10
+         - varx str, x, {rax}       x=rax value
+           getx $x                  x=rax value
+         
+         -varx int, x, 10           int x= 0x10\16 :has been added
+          varx array, y[$x], 1          array y[0]= 1 :has been added
+          setx $y[$x], 110          y[10]= 110
+          getx $y                   y[0]= 1
+          getx $y[$x]               y[10]= 110
+/////
+Movx
+Movx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+/////
+addx
+addx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+//////////
+subx
+subx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       subx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+//////////
+mulx
+mulx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+//////////
+divx
+divx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+//////////
+andx
+andx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+//////////
+orx
+orx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+//////////
+xorx
+xorx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+//////////
+shlx
+shlx  P1, P2
+first parameter will not analyzed, just the second one.
+sample :
+     - again:
+       varx str,base,{rax}
+       cmpx {rax},$base   	>>> cmpx analyzed both parameters so we can write like this
+       jne done
+       jmp again 
+       done:
+     - varx int,x,20
+       varx int,y,0xFF
+       var z     		>>> this var from x64dbg system
+       addx rax,$x+$y               rax =rax + 0x32+ 0x255 = rax + 0x287 
+       addx z,$x+$y                 z=z+0x287
+	
+     -	varx str,addr,{rip+4}
+	varx str,BPname,test
+	bpxx $addr,$BPname
+	bpcx $addr
+	bphx $addr,r
+
+    -	varx int,x,50
+	setx $x ,0x30
+	varx str,y,20
+	movx rax,$x
+
+//////////
+pushx
+pushx  P1
+parameter not analyzed.
+//////////
+popx
+popx  P1
+parameter not analyzed.
+//////////
+BPxx
+BPxx  Address , Name of the breakpoint(optional) ,Breakpoint type (optional)
+Set an INT3 (SHORT/LONG) or UD2 breakpoint and optionally assign a name to it.
+
+-note :
+	in new Update BPxx for one parameter can set on array of address directly , but for some resone x64dbg will take 
+	time to respond ( I don't know why ) so u can go to refrence and set BP on all finded items.
+	sample :
+	- varx str,IATCall,"E8????????90"								//define the search pattern
+	- varx int,TxSecBegin,{rip}										//define begin of section and set rip address
+	- setx $TxSecBegin,ads.SectionBegin($TxSecBegin)	//Get section begin address by ads libary 
+	- varx array,IatCallList[1]											//define array of call xxx
+	- findallmemx $TxSecBegin,$IATCall,$IatCallList		//search for the pattern and fill IatCallList list
+	- bpxx $MagicLineList		  										//set BP at IatCallList list fo the address          <<<<<
+//////////
+bpcx
+bpcx  Address 
+Delete a breakpoint set using the SetBPX command.
+//////////
+bpex
+bpex  Address 
+Enable a breakpoint set using the SetBPX command.
+//////////
+bpdx
+bpdx  Address 
+Disable a breakpoint set using the SetBPX command.
+//////////
+bphx
+bphx  Address ,Hardware breakpoint type ,Hardware breakpoint size
+Set a hardware breakpoint (using debug registers).
+
+P1 Address of the hardware breakpoint.
+P2 Hardware breakpoint type. Can be either ‘r’ (readwrite), ‘w’ (write) or ‘x’ (execute). When not specified, ‘x’ is assumed.
+P3 Hardware breakpoint size. Can be either ‘1’, ‘2’, ‘4’ or ‘8’ (x64 only). Per default, ‘1’ is assumed. 
+The address you’re putting the hardware breakpoint on must be aligned to the specified size.
+//////////
+bphcx
+bphcx  Address/name
+Delete a hardware breakpoint set using the SetHardwareBreakpoint command.
+//////////
+bphex
+bphex  Address/name
+Enable a previously disabled hardware breakpoint.
+//////////
+bphdx
+bphdx  Address/name
+Disable a hardware breakpoint.
+//////////
+bpmx
+bpmx  Address, restore the memory breakpoint once ,Breakpoint type
+Set a memory breakpoint (GUARD_PAGE) on the whole memory region the provided address is in.
+
+P1 Address of or inside a memory region that will be watched.
+P2 1/0 restore the memory breakpoint once it’s hit? When this value is not equal to ‘1’ or ‘3’, it’s assumed to be arg3. This means “bpm eax,r” would be the same command as: “bpm eax,0,r”.
+P3 Breakpoint type, it can be ‘a’ (read+write+execute) ‘r’ (read), ’w’ (write) or ‘x’ (execute). Per default, it’s ‘a’ (read+write+execute)
+//////////
+findallmemx
+findallmemx address, byte pattern to search, array variable to handle result ,  size of the data to search in
+
+ it's same findallmem in x64dbg system, but it accept variables in the parameter.
+Find all occurrences of a pattern in the entire memory map.
+note : in the new update now we can assign the result directly to ArrayList.
+```
+Parameter:
+findallmemx P1, P2, P3 ,P4
+      P1: The address to start searching from.
+      P2: The byte pattern to search for. This byte pattern can contain wildcards (?)
+            for example: EB0?90??8D   or  "EB0?90??8D"
+      P3: array variable it recommended to define array with 1 elements because this function will fill the array    
+      P4: The size of the data to search in. Default is the entire memory map.. (optional)
+                  >>all variable can used AVS<<
+<<<<<<note: you can find the count of result by get {$result}>>>>>>>>
+    sample :
+         - varx str, search, "4533C94533C033"  << or >> varx str, search, 4533C94533C033
+           varx str, base, { rdx }
+	   varx array,y[1]
+           findallmemx $base, $search ,$y
+	or:   findallmemx $base,4533C94533C033 ,$y
+	or:   findallmemx $base,"4533C94533C033" ,$y   // recomanded 
+           //mov rdi, ref.addr(0)		       // old way  u can still used it 
+	   
+   
+	- varx str, search, "4533C94533C033"
+	  varx str, base, { rdx }
+	  varx array,z[1]
+	  findallmemx $base, $search,$z
+	  	log {ref.addr(500)}
+	  or 	getx $z[500]
+	  varx int,k,0
+	  	setx $k,{ref.addr(500)}
+	  or	
+	  setx $k,{$result} //result hold the array length    old way
+	  or  GetArraySize $z,$k   // return the length of arry	  
+	  mov rdi, ref.addr(0)
+	  varx int, x0, 90
+	  varx int, x1, 5
+	  getx $x0
+	  getx $x1
+	  varx array, y, 1
+	  setx $y, 110, 100
+	  getx $y, 10 + $x + $x1 + 5
+//////////
+memdump
+memdump  address , size of data
+dump memory to log window like windbg style
+```
+	//00007ff8`02f42280  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
+	//00007ff8`02f42290  cc c3 cc cc cc cc cc cc - 0f 1f 84 00 00 00 00 00  ................
+
+Parameter:
+memdump P1, P2
+      P1: The address to start dump.
+      P2: size of data   
+   sample :
+         - memdump 00000000FF613570,50
+                        
+                  00000000FF613570         4883EC28E807FEFFFF4883C428EB1190        H?�(����H?�(�.
+                  00000000FF613580         90909090909090909090909090909090        ................ 
+                  00000000FF613590         488974240848897C241041544881ECB0        H?t$H?|$ATH��� 
+                  00000000FF6135A0         0000008364242000488D4C2440FF157D        ...?d$ .H�L$@�} 
+                  00000000FF6135B0         8C00009065488B042530000000488B78        ?...eH?%0...H?x
+        
+        - memdump {cip},50         {cip}= rip address
+         
+        -varx str,address,{cip}
+         varx str,size,20
+         memdump $address,$size
+//////////
+VarxClear
+VarxClear
+clear all variable's rest variables list , so we can add again same var 
+Good for maintenance.
+   sample :
+         - VarxClear 
+//////////
+asmx
+asmx 	Address ,Instruction text, filled with NOPs
+it's mirror of asm command in x64dbg, it accept variables.
+
+For Instruction: if you define it as var no problem if u but "" or not 
+			but if you define it direct it's good to surrounded it by ""
+	fill with nops : just put 1 that enough and it will fill the rest with nops.
+``` 
+    sample :
+         - varx str,addr,{rip}
+	   varx str,command,"add rax,10"
+	   asmx $addr,$command
+      or   asmx $addr,"add rax,10"     
+      
+     How to asmeble command ( call qword ptr ds:[0x000000014004C408] ) at address, way to fix IAT
+     -  varx str,addr,{rip}
+	varx str,IAT,0x000000014004C408  or varx str,IAT,{rax}
+ 	varx str,call,"call qword ptr ds:["
+ 	setx $call,$call 0x$IAT ]		Don't forget 0x before $IAT ,and Don't forget the spaces before ] :), 
+													so the it mix with var IAT name
+	asmx $addr,$call   << this asm without fill with nops
+	asmx $addr,$call,"1" << this asm with fill with nops	
+	
+	asmx 0x0000000140EA0010,"call qword ptr ds:[0x777259C0]",1
+     - 
+//////////
+writeStr
+writeStr  address , text to write , replace old string
+this Function write any string to address of memory, in case replace is true, it read the string ( Asci or unicode )
+then it zero the string memory and replace it with new string according the string type ( Asci or unicode ).
+```
+WriteStr  duint address, String^ text, bool replace
+
+	- writeStr {rdx},"This is test" ,0
+	- writeStr {rdx},"This is test" ,1
+//////////
+if
+if mainStr  > < = != ?  string , type (int, str/strb,stre,strc ) , line number if true , line number if false
+(if) this Function as any if, its good for short the work of cmp jne .
+(goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
+ if condtion ( > < = != ?) , type (int, str/strb,stre,strc ) , line number if true , line number if false
+ 
+ - note : if you set line number to 0 that mean step to next line.
+ 
+  - note : in new version we can use ads lib like some commands which return true or false 
+ 	  like ( ads.isInArray  , ads.isAddrBelongSection  ) WILL explain later
+	  
+- note : when use ads lib parameter type will be ignored so u set it as str.
+
+ - in parameter 1 :we can make any compare with variables ( >  <  =  != )  (?) just for string compare and should use 
+ 	one of the comapre string which is :
+	strb : if string begin with 
+	stre : if string end with 
+	strc : if string contain
+	
+	sample :
+		if mainStr?"string_",strb,5d,7d /// check if mainStr begin with (string_)
+		
+ - in parameter 2 :we define the type of variable we need to compare. we can compare int with int or string to string
+ 		int	
+		str
+		strb	string begin with
+		stre	string end with
+		strc	string contain with
+		
+ - Line number : there are 3 way to set it 
+ 
+ 		1- number + d : it mean the number is int not hex value Like 10d = line number 10
+		2- number : it mean the number hex value Like 10 = line number 16
+		3- string lable : it mean there are lable in the script it will jmp to 
+		4- set one of them to 0 mean jmp to next line
+		sample :
+		1	varx int,x,0
+		2	varx int,y,10
+		3	if $x>$y,int,0,5d     /// if x>y then it will go to line 4 otherwise go to line 5
+		4	........
+		5	........
+note : we can mix this tow commands and we get a loop good for IAT read write fix Loop
+	or for search 
+ 
+```
+	-0	varx int,x,10
+	 1	varx int,y,5
+	 2	if $x=$y,int,GotHere,4d   compare between 2 int if they equal it will jmp to 
+	 					lable (GotHere) else jmp to line number 4
+ 	 3	getx $x
+ 	 4	goto GotHere		go to line 8 ( lable GotHere)
+ 	 5	getx $y
+ 	 6	varx array,z[5],test
+  	 7	setx $x,20
+  	 8	GotHere:
+  	 9	movx rax,{rsp}
+	 .
+	 .
+	 .
+	 20	goto 10			go to line 16
+	 21 	goto 10d		go to line 10
+	 
+	 -Loop:
+	 	varx int,x,0
+		if $x<10,int,2d,Finish
+		setx $x,$x+1
+		getx $x
+		goto 1d
+		Finish:
+
+	-varx str,Rstr
+	 again:
+	 run
+ 	 ReadStr $Rstr,{rdx}
+	 if $Rstr?"ImmIMPGetIMEA",strc,5d,2d
+	 ret
+//////////
+goto
+goto line number /lable line
+
+(goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
+goto 6  			jmp to line number 0x6
+goto 6d  		jmp to line number 6
+goto again	jmp to line have lable again
+//////////
+GetAPIName
+GetAPIName varname ,  addrress
+this Function get API name of the address and set it to variable .
+GetAPIName  varname ,  addrress
+ - in parameter 1 :the variable which will handle the name it should be str or array
+ - in parameter 2 :valid address of the API.
+ 
+```
+	-varx array,x[30],{rax}
+	 GetApiName $x[2],$x[0]
+ 	 setx $x[4],APIAddr : $x[0] / $x[2]
+ 	 getx $x[4]
+```
+//////////
+ResizeArray
+resizeArr array,added amount (+ or -)
+this Function used to Resize Array variable it's good if we don't know how much we want to reverse.
+so we can add more elements or sub some elements . 
+resizeArr array,added amount
+ - in parameter 1 :the array name .
+ - in parameter 2 :the amount need to sub (-n) or add (+n) . 
+```
+	-varx array,x[1],1r
+	 resizearray $x,10    add elements 
+	 resizearray $x,-7    sub elements
+
+```
+//////////
+GetArraySize
+GetArraySize  varArrName, varname
+this Function used to get the size of Array variable.
+GetArraySize  varArrName, varname
+ - in parameter 1 :the array name .
+ - in parameter 2 :the amount need to sub (-n) or add (+n) . 
+```
+	-GetArraySize $temp,$sizeArray	
+```
+//////////
+Write2File
+write2File path,over_append(false/true),data (Can be array )
+note: you can write array directly to file by write the array name see sample
+this Function used to write data to file and can write array to file too .
+write2File path,over_append(false/true),data
+ - in parameter 1 :set the path of the file it can be done by variable other wise use "" surrounded path.
+ - in parameter 2 :
+ 		- false: to over write file . ( u can use false or 0 or off )
+		- true: to append to file . ( u can use true or 1 or on )
+ - in parameter 3 : the data you want to write to the file it will analyzed if it have variables can be array .
+```
+	-varx str,path,"E:\temp1\log.txt"
+	 varx array,x[2]
+	 GetAPIName $x[0],{rax}
+	 write2file $path,1,$x[0]	here it will append data to the log file
+	 write2file $path,0,"API Name:" $x[0]     this will write the value of x[0]
+	 
+	 -varx array,x[2]
+	  setx $x[0],test
+	  setx $x[1],again
+  	  Write2File "D:\t.txt",0,$x   	this will write all x aary to t.txt file
+
+```
+//////////
+InputBox
+inputBox  variable, message, title
+
+this Function used to get data from the user like address , it could be used as dialog to see if user say
+yes or no or (y/n).
+inputBox  variable, message, title
+ - in parameter 1 :the variable which will hold the return message.
+ - in parameter 2 :
+ 		- false: to over write file . ( u can use false or 0 or off )
+		- true: to append to file . ( u can use true or 1 or on )
+```
+	-varx array,x[2],10
+	 InputBox $x[1],this is $x[0],"info"
+	 varx int,z,0
+ 	 InputBox $z,int test,test
+
+```
+//////////
+ReadStr
+ReadStr  variable , duint address
+
+this Function used to read string at address.
+ReadStr  variable , duint address
+ - in parameter 1 :the variable which will hold string.
+ - in parameter 2 :the address which have the string
+```
+	-varx str,Rstr
+	 again:
+	 run
+ 	 ReadStr $Rstr,{rdx}
+	 if $Rstr?"ImmIMPGetIMEA",strc,5d,2d
+	 ret
+
+```
+//////////
+commentset
+commentset  address,String comment
+//////////
+GetdesCallJmp
+GetdesCallJmp   variable, address of call
+
+this Function get the address of (Call xxxxx  or Jmp xxxx )and store it in a variable.
+GetdesCallJmp   variable, address of call
+
+- P1 parameter 1 :variable which gold the value .
+- P2 parameter 2 :address of Call or jmp 
+```
+	-varx int,x,0	
+	 GetdesCallJmp $x,{rip}		
+
+```
+//////////
+ads library: 
+ads.____		/// ____ mean command
+this library is used for fast get info like exebase or Sctionbase .....
+ads.Command
+commands Like :exebase,	modulebase,SectionSize,	exefolderpath,exename,SectionBegin,SectionEnd,
+note : don't use nested command with ads lib which have brackets  ( it is not support yet )  .
+like : ads.____ (ads.____(),____)    this not allow
+but  : ads.____(ads.exebase,____)   this no problem     
+form :
+```
+ads.exebase				get exe base
+ads.modulebase(Modulename or address) 	get the base of module by name or address ( any address from the section)
+ads.SectionSize(address) 		get Section base by address ( any address from the section)
+ads.exefolderpath			get exe folder path
+ads.exename				get exe name
+ads.SectionBegin(address)		get begin of the section by address ( any address from the section)
+ads.SectionEnd(address)			get End of the section by address ( any address from the section)
+ads.GetAPIName(address)			get API name from address
+ads.GetArraySize($arrayName)		get the array size
+ads.ReadStr(address)			get string at address
+ads.GetdesCallJmp(address of Call)	get the destination of call or Jmp :Like 
+					0000000140EA4000 call 0x01F50304 
+					ads.GetdesCallJmp(0000000140EA4000) >> return 0x01F50304 
+ads.isInArray(text , arrayName)		used with if command it return true or false if the text exist in the array.
+					ads.isInArray(GetProcAddress,$x)  or  ads.isInArray($z,$x)
+					
+ads.isAddrBelongSection((addr,any addr of the section)  used with if command it return true or false if this command belong to this
+							section, 
+```
+	-varx str,IATCall,"E8????????90" //search for all call xxxx  nop in text section
+	 varx str,MagicLine,"xxxxxx" //search for all magic line in Themida section
+	 varx int,TxSecBegin,0 //text sction begin address
+	 varx int,ThemidaSecBegin,0 //Themida sction begin address
+	 varx int,TxSecEnd,0 //text sction End address
+	 varx int,ThemidaSecEnd,0 //Themida sction End address
+	 varx array,IatCallList[1] //list of Call emulated IAT, it's 1 because it will Auto refill later
+	 varx array,MagicLineList[1] //list of magic line
+	 varx int,i,0 //counter
+	 inputbox $TxSecBegin,Please paste any address from text Section,Text Section //get address form text section to use it later to get Begin and End Section
+	 inputbox $ThemidaSecBegin,Please paste any address from Themida Section,Themida Section //get address form Themida section to use it later to get Begin and End Section
+	 setx $TxSecBegin,ads.SectionBegin($TxSecBegin) //Get address of text Section begin
+	 setx $TxSecEnd,ads.SectionEnd($TxSecBegin) //Get address of text Section end
+	 setx $ThemidaSecBegin,ads.SectionBegin($ThemidaSecBegin) //Get address of Themida Section begin
+	 setx $ThemidaSecEnd,ads.SectionEnd($ThemidaSecBegin) //Get address of Themida Section End
+	 findallmemx $TxSecBegin,$IATCall,$IatCallList //Find all Call xxxx nop and fill the list with result
+	 findallmemx $ThemidaSecBegin,$MagicLine,$MagicLineList //Find all magic line and fill the list with result
+	 bpxx $MagicLineList //set breack point on all items in the list
+	 varx int,tempAddr,0
+	 if $ThemidaSecBegin=$ThemidaSecEnd,int,17d,13d //begin check
+	
+```
+	- varx str,x,ads.GetAPIName({rax})   // u can get the API name directly
+```
+```
+	- varx array,x[20],30
+	  varx int,y,ads.GetArraySize( $x)   // get array size direct
+	  varx str,z,ads.ReadStr({rax})      // read string at address
+```
+//////////
