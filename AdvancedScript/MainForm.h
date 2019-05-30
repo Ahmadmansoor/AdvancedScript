@@ -65,27 +65,17 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::ToolStripMenuItem^  saveScriptFileToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  newScriptToolStripMenuItem;
 
-
-
 	private: System::ComponentModel::IContainer^  components;
 
-
 	protected:
-
-
-
-
+		
 	protected:
 
 	public:
 		String^ ScriptFileName = String::Empty;
 		bool Run = false;
 	private: System::Windows::Forms::PictureBox^  PB_wait;
-
-
-
-
-
+			 
 
 	public:
 		static String^ LoadAllText_ = String::Empty;
@@ -107,7 +97,6 @@ namespace AdvancedScript {
 	private:
 		String^ cmd;
 		String^ info;
-
 	public:
 		HelpLoad(String^ cmd_, String^ info_) {
 			cmd = cmd_->Trim()->ToLower();
@@ -124,6 +113,18 @@ namespace AdvancedScript {
 	};
 	public:
 		Generic::List<HelpLoad^>^ HelpLoad_List = gcnew Generic::List<HelpLoad^>;
+	public:
+		int HelpLoad_List_indexbyCmd(String^ inputCmd) {
+			int Counter = 0;
+			for each (HelpLoad^ var in HelpLoad_List)
+			{
+				if (var->Getcmd_()->ToLower() == inputCmd->ToLower()) {
+					return Counter;
+				}
+				Counter += 1;
+			}
+			return -1;
+		}
 	private: System::Windows::Forms::ListBox^  LB_Function;
 	private: System::Windows::Forms::Button^  Bu_VarListRefresh;
 	private: System::Windows::Forms::CheckBox^  CB_AutoUpdate;
@@ -144,9 +145,10 @@ namespace AdvancedScript {
 	public: ref class Variables
 	{
 	public:
-		Variables(int index_, String^ Cmd_) {
+		Variables(int index_, String^ Cmd_,String^ comments_) {
 			index = index_;
 			Cmd = Cmd_;
+			comments = comments_;
 		}
 	public:
 		bool is_indexExist(int index_) {
@@ -161,12 +163,16 @@ namespace AdvancedScript {
 	public: String^ GetCmd() {
 		return Cmd;
 	}
+	public: String^ Getcomments() {
+		return comments;
+	}
 	public: void updateCmd(String^ cmd_) {
 		Cmd = cmd_;
 	}
 	private:
 		int index;
 		String^ Cmd;
+		String^ comments;
 	};
 
 
@@ -191,7 +197,18 @@ namespace AdvancedScript {
 			return false;
 		}
 	}
-
+	public:
+		String^ GetCmd() {
+			return Cmd;
+		}
+	public:
+		String^ GetdescriB() {
+			return descriB;
+		}
+	public:
+		Color^ GetcoloR() {
+			return coloR;
+		}
 	private:
 		String^ Cmd;
 		String^ descriB;
@@ -222,8 +239,8 @@ namespace AdvancedScript {
 		{
 			this->components = (gcnew System::ComponentModel::Container());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle4 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle8 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle6 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle5 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
 			this->DGV1 = (gcnew System::Windows::Forms::DataGridView());
 			this->ID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
@@ -289,24 +306,24 @@ namespace AdvancedScript {
 					this->describe
 			});
 			this->DGV1->ContextMenuStrip = this->CMT1;
-			dataGridViewCellStyle6->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle6->BackColor = System::Drawing::SystemColors::Window;
-			dataGridViewCellStyle6->Font = (gcnew System::Drawing::Font(L"Courier New", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			dataGridViewCellStyle8->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle8->BackColor = System::Drawing::SystemColors::Window;
+			dataGridViewCellStyle8->Font = (gcnew System::Drawing::Font(L"Courier New", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			dataGridViewCellStyle6->ForeColor = System::Drawing::SystemColors::ControlText;
-			dataGridViewCellStyle6->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle6->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle6->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
-			this->DGV1->DefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle8->ForeColor = System::Drawing::SystemColors::ControlText;
+			dataGridViewCellStyle8->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle8->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle8->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
+			this->DGV1->DefaultCellStyle = dataGridViewCellStyle8;
 			this->DGV1->Location = System::Drawing::Point(274, 11);
 			this->DGV1->Name = L"DGV1";
 			this->DGV1->Size = System::Drawing::Size(746, 115);
-			this->DGV1->TabIndex = 0;
+			this->DGV1->TabIndex = 1;
 			// 
 			// ID
 			// 
-			dataGridViewCellStyle5->NullValue = L"0";
-			this->ID->DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle6->NullValue = L"0";
+			this->ID->DefaultCellStyle = dataGridViewCellStyle6;
 			this->ID->FillWeight = 25;
 			this->ID->HeaderText = L"ID";
 			this->ID->Name = L"ID";
@@ -434,7 +451,7 @@ namespace AdvancedScript {
 			this->CB_AutoUpdate->Location = System::Drawing::Point(92, 199);
 			this->CB_AutoUpdate->Name = L"CB_AutoUpdate";
 			this->CB_AutoUpdate->Size = System::Drawing::Size(83, 17);
-			this->CB_AutoUpdate->TabIndex = 7;
+			this->CB_AutoUpdate->TabIndex = 2;
 			this->CB_AutoUpdate->Text = L"AutoUpdate";
 			this->CB_AutoUpdate->UseVisualStyleBackColor = true;
 			// 
@@ -443,7 +460,7 @@ namespace AdvancedScript {
 			this->Bu_VarListRefresh->Location = System::Drawing::Point(10, 193);
 			this->Bu_VarListRefresh->Name = L"Bu_VarListRefresh";
 			this->Bu_VarListRefresh->Size = System::Drawing::Size(81, 26);
-			this->Bu_VarListRefresh->TabIndex = 3;
+			this->Bu_VarListRefresh->TabIndex = 1;
 			this->Bu_VarListRefresh->Text = L"Refresh list";
 			this->Bu_VarListRefresh->UseVisualStyleBackColor = true;
 			this->Bu_VarListRefresh->Click += gcnew System::EventHandler(this, &MainForm::Bu_VarListRefresh_Click);
@@ -453,7 +470,7 @@ namespace AdvancedScript {
 			this->Bu_ClearVariable->Location = System::Drawing::Point(174, 193);
 			this->Bu_ClearVariable->Name = L"Bu_ClearVariable";
 			this->Bu_ClearVariable->Size = System::Drawing::Size(81, 26);
-			this->Bu_ClearVariable->TabIndex = 1;
+			this->Bu_ClearVariable->TabIndex = 3;
 			this->Bu_ClearVariable->Text = L"Clear Variable";
 			this->Bu_ClearVariable->UseVisualStyleBackColor = true;
 			this->Bu_ClearVariable->Click += gcnew System::EventHandler(this, &MainForm::Bu_ClearVariable_Click);
@@ -467,7 +484,7 @@ namespace AdvancedScript {
 			this->TrViewVariable->Location = System::Drawing::Point(11, 225);
 			this->TrViewVariable->Name = L"TrViewVariable";
 			this->TrViewVariable->Size = System::Drawing::Size(244, 373);
-			this->TrViewVariable->TabIndex = 2;
+			this->TrViewVariable->TabIndex = 4;
 			// 
 			// CMT_VariableList
 			// 
@@ -548,7 +565,7 @@ namespace AdvancedScript {
 			this->LB_Function->Location = System::Drawing::Point(4, 5);
 			this->LB_Function->Name = L"LB_Function";
 			this->LB_Function->Size = System::Drawing::Size(114, 147);
-			this->LB_Function->TabIndex = 1;
+			this->LB_Function->TabIndex = 0;
 			this->LB_Function->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::LB_Function_SelectedIndexChanged);
 			// 
 			// TB_CommandHelp
@@ -567,7 +584,7 @@ namespace AdvancedScript {
 			this->TB_CommandHelp->Name = L"TB_CommandHelp";
 			this->TB_CommandHelp->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 			this->TB_CommandHelp->Size = System::Drawing::Size(660, 152);
-			this->TB_CommandHelp->TabIndex = 0;
+			this->TB_CommandHelp->TabIndex = 1;
 			// 
 			// tabPage_Log
 			// 
@@ -587,7 +604,10 @@ namespace AdvancedScript {
 			this->autocomplete_List->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9));
 			this->autocomplete_List->ImageList = nullptr;
 			this->autocomplete_List->Items = gcnew cli::array< System::String^  >(0);
+			this->autocomplete_List->MaximumSize = System::Drawing::Size(800, 350);
+			this->autocomplete_List->MinFragmentLength = 1;
 			this->autocomplete_List->TargetControlWrapper = nullptr;
+			this->autocomplete_List->Selected += gcnew System::EventHandler<AutocompleteMenuNS::SelectedEventArgs^ >(this, &MainForm::autocomplete_List_Selected);
 			// 
 			// RTB_Script
 			// 
@@ -596,10 +616,10 @@ namespace AdvancedScript {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->autocomplete_List->SetAutocompleteMenu(this->RTB_Script, this->autocomplete_List);
 			this->RTB_Script->ContextMenuStrip = this->CMT1;
-			this->RTB_Script->Location = System::Drawing::Point(276, 137);
+			this->RTB_Script->Location = System::Drawing::Point(277, 92);
 			this->RTB_Script->Name = L"RTB_Script";
-			this->RTB_Script->Size = System::Drawing::Size(761, 269);
-			this->RTB_Script->TabIndex = 7;
+			this->RTB_Script->Size = System::Drawing::Size(807, 344);
+			this->RTB_Script->TabIndex = 0;
 			this->RTB_Script->TabStop = false;
 			this->RTB_Script->Text = L"";
 			this->RTB_Script->WordWrap = false;
@@ -643,35 +663,6 @@ namespace AdvancedScript {
 											//Done
 		LableLineClass::LableLines->Clear();
 		Variables_List->Clear();
-		//for (int i = 0; i < DGV1->RowCount - 1; i++)
-		//{
-		//	DGV1->Rows[i]->Cells[0]->Value = i; // duint2Hex(i) + "/" + i;   // fill first colume with number 0 1 2 3 ....
-		//	if (DGV1->Rows[i]->Cells[1]->Value != nullptr) {
-		//		if (DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->EndsWith(":")) {  // find lables
-		//			String^ LableHold = DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->Substring(0, DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->IndexOf(":"));
-		//			LableLine^ LaL = gcnew LableLine(i, LableHold);
-		//			LableLineClass::LableLines->Add(LaL);
-		//		}
-		//		if (DGV1->Rows[i]->Cells[1]->Value->ToString()->ToLower()->Trim()->StartsWith("varx")) {  // find variables
-		//			if (DGV1->Rows[i]->Cells[1]->Value->ToString()->Contains(",")) {
-		//				//String^ cmd = DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->Substring(0, DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim()->IndexOf(","));
-		//				String^ cmd = DGV1->Rows[i]->Cells[1]->Value->ToString()->Trim();
-		//				if ((!cmd->Contains(",")) || (cmd->Trim()->IndexOf(",") + 1 >= cmd->Trim()->Length))  ///// in case we write varx int and not continue 
-		//					return;
-		//				Generic::List<String^>^ arguments;
-		//				GetArg(cmd, arguments);
-		//				if (arguments->Count < 2)
-		//					return;
-		//				if (arguments[0]->ToLower() == "array") {
-		//					arguments[1] = arguments[1]->Substring(0, arguments[1]->IndexOf("["));
-		//				}
-		//				Variables^ LaL = gcnew Variables(i, "$" + arguments[1]);
-		//				Variables_List->Add(LaL);
-		//			}
-		//		}
-		//	}
-		//}
-
 		for (int i = 0; i < RTB_Script->Lines->Length; i++)
 		{
 			if (RTB_Script->Lines[i]->Trim() != "") {
@@ -680,7 +671,7 @@ namespace AdvancedScript {
 					LableLine^ LaL = gcnew LableLine(i, LableHold);
 					LableLineClass::LableLines->Add(LaL);
 				}
-				if (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("varx")) {  // find variables
+				if (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("varx")) {  // find variables					
 					if (RTB_Script->Lines[i]->Trim()->Contains(",")) {
 						String^ cmd = RTB_Script->Lines[i]->Trim();
 						if ((!cmd->Contains(",")) || (cmd->Trim()->IndexOf(",") + 1 >= cmd->Trim()->Length))  ///// in case we write varx int and not continue 
@@ -694,7 +685,12 @@ namespace AdvancedScript {
 								arguments[1] = arguments[1]->Substring(0, arguments[1]->IndexOf("["));
 							}
 						}
-						Variables^ LaL = gcnew Variables(i, "$" + arguments[1]);
+						//// check for comments 
+						String^ Comments = " ";
+						if (RTB_Script->Lines[i]->Trim()->Contains("//")) {
+							Comments = RTB_Script->Lines[i]->Trim()->Substring(RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2, RTB_Script->Lines[i]->Trim()->Length - (RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2));
+						}
+						Variables^ LaL = gcnew Variables(i, "$" + arguments[1],Comments);
 						Variables_List->Add(LaL);
 					}
 				}
@@ -751,6 +747,7 @@ namespace AdvancedScript {
 			LB_Function->Items->Add(HelpLoad_List[i]->Getcmd_());
 		}
 		FillTrView();  // fill tree on load 
+		Fill_FunctionsAutoComplete_AtLoad();  /// load AutoComplete main List 
 		//TB_CommandHelp->Text = LoadAllText_;
 
 	}
@@ -988,6 +985,10 @@ namespace AdvancedScript {
 					saveAsToolStripMenuItem_Click(sender, e);
 				}
 			}
+			if (e->KeyCode == Keys::J) {
+				ReFill_FunctionsAutoComplete_AtLoad();
+				autocomplete_List->Show(RTB_Script, true);
+			}
 			/// send Get Function list
 			/*if (e->KeyCode == Keys::J) {
 			tb->AutoCompleteMode = AutoCompleteMode::SuggestAppend;
@@ -1066,10 +1067,17 @@ namespace AdvancedScript {
 	}
 	private: System::Void RTB_Script_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		IniLoadData();
+		
 	}
 
-			 ////////////////////////////////////////////////////////////////
-	private: System::Void Fill_Functions_AutoCompleteLoad()
+	private: System::Void autocomplete_List_Selected(System::Object^  sender, AutocompleteMenuNS::SelectedEventArgs^  e) {
+		AutocompleteItem^ autocompleteItem = e->Item;
+		int index_ = HelpLoad_List_indexbyCmd(autocompleteItem->Text);
+		if (index_ != -1)
+			TB_CommandHelp->Text = HelpLoad_List[index_]->Getinfo_();
+	}
+
+	private: System::Void Fill_FunctionsAutoComplete_AtLoad()
 	{
 		//AutoCompleteStringCollection^ str = gcnew AutoCompleteStringCollection();
 		autocomplete_List->ClearItem();
@@ -1101,144 +1109,33 @@ namespace AdvancedScript {
 				}
 				else
 					describ = " ";
-				autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { "This is", "", "used for something"}, "This is", true, true));
+
+				AutoCompleteMainList^ mainList = gcnew AutoCompleteMainList(cmd, describ, color_);
+				autoCompleteMainList->Add(mainList);  /// we will save this for later use as base of the AutoComplete
+				autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { cmd, describ}, cmd, true, true));
 			}
 		}
-
 		////MulticolumnAutocompleteItem^ s = gcnew MulticolumnAutocompleteItem(gcnew array<String^> { "test", "name" }, "This is ",true,true);
 		//autocomplete_List->ClearItem();
 		//autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { "This is", "" ,"used for something"}, "This is", true, true));
-		//autocomplete_List->AddItem("Varx");		
-		//autocomplete_List->AddItem("Getx");
-		//autocomplete_List->AddItem("Setx");
-		//autocomplete_List->AddItem("Movx");
-		//autocomplete_List->AddItem("addx");
-		//autocomplete_List->AddItem("subx");
-		//autocomplete_List->AddItem("mulx");
-		//autocomplete_List->AddItem("divx");
+	}
 
-		//autocomplete_List->AddItem("andx");
-		//autocomplete_List->AddItem("orx");
-		//autocomplete_List->AddItem("xorx");
-		//autocomplete_List->AddItem("shlx");
-		//autocomplete_List->AddItem("pushx");
-		//autocomplete_List->AddItem("popx");
-		//autocomplete_List->AddItem("cmpx");
-		//autocomplete_List->AddItem("findx");
-		//autocomplete_List->AddItem("findallx");
-		//autocomplete_List->AddItem("findallmemx");
-		//autocomplete_List->AddItem("VarxClear");
-		//autocomplete_List->AddItem("memdump");
+	private: System::Void ReFill_FunctionsAutoComplete_AtLoad()
+	{
+		autocomplete_List->ClearItem();
+		/*for (int i = 0; i < autoCompleteMainList->Count; i++)
+		{			
+			autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { autoCompleteMainList[i]->GetCmd(), autoCompleteMainList[i]->GetdescriB()}, autoCompleteMainList[i]->GetCmd(), true, true));
+		}*/
 
-		//autocomplete_List->AddItem("writelist");
-		//autocomplete_List->AddItem("Readlist");
-		//autocomplete_List->AddItem("BPxx");
-		//autocomplete_List->AddItem("bpcx");
-		//autocomplete_List->AddItem("bpex");
-		//autocomplete_List->AddItem("bpdx");
-		//autocomplete_List->AddItem("bphx");
-		//autocomplete_List->AddItem("bphcx");
-		//autocomplete_List->AddItem("bphex");
-		//autocomplete_List->AddItem("bphdx");
-		//autocomplete_List->AddItem("bpmx");
-		//autocomplete_List->AddItem("asmx");
-
-		//autocomplete_List->AddItem("GetAPIName");
-		//autocomplete_List->AddItem("ResizeArray");
-		//autocomplete_List->AddItem("GetArraySize");
-		//autocomplete_List->AddItem("Write2File");
-		//autocomplete_List->AddItem("inputbox");
-		//autocomplete_List->AddItem("commentsetx");
-		//autocomplete_List->AddItem("GetdesCallJmp");
-
-		///// x64dbg function
-		//autocomplete_List->AddItem("run");
-		//autocomplete_List->AddItem("ego");
-		//autocomplete_List->AddItem("pause");
-		//autocomplete_List->AddItem("StepInto");
-		//autocomplete_List->AddItem("StepOver");
-		//autocomplete_List->AddItem("StepOut");
-
-
-		//autocomplete_List->AddItem = list;
-	/*	str->Clear();
-		str->Add("Varx");
-		str->Add("Getx");
-		str->Add("Setx");
-		str->Add("Movx");
-		str->Add("addx");
-		str->Add("subx");
-		str->Add("mulx");
-		str->Add("divx");
-
-		str->Add("andx");
-		str->Add("orx");
-		str->Add("xorx");
-		str->Add("shlx");
-		str->Add("pushx");
-		str->Add("popx");
-		str->Add("cmpx");
-		str->Add("findx");
-		str->Add("findallx");
-		str->Add("findallmemx");
-		str->Add("VarxClear");
-		str->Add("memdump");
-
-		str->Add("writeStr");
-		str->Add("ReadStr");
-		str->Add("BPxx");
-		str->Add("bpcx");
-		str->Add("bpex");
-		str->Add("bpdx");
-		str->Add("bphx");
-		str->Add("bphcx");
-		str->Add("bphex");
-		str->Add("bphdx");
-		str->Add("bpmx");
-		str->Add("asmx");
-
-		str->Add("GetAPIName");
-		str->Add("ResizeArray");
-		str->Add("GetArraySize");
-		str->Add("Write2File");
-		str->Add("inputbox");
-		str->Add("commentsetx");
-		str->Add("GetdesCallJmp");
-
-		/// x64dbg function
-		str->Add("run");
-		str->Add("ego");
-		str->Add("pause");
-		str->Add("StepInto");
-		str->Add("StepOver");
-		str->Add("StepOut");*/
+		for (int i1 = 0; i1 < Variables_List->Count; i1++)
+		{
+			autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { Variables_List[i1]->GetCmd(), Variables_List[i1]->Getcomments()}, Variables_List[i1]->GetCmd(), true, true));
+		}
 
 	}
 
-			 //private: AutoCompleteStringCollection^ Ads_Variables_AutoCompleteLoad()
-			 //{
-			 //	AutoCompleteStringCollection^ str = gcnew AutoCompleteStringCollection();
-			 //	//str->Clear();
-			 //	str->Add("ads.exebase ");
-			 //	str->Add("ads.modulebase( ");
-			 //	str->Add("ads.SectionSize( ");
-			 //	str->Add("ads.exefolderpath ");
-			 //	str->Add("ads.exename ");
-			 //	str->Add("ads.SectionBegin( ");
-			 //	str->Add("ads.SectionEnd( ");	
-			 //	str->Add("ads.GetAPIName( ");
-			 //	str->Add("ads.GetArraySize( ");
-			 //	str->Add("ads.ReadStr( ");
-			 //	str->Add("ads.GetdesCallJmp( ");
-			 //	str->Add("ads.isInArray( ");
-			 //	str->Add("ads.isAddrBelongSection( ");
-			 //	for (int i = 0; i < Variables_List->Count; i++)
-			 //	{
-			 //		str->Add(Variables_List[i]->GetCmd());
-			 //	}
-			 //	return str;
-			 //}	
-
+			 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private: System::Void RTB_Script_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::F12) {
 			//Functions_AutoCompleteLoad();
@@ -1354,6 +1251,7 @@ namespace AdvancedScript {
 
 		}
 	}
+
 
 	};
 }

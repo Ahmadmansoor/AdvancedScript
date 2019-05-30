@@ -17,7 +17,7 @@ bool LogOff_ = false;
 bool log2LogWindowAtBP = false;
 bool LogTraceOn = false;
 bool cx = false;
-
+bool AutocompleteMenu_ModuleLoaded = false;
 
 
 //Managed types cannot be declared in an unmanaged context.
@@ -40,7 +40,7 @@ public:
 public ref class search__
 {
 public:
-	search__(String^ addr_1,String^ disass1) {
+	search__(String^ addr_1, String^ disass1) {
 		addr_ = addr_1;
 		disass = disass1;
 	}
@@ -180,24 +180,24 @@ static bool test(int argc, char* argv[]) {
 		DbgCmdExecDirect(Str2ConstChar("cmt " + AsmcommandStr));*/
 		String^ intvalue;  /// first if it is hex value
 		if (CheckHexIsValid(arguments[0], intvalue) > 0) {  /// it mean it is address ( hex value)
-			
+
 			duint base = Script::Memory::GetBase(Str2int(intvalue));
 			duint size_ = Script::Memory::GetSize(Str2int(intvalue));
 			BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
-						
-			Generic::List<search__^>^ Datax =gcnew Generic::List<search__^>;
-			duint temp=base;
-			while (temp<base+size_)
+
+			Generic::List<search__^>^ Datax = gcnew Generic::List<search__^>;
+			duint temp = base;
+			while (temp < base + size_)
 			{
 				DbgDisasmFastAt(temp, basicinfo);
 				search__^ ser = gcnew search__(duint2Hex(temp), CharArr2Str(basicinfo->instruction));
 				Datax->Add(ser);
 				temp += basicinfo->size;
 			}
-			
-			
+
+
 		}
-		
+
 		break;
 	}
 	case 2: {
@@ -253,12 +253,17 @@ static void ShowDialog_Script()
 	}
 	else
 	{
-		//if (!IO::File::Exists(Application::StartupPath + "\\AutocompleteMenu.dll")) {
+		if (!AutocompleteMenu_ModuleLoaded)
+		{
+			/// here AutocompleteMenu.dll will be loaded in the process so we can't over write so if 
+			/// it's loaded first time so no need to copy again
 			IO::File::Copy(Application::StartupPath + "\\plugins\\AutocompleteMenu.dll", Application::StartupPath + "\\AutocompleteMenu.dll", true);
-		//}
+			AutocompleteMenu_ModuleLoaded = true;
+		}
+			
 	}
-	
-	AdvancedScript::MainForm ScriptWindow;	
+
+	AdvancedScript::MainForm ScriptWindow;
 	try
 	{
 		if (!ScriptWindow.Visible)
@@ -268,7 +273,7 @@ static void ShowDialog_Script()
 	{
 
 	}
-	
+
 }
 
 static bool cbMainForm(int argc, char* argv[])
