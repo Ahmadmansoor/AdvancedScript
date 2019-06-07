@@ -6,7 +6,7 @@ using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
 using namespace System::Windows::Forms;
-
+using namespace System::Drawing;
 
 namespace ScriptWindowArg {
 
@@ -15,6 +15,7 @@ namespace ScriptWindowArg {
 	private:
 		int lineNumber = 0;
 		int MaxLine = 0;
+		Color OldColor=Color::Black;
 	public:
 		int isCommandsExist(String^ input_) {
 			array <String^>^ CommandsArray_ = {
@@ -63,6 +64,12 @@ namespace ScriptWindowArg {
 		void setLineNumber(int LineNum) {
 			lineNumber = LineNum;
 		};
+	public: void setOldColor(Color color_) {
+		OldColor = color_;
+	}
+	public: Color getColor() {
+		return OldColor;
+	}
 	public:
 		void setMaxLine(int MaxLine_) {
 			MaxLine = MaxLine_;

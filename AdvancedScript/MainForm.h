@@ -2,6 +2,7 @@
 #include "ScriptArgumentWindow.h"
 #include "ScriptFun.h"
 
+
 namespace AdvancedScript {
 
 	using namespace System;
@@ -39,10 +40,10 @@ namespace AdvancedScript {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::DataGridView^  DGV1;
-	private: System::Windows::Forms::DataGridViewTextBoxColumn^  ID;
-	private: System::Windows::Forms::DataGridViewTextBoxColumn^  Command;
-	private: System::Windows::Forms::DataGridViewTextBoxColumn^  describe;
+
+
+
+
 	private: System::Windows::Forms::ContextMenuStrip^  CMT1;
 	private: System::Windows::Forms::ToolStripMenuItem^  startHereToolStripMenuItem;
 
@@ -68,27 +69,28 @@ namespace AdvancedScript {
 	private: System::ComponentModel::IContainer^  components;
 
 	protected:
-		
+
 	protected:
 
 	public:
 		String^ ScriptFileName = String::Empty;
 		bool Run = false;
 	private: System::Windows::Forms::PictureBox^  PB_wait;
-			 
+
 
 	public:
 		static String^ LoadAllText_ = String::Empty;
 	public:
-		TextBox^ tb1;
 	public:
-
+	private:
+		int currentPostion = 0;
 	public:
 	private: System::Windows::Forms::ToolStripMenuItem^  saveAsToolStripMenuItem;
 	private: System::Windows::Forms::TabControl^  tabControl1;
 	private: System::Windows::Forms::TabPage^  tabPage_CommandHelp;
 	private: System::Windows::Forms::TabPage^  tabPage_Log;
 	private: System::Windows::Forms::TextBox^  TB_CommandHelp;
+	private: System::Windows::Forms::ToolStripMenuItem^  refrshToolStripMenuItem;
 
 
 			 ////////////////
@@ -145,7 +147,7 @@ namespace AdvancedScript {
 	public: ref class Variables
 	{
 	public:
-		Variables(int index_, String^ Cmd_,String^ comments_) {
+		Variables(int index_, String^ Cmd_, String^ comments_) {
 			index = index_;
 			Cmd = Cmd_;
 			comments = comments_;
@@ -183,7 +185,7 @@ namespace AdvancedScript {
 	public: ref class AutoCompleteMainList
 	{
 	public:
-		AutoCompleteMainList(String^ cmd_, String^ describ, Color^ color_) {
+		AutoCompleteMainList(String^ cmd_, String^ describ, Color color_) {
 			Cmd = cmd_;
 			descriB = describ;
 			coloR = color_;
@@ -206,21 +208,38 @@ namespace AdvancedScript {
 			return descriB;
 		}
 	public:
-		Color^ GetcoloR() {
+		Color GetcoloR() {
 			return coloR;
 		}
 	private:
 		String^ Cmd;
 		String^ descriB;
-		Color^ coloR;
+		Color coloR;
 	};
-
+			/// we will save this for later use as base of the AutoComplete List
+			//it will be loaded at main form loaded 
 			Generic::List<AutoCompleteMainList^>^ autoCompleteMainList = gcnew Generic::List<AutoCompleteMainList^>;
+			///////////////
+			/// this list will get all of autoCompleteMainList and variable and Labels  
+			Generic::List<AutoCompleteMainList^>^ autoCompleteFlexibleList = gcnew Generic::List<AutoCompleteMainList^>;
 
 			///////////////
+
 	public:
+		/// <summary>
+		/// get index of the line in the Richtextbox
+		/// </summary>
 		int GetRTB_lineNum() {
 			int cursorPosition = RTB_Script->SelectionStart;
+			int lineIndex = RTB_Script->GetLineFromCharIndex(cursorPosition);
+			return lineIndex;
+		}
+	public:
+		/// <summary>
+		/// get index of the line in the Richtextbox by cursor Position
+		/// </summary>
+		int GetRTB_lineNumByPostion(int cursorPosition) {
+			//int cursorPosition = RTB_Script->SelectionStart;
 			int lineIndex = RTB_Script->GetLineFromCharIndex(cursorPosition);
 			return lineIndex;
 		}
@@ -238,14 +257,7 @@ namespace AdvancedScript {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle4 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle8 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle6 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
-			this->DGV1 = (gcnew System::Windows::Forms::DataGridView());
-			this->ID = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->Command = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->describe = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->CMT1 = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->newScriptToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -275,7 +287,7 @@ namespace AdvancedScript {
 			this->tabPage_Log = (gcnew System::Windows::Forms::TabPage());
 			this->autocomplete_List = (gcnew AutocompleteMenuNS::AutocompleteMenu());
 			this->RTB_Script = (gcnew System::Windows::Forms::RichTextBox());
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->BeginInit();
+			this->refrshToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->CMT1->SuspendLayout();
 			this->CMT_TreeView->SuspendLayout();
 			this->groupBox1->SuspendLayout();
@@ -285,70 +297,14 @@ namespace AdvancedScript {
 			this->tabPage_CommandHelp->SuspendLayout();
 			this->SuspendLayout();
 			// 
-			// DGV1
-			// 
-			this->DGV1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-				| System::Windows::Forms::AnchorStyles::Left)
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->DGV1->AutoSizeColumnsMode = System::Windows::Forms::DataGridViewAutoSizeColumnsMode::Fill;
-			dataGridViewCellStyle4->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle4->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle4->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			dataGridViewCellStyle4->ForeColor = System::Drawing::SystemColors::WindowText;
-			dataGridViewCellStyle4->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle4->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle4->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
-			this->DGV1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-			this->DGV1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->DGV1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(3) {
-				this->ID, this->Command,
-					this->describe
-			});
-			this->DGV1->ContextMenuStrip = this->CMT1;
-			dataGridViewCellStyle8->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle8->BackColor = System::Drawing::SystemColors::Window;
-			dataGridViewCellStyle8->Font = (gcnew System::Drawing::Font(L"Courier New", 11.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			dataGridViewCellStyle8->ForeColor = System::Drawing::SystemColors::ControlText;
-			dataGridViewCellStyle8->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle8->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle8->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
-			this->DGV1->DefaultCellStyle = dataGridViewCellStyle8;
-			this->DGV1->Location = System::Drawing::Point(274, 11);
-			this->DGV1->Name = L"DGV1";
-			this->DGV1->Size = System::Drawing::Size(746, 115);
-			this->DGV1->TabIndex = 1;
-			// 
-			// ID
-			// 
-			dataGridViewCellStyle6->NullValue = L"0";
-			this->ID->DefaultCellStyle = dataGridViewCellStyle6;
-			this->ID->FillWeight = 25;
-			this->ID->HeaderText = L"ID";
-			this->ID->Name = L"ID";
-			this->ID->ReadOnly = true;
-			// 
-			// Command
-			// 
-			this->Command->FillWeight = 200;
-			this->Command->HeaderText = L"Command";
-			this->Command->Name = L"Command";
-			// 
-			// describe
-			// 
-			this->describe->FillWeight = 200;
-			this->describe->HeaderText = L"describe";
-			this->describe->Name = L"describe";
-			// 
 			// CMT1
 			// 
-			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+			this->CMT1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
 				this->fileToolStripMenuItem,
-					this->startHereToolStripMenuItem
+					this->startHereToolStripMenuItem, this->refrshToolStripMenuItem
 			});
 			this->CMT1->Name = L"CMT1";
-			this->CMT1->Size = System::Drawing::Size(153, 48);
+			this->CMT1->Size = System::Drawing::Size(153, 92);
 			// 
 			// fileToolStripMenuItem
 			// 
@@ -526,7 +482,7 @@ namespace AdvancedScript {
 			// PB_wait
 			// 
 			this->PB_wait->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"PB_wait.Image")));
-			this->PB_wait->Location = System::Drawing::Point(891, 3);
+			this->PB_wait->Location = System::Drawing::Point(555, 173);
 			this->PB_wait->Name = L"PB_wait";
 			this->PB_wait->Size = System::Drawing::Size(193, 197);
 			this->PB_wait->TabIndex = 5;
@@ -599,6 +555,7 @@ namespace AdvancedScript {
 			// 
 			// autocomplete_List
 			// 
+			this->autocomplete_List->AllowsTabKey = true;
 			this->autocomplete_List->AppearInterval = 150;
 			this->autocomplete_List->Colors = (cli::safe_cast<AutocompleteMenuNS::Colors^>(resources->GetObject(L"autocomplete_List.Colors")));
 			this->autocomplete_List->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9));
@@ -606,25 +563,38 @@ namespace AdvancedScript {
 			this->autocomplete_List->Items = gcnew cli::array< System::String^  >(0);
 			this->autocomplete_List->MaximumSize = System::Drawing::Size(800, 350);
 			this->autocomplete_List->MinFragmentLength = 1;
+			this->autocomplete_List->SearchPattern = L"^[$\\w\\.]";
 			this->autocomplete_List->TargetControlWrapper = nullptr;
 			this->autocomplete_List->Selected += gcnew System::EventHandler<AutocompleteMenuNS::SelectedEventArgs^ >(this, &MainForm::autocomplete_List_Selected);
 			// 
 			// RTB_Script
 			// 
+			this->RTB_Script->AcceptsTab = true;
 			this->RTB_Script->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->autocomplete_List->SetAutocompleteMenu(this->RTB_Script, this->autocomplete_List);
 			this->RTB_Script->ContextMenuStrip = this->CMT1;
-			this->RTB_Script->Location = System::Drawing::Point(277, 92);
+			this->RTB_Script->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->RTB_Script->Location = System::Drawing::Point(277, 22);
 			this->RTB_Script->Name = L"RTB_Script";
-			this->RTB_Script->Size = System::Drawing::Size(807, 344);
+			this->RTB_Script->Size = System::Drawing::Size(807, 414);
 			this->RTB_Script->TabIndex = 0;
 			this->RTB_Script->TabStop = false;
 			this->RTB_Script->Text = L"";
 			this->RTB_Script->WordWrap = false;
 			this->RTB_Script->TextChanged += gcnew System::EventHandler(this, &MainForm::RTB_Script_TextChanged);
 			this->RTB_Script->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::RTB_Script_KeyDown);
+			this->RTB_Script->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::RTB_Script_KeyUp);
+			this->RTB_Script->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &MainForm::RTB_Script_MouseDown);
+			// 
+			// refrshToolStripMenuItem
+			// 
+			this->refrshToolStripMenuItem->Name = L"refrshToolStripMenuItem";
+			this->refrshToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->refrshToolStripMenuItem->Text = L"Refrsh";
+			this->refrshToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::refrshToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -632,18 +602,16 @@ namespace AdvancedScript {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::SlateGray;
 			this->ClientSize = System::Drawing::Size(1091, 616);
+			this->Controls->Add(this->PB_wait);
 			this->Controls->Add(this->RTB_Script);
 			this->Controls->Add(this->tabControl1);
-			this->Controls->Add(this->PB_wait);
 			this->Controls->Add(this->groupBox1);
-			this->Controls->Add(this->DGV1);
 			this->KeyPreview = true;
 			this->Name = L"MainForm";
 			this->Text = L"MainForm";
 			this->Load += gcnew System::EventHandler(this, &MainForm::MainForm_Load);
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyDown);
 			this->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyUp);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGV1))->EndInit();
 			this->CMT1->ResumeLayout(false);
 			this->CMT_TreeView->ResumeLayout(false);
 			this->groupBox1->ResumeLayout(false);
@@ -658,46 +626,6 @@ namespace AdvancedScript {
 		}
 #pragma endregion
 
-
-	private: System::Void IniLoadData() {   /// we use it to get all lable in the script to use it for Goto
-											//Done
-		LableLineClass::LableLines->Clear();
-		Variables_List->Clear();
-		for (int i = 0; i < RTB_Script->Lines->Length; i++)
-		{
-			if (RTB_Script->Lines[i]->Trim() != "") {
-				if (RTB_Script->Lines[i]->Trim()->EndsWith(":")) {  // find lables
-					String^ LableHold = RTB_Script->Lines[i]->Trim()->Substring(0, RTB_Script->Lines[i]->Trim()->IndexOf(":"));
-					LableLine^ LaL = gcnew LableLine(i, LableHold);
-					LableLineClass::LableLines->Add(LaL);
-				}
-				if (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("varx")) {  // find variables					
-					if (RTB_Script->Lines[i]->Trim()->Contains(",")) {
-						String^ cmd = RTB_Script->Lines[i]->Trim();
-						if ((!cmd->Contains(",")) || (cmd->Trim()->IndexOf(",") + 1 >= cmd->Trim()->Length))  ///// in case we write varx int and not continue 
-							return;
-						Generic::List<String^>^ arguments;
-						GetArg(cmd, arguments);
-						if (arguments->Count < 2)
-							return;
-						if (arguments[0]->ToLower() == "array") {
-							if (arguments[1]->Contains("[")) {  // check if it has [ for the array
-								arguments[1] = arguments[1]->Substring(0, arguments[1]->IndexOf("["));
-							}
-						}
-						//// check for comments 
-						String^ Comments = " ";
-						if (RTB_Script->Lines[i]->Trim()->Contains("//")) {
-							Comments = RTB_Script->Lines[i]->Trim()->Substring(RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2, RTB_Script->Lines[i]->Trim()->Length - (RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2));
-						}
-						Variables^ LaL = gcnew Variables(i, "$" + arguments[1],Comments);
-						Variables_List->Add(LaL);
-					}
-				}
-			}
-		}
-
-	}
 
 
 	private: System::Void startHereToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -748,8 +676,7 @@ namespace AdvancedScript {
 		}
 		FillTrView();  // fill tree on load 
 		Fill_FunctionsAutoComplete_AtLoad();  /// load AutoComplete main List 
-		//TB_CommandHelp->Text = LoadAllText_;
-
+		//TB_OldValue = RTB_Script->Lines;
 	}
 
 	private:System::Void FillTrView() {  /// tp fill treeiew with category and files
@@ -767,15 +694,23 @@ namespace AdvancedScript {
 	}
 
 	private: System::Void LoadScriptFile(String^ filepath) {  /// load Script file in DataGridView
-
-		RTB_Script->Text = "";
+		/*RTB_Script->Text = "";
 		RTB_Script->Text = IO::File::ReadAllText(filepath);
-		RTB_Script->Text = RTB_Script->Text->Trim();   /// trim unneeded spaces at the end of the file
-		//IniLoadData();   no needed because it already doen by RTB_Script_TextChanged
+		RTB_Script->Text = RTB_Script->Text->Trim();   /// trim unneeded spaces at the end of the file	*/
+
+		try {
+			RTB_Script->LoadFile(filepath, RichTextBoxStreamType::RichText);
+		}
+		catch (ArgumentException^ ex) {
+			RTB_Script->LoadFile(filepath, RichTextBoxStreamType::PlainText);
+		}
+		IniLoadData();
+		//TB_OldValue = RTB_Script->Lines;
 	}
 
 	private: System::Void SaveScriptFile(String^ filepath) {  /// Save Script file from DataGridView to Disk		
-		IO::File::WriteAllText(filepath, RTB_Script->Text);
+		//IO::File::WriteAllText(filepath, RTB_Script->Text);
+		RTB_Script->SaveFile(filepath, RichTextBoxStreamType::RichText);
 		Microsoft::VisualBasic::Interaction::MsgBox("Done", MsgBoxStyle::DefaultButton1, "Confirm");
 
 	}
@@ -787,6 +722,7 @@ namespace AdvancedScript {
 			ScriptargumentClass::Scriptargument_->setMaxLine(RTB_Script->Lines->Length);  // update max line just in case update script through run
 			ScriptFileName = TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text;
 		}
+		//highlight_AllRTB_Script();
 	}
 
 	private: System::Void deletToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -911,9 +847,9 @@ namespace AdvancedScript {
 
 
 	private: System::Void saveScriptFileToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-
 		if (ScriptFileName != "") {
 			SaveScriptFile(Application::StartupPath + "\\Script\\" + ScriptFileName);
+			//RTB_Script->SaveFile(Application::StartupPath + "\\Script\\" + ScriptFileName);
 		}
 		else
 		{
@@ -986,20 +922,9 @@ namespace AdvancedScript {
 				}
 			}
 			if (e->KeyCode == Keys::J) {
-				ReFill_FunctionsAutoComplete_AtLoad();
+				Fill_VariableAutoComplete();
 				autocomplete_List->Show(RTB_Script, true);
 			}
-			/// send Get Function list
-			/*if (e->KeyCode == Keys::J) {
-			tb->AutoCompleteMode = AutoCompleteMode::SuggestAppend;
-			tb->AutoCompleteCustomSource = Ads_Variables_AutoCompleteLoad();
-			tb->AutoCompleteSource = AutoCompleteSource::CustomSource;
-			tb->Location = DGV1->GetCellDisplayRectangle(1, DGV1->CurrentRow->Index, false).Location;
-			tb->Location = Point(DGV1->Left + tb->Left, DGV1->Top + tb->Top + DGV1->CurrentRow->Height);
-			tb->Visible = true;
-			tb->Width = DGV1->Columns[1]->Width / 2;
-			tb->Focus();
-			}*/
 		}
 	}
 
@@ -1065,21 +990,61 @@ namespace AdvancedScript {
 		}
 
 	}
-	private: System::Void RTB_Script_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	private: System::Void RTB_Script_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		currentPostion = RTB_Script->SelectionStart;
+	}
+	private: System::Void refrshToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		IniLoadData();
-		
+		for (int i = 0; i < RTB_Script->Lines->Length; i++)
+		{
+			highlight_Line_ByLineIndex(i);
+		}
 	}
-
-	private: System::Void autocomplete_List_Selected(System::Object^  sender, AutocompleteMenuNS::SelectedEventArgs^  e) {
-		AutocompleteItem^ autocompleteItem = e->Item;
-		int index_ = HelpLoad_List_indexbyCmd(autocompleteItem->Text);
-		if (index_ != -1)
-			TB_CommandHelp->Text = HelpLoad_List[index_]->Getinfo_();
+	private: System::Void IniLoadData() {   /// we use it to get all lable in the script to use it for Goto
+											//Done
+		LableLineClass::LableLines->Clear();
+		Variables_List->Clear();
+		for (int i = 0; i < RTB_Script->Lines->Length; i++)
+		{
+			if (RTB_Script->Lines[i]->Trim() != "") {
+				if (RTB_Script->Lines[i]->Trim()->EndsWith(":")) {  // find lables
+					String^ LableHold = RTB_Script->Lines[i]->Trim()->Substring(0, RTB_Script->Lines[i]->Trim()->IndexOf(":"));
+					LableLine^ LaL = gcnew LableLine(i, LableHold);
+					LableLineClass::LableLines->Add(LaL);
+				}
+				if (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("varx")) {  // find variables					
+					if (RTB_Script->Lines[i]->Trim()->Contains(",")) {
+						String^ cmd = RTB_Script->Lines[i]->Trim();
+						if ((!cmd->Contains(",")) || (cmd->Trim()->IndexOf(",") + 1 >= cmd->Trim()->Length))  ///// in case we write varx int and not continue 
+							return;
+						Generic::List<String^>^ arguments;
+						GetArg(cmd, arguments);
+						if (arguments->Count < 2)
+							return;
+						if (arguments[0]->ToLower() == "array") {
+							if (arguments[1]->Contains("[")) {  // check if it has [ for the array
+								arguments[1] = arguments[1]->Substring(0, arguments[1]->IndexOf("["));
+							}
+						}
+						//// check for comments 
+						String^ Comments = " ";
+						if (RTB_Script->Lines[i]->Trim()->Contains("//")) {
+							Comments = RTB_Script->Lines[i]->Trim()->Substring(RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2, RTB_Script->Lines[i]->Trim()->Length - (RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2));
+						}
+						Variables^ LaL = gcnew Variables(i, arguments[1], Comments);  // for variable case Varx varType,VarName,VarValue
+						Variables_List->Add(LaL);
+						LaL = gcnew Variables(i, "$" + arguments[1], Comments);
+						Variables_List->Add(LaL);
+					}
+				}
+			}
+		}
+		Fill_AllAutoComplete();
 	}
-
-	private: System::Void Fill_FunctionsAutoComplete_AtLoad()
+#pragma region AutoComplete_Related
+	private: System::Void Fill_FunctionsAutoComplete_AtLoad()  /// this will load all variables form AdvSconfig file
 	{
-		//AutoCompleteStringCollection^ str = gcnew AutoCompleteStringCollection();
 		autocomplete_List->ClearItem();
 		array<String^>^ list;
 		if (IO::File::Exists(Application::StartupPath + "\\plugins\\AdvSconfig.txt")) {
@@ -1089,7 +1054,7 @@ namespace AdvancedScript {
 		{
 			return;
 		}
-		String^ cmd; String^ describ; Color^ color_;
+		String^ cmd; String^ describ; Color color_;
 		String^ temp;
 		for (int i = 0; i < list->Length; i++)
 		{
@@ -1100,6 +1065,7 @@ namespace AdvancedScript {
 				if (temp->EndsWith(";")) {
 					describ = temp->Substring(0, temp->IndexOf(";"));
 					if (temp->EndsWith(";")) {
+						temp = temp->Substring(temp->IndexOf(";") + 1, temp->Length - (temp->IndexOf(";") + 1));
 						color_ = Color::FromName(temp->Substring(0, temp->IndexOf(";")));
 					}
 					else
@@ -1111,146 +1077,533 @@ namespace AdvancedScript {
 					describ = " ";
 
 				AutoCompleteMainList^ mainList = gcnew AutoCompleteMainList(cmd, describ, color_);
-				autoCompleteMainList->Add(mainList);  /// we will save this for later use as base of the AutoComplete
+				autoCompleteMainList->Add(mainList);  /// we will save this for later use as base of the AutoComplete List
+				autoCompleteFlexibleList->Add(mainList);
+				// fill menu with items 
 				autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { cmd, describ}, cmd, true, true));
 			}
 		}
-		////MulticolumnAutocompleteItem^ s = gcnew MulticolumnAutocompleteItem(gcnew array<String^> { "test", "name" }, "This is ",true,true);
-		//autocomplete_List->ClearItem();
-		//autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { "This is", "" ,"used for something"}, "This is", true, true));
 	}
 
-	private: System::Void ReFill_FunctionsAutoComplete_AtLoad()
+	private: System::Void autocomplete_List_Selected(System::Object^  sender, AutocompleteMenuNS::SelectedEventArgs^  e) {
+		AutocompleteItem^ autocompleteItem = e->Item;
+		String^ temp = autocompleteItem->Text->Trim();
+		if (temp->Contains("(")) {   /// remove () if exist like ads.ReadStr()
+			temp = temp->Substring(0, temp->IndexOf("("));
+		}
+		if (temp->Contains(",")) {   /// remove , if exist like ads.ReadStr()
+			temp = temp->Substring(0, temp->IndexOf(","));
+		}
+		int index_ = HelpLoad_List_indexbyCmd(temp);
+		if (index_ != -1)// get the word form the selected autocomplete menu 
+			TB_CommandHelp->Text = HelpLoad_List[index_]->Getinfo_();
+
+		//Fill_MainAutoComplete();  /// we add it here because when we press Ctrl+J AutoComplete menu will be filled with variables so we have tr refill it with main menu again 
+		//highlight_FromSelectedAutoComplete(autocompleteItem->Text);
+	}
+	private: System::Void Fill_MainAutoComplete()
 	{
 		autocomplete_List->ClearItem();
-		/*for (int i = 0; i < autoCompleteMainList->Count; i++)
-		{			
+		for (int i = 0; i < autoCompleteMainList->Count; i++)
+		{
 			autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { autoCompleteMainList[i]->GetCmd(), autoCompleteMainList[i]->GetdescriB()}, autoCompleteMainList[i]->GetCmd(), true, true));
-		}*/
+		}
+	}
+	private: System::Void Fill_AllAutoComplete()
+	{
+		autocomplete_List->ClearItem();
+		autoCompleteFlexibleList->Clear();
+		autoCompleteFlexibleList->AddRange(autoCompleteMainList);
+		for (size_t i1 = 0; i1 < Variables_List->Count; i1++)
+		{
+			AutoCompleteMainList^ tempItem;
+			tempItem = gcnew AutoCompleteMainList(Variables_List[i1]->GetCmd(), Variables_List[i1]->Getcomments(), Color::OrangeRed);
+			autoCompleteFlexibleList->Add(tempItem);
+		}
 
+		for (int i = 0; i < autoCompleteFlexibleList->Count; i++)  //for (int i = 0; i < autoCompleteMainList->Count; i++)
+		{
+			autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { autoCompleteFlexibleList[i]->GetCmd(), autoCompleteFlexibleList[i]->GetdescriB()}, autoCompleteFlexibleList[i]->GetCmd(), true, true));
+		}
+	}
+	private: System::Void Fill_VariableAutoComplete()
+	{
+		autocomplete_List->ClearItem();
+		Fill_MainAutoComplete();
 		for (int i1 = 0; i1 < Variables_List->Count; i1++)
 		{
 			autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { Variables_List[i1]->GetCmd(), Variables_List[i1]->Getcomments()}, Variables_List[i1]->GetCmd(), true, true));
 		}
 
 	}
+#pragma endregion
 
-			 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	private: System::Void RTB_Script_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		if (ScanMode) {
+			ScanMode = false;
+			return;
+		}
+		int OldLine = RTB_Script->GetLineFromCharIndex(currentPostion);
+		int CurrentLine = RTB_Script->GetLineFromCharIndex(RTB_Script->SelectionStart);
+		IniLoadData();
+		if (OldLine < CurrentLine) {
+			for (int i = OldLine; i <= CurrentLine; i++)
+			{
+				highlight_Line_ByLineIndex(i);
+			}
+		}
+		if (OldLine > CurrentLine) {
+			for (int i = CurrentLine; i <= OldLine; i++)
+			{
+				highlight_Line_ByLineIndex(i);
+			}
+		}
+		if (OldLine == CurrentLine) {
+			highlight_Line_ByLineIndex(CurrentLine);
+		}
+		//highlight_Line();
+	}
+#pragma region highlight_system
+			 /// we will used it when select item from Autocomplete_list
+	private:System::Void highlight_FromSelectedAutoComplete(String^ word) {
+		//String^ word;
+		int startIndex = 0;
+		AutoCompleteMainList^ tempItem;
+		for (int i = 0; i < autoCompleteFlexibleList->Count; i++)
+		{
+			if (autoCompleteFlexibleList[i]->GetCmd()->ToLower()->StartsWith(word->Trim()->ToLower())) {
+				tempItem = gcnew AutoCompleteMainList(autoCompleteFlexibleList[i]->GetCmd(), autoCompleteFlexibleList[i]->GetdescriB(), autoCompleteFlexibleList[i]->GetcoloR());
+				break;
+			}
+		}
+		if (tempItem == nullptr)
+			return;
+		word = word->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
+		if (word->Contains("(")) {   /// remove () if exist like ads.ReadStr()
+			word = word->Substring(0, word->IndexOf("("));
+		}
+		if (word->Contains(",")) {   /// remove , if exist like ads.ReadStr()
+			word = word->Substring(0, word->IndexOf(","));
+		}
+		int LineIndex = GetRTB_lineNum();  ///get  line number(index)		
+		if ((LineIndex == 0) && (RTB_Script->Lines[LineIndex] == nullptr))  /// check if the line index is first line and line not have string
+			return;
+		String^ text = RTB_Script->Lines[LineIndex];
+		//if (text != nullptr) {
+		if (text->ToLower()->Contains(word))  /// search text in lower case
+		{
+			int index = -1;
+			int selectStart = RTB_Script->SelectionStart;
+			index = RTB_Script->SelectionStart - tempItem->GetCmd()->Length; //		word->Length;
+			if (index < 0)
+				return;
+			RTB_Script->Select((index + startIndex), word->Length);
+			RTB_Script->SelectionColor = tempItem->GetcoloR();
+			RTB_Script->Select(selectStart, 0);
+			index = word->Length;
+			RTB_Script->SelectionColor = Color::Black;
+		}
+	}
+
+	private:System::Void highlight_Line() {
+		int currentPlace = RTB_Script->SelectionStart;
+		String^ word; int startIndex = 0;
+		int LineIndex = GetRTB_lineNum();  ///get  line number(index)
+		int FirstCharIndexFromLine = RTB_Script->GetFirstCharIndexFromLine(LineIndex);  // Get First Char Index From current Line
+		int Index_ofLineBegin = FirstCharIndexFromLine;
+		//if ((LineIndex == 0) && (RTB_Script->Lines[LineIndex] == nullptr))  /// check if the line index is first line and line not have string
+		if (RTB_Script->Lines->Length < 0)  /// check if the line index is not have string
+			return;
+		try
+		{
+			if (RTB_Script->Lines[LineIndex]->Trim() == "")  /// check if the line index is just spaces
+				return;
+		}
+		catch (System::IndexOutOfRangeException^ ex)
+		{
+			return;
+		}
+		String^ text = RTB_Script->Lines[LineIndex];  /// get string of the line
+		if (text != nullptr) {
+			for (int i = 0; i < autoCompleteFlexibleList->Count; i++)
+			{
+				word = autoCompleteFlexibleList[i]->GetCmd()->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
+				if (word->Contains("(")) {   /// remove () if exist like ads.ReadStr()
+					word = word->Substring(0, word->IndexOf("("));
+				}
+				if (word->Contains(",")) {   /// remove , if exist 
+					word = word->Substring(0, word->IndexOf(","));
+				}
+
+				if (text->ToLower()->Contains(word))  /// search text in lower case in this line 
+				{
+					int index = Index_ofLineBegin;
+					int Check_index = currentPlace - autoCompleteFlexibleList[i]->GetCmd()->Length;
+					if (Check_index < 0)
+						return;
+					index = 0; /// rest index to begin of line
+					//while ((RTB_Script->Text->ToLower()->IndexOf(word, index, word->Length)) != -1)
+					//while ((index = RTB_Script->Text->ToLower()->IndexOf(word, (index), StringComparison::Ordinal)) != -1)
+					while ((index = text->ToLower()->IndexOf(word, (index), StringComparison::Ordinal)) != -1)
+					{
+						//RTB_Script->Select((index + startIndex), word->Length);
+						bool noneed = false;
+						if (index - 1 > 0) {
+							if ((Char::IsLetter(text[index - 1])) || (text[index - 1] == (Char)"$")) {
+								noneed = true;
+							}
+						}
+						if (index + word->Length + 1 < text->Length) {
+							Char^ xx = text[index + word->Length];
+							if (Char::IsLetter(text[index + word->Length + 1])) {
+								noneed = true;
+							}
+						}
+						if (!noneed) {
+							RTB_Script->Select((index + FirstCharIndexFromLine), word->Length);
+							RTB_Script->SelectionColor = autoCompleteFlexibleList[i]->GetcoloR();
+							RTB_Script->Select(FirstCharIndexFromLine + index + word->Length, text->Length - (index + word->Length));
+							RTB_Script->SelectionColor = Color::Black;
+						}
+						index += word->Length;
+					}
+				}
+			}
+			if (RTB_Script->Lines[LineIndex]->Contains("//")) {
+				int indexOfComment = RTB_Script->Lines[LineIndex]->IndexOf("//");
+				indexOfComment = indexOfComment + FirstCharIndexFromLine;
+				RTB_Script->Select(indexOfComment, RTB_Script->Lines[LineIndex]->Length - RTB_Script->Lines[LineIndex]->IndexOf("//"));
+				RTB_Script->SelectionColor = Color::LightGreen;
+			}
+		}
+		RTB_Script->Select(currentPlace, 0);
+	}
+
+	private: bool ScanMode = false; /// we used it because when we cann RTB_Script->Select it fire RTB_Script_TextChanged which will make it too slow
+	private:System::Void highlight_Line_ByLineIndex(int LineIndex) {
+		int currentPlace = RTB_Script->SelectionStart;
+		String^ word; int startIndex = 0;
+		//int LineIndex = GetRTB_lineNum();  ///get  line number(index)
+		int FirstCharIndexFromLine = RTB_Script->GetFirstCharIndexFromLine(LineIndex);  // Get First Char Index From current Line
+		int Index_ofLineBegin = FirstCharIndexFromLine;
+		//if ((LineIndex == 0) && (RTB_Script->Lines[LineIndex] == nullptr))  /// check if the line index is first line and line not have string
+		if (RTB_Script->Lines->Length < 0)  /// check if the line index is not have string
+			return;
+		try
+		{
+			if (RTB_Script->Lines[LineIndex]->Trim() == "")  /// check if the line index is just spaces
+				return;
+		}
+		catch (System::IndexOutOfRangeException^ ex)
+		{
+			return;
+		}
+		String^ text = RTB_Script->Lines[LineIndex];  /// get string of the line
+		if (text != nullptr) {
+			for (int i = 0; i < autoCompleteFlexibleList->Count; i++)
+			{
+				word = autoCompleteFlexibleList[i]->GetCmd()->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
+				if (word->Contains("(")) {   /// remove () if exist like ads.ReadStr()
+					word = word->Substring(0, word->IndexOf("("));
+				}
+				if (word->Contains(",")) {   /// remove , if exist 
+					word = word->Substring(0, word->IndexOf(","));
+				}
+
+				if (text->ToLower()->Contains(word))  /// search text in lower case in this line 
+				{
+					int index = Index_ofLineBegin;
+					int Check_index = currentPlace - autoCompleteFlexibleList[i]->GetCmd()->Length;
+					if (Check_index < 0)
+						return;
+					index = 0; /// rest index to begin of line
+							   //while ((RTB_Script->Text->ToLower()->IndexOf(word, index, word->Length)) != -1)
+							   //while ((index = RTB_Script->Text->ToLower()->IndexOf(word, (index), StringComparison::Ordinal)) != -1)
+					while ((index = text->ToLower()->IndexOf(word, (index), StringComparison::Ordinal)) != -1)
+					{
+						//RTB_Script->Select((index + startIndex), word->Length);
+						bool noneed = false;
+						if (index - 1 >= 0) {
+							if ((Char::IsLetter(text[index - 1])) || (text[index - 1] == (Char)"$")) {
+								noneed = true;
+							}
+						}
+						if (index + word->Length + 1 <= text->Length) {
+							Char^ xx = text[index + word->Length];
+							if (Char::IsLetter(text[index + word->Length])) {
+								noneed = true;
+							}
+						}
+						if (!noneed) {
+							ScanMode = true;
+							RTB_Script->Select((FirstCharIndexFromLine + index), word->Length);
+							RTB_Script->SelectionColor = autoCompleteFlexibleList[i]->GetcoloR();
+							ScanMode = true;
+							RTB_Script->Select(FirstCharIndexFromLine + index + word->Length, text->Length - (index + word->Length));
+							RTB_Script->SelectionColor = Color::Black;
+						}
+						else
+						{							
+							ScanMode = true;
+							RTB_Script->Select(FirstCharIndexFromLine + index , text->Length - (index));
+							RTB_Script->SelectionColor = Color::Black;
+						}
+						index += word->Length;
+					}
+				}
+			}
+			if (RTB_Script->Lines[LineIndex]->Contains("//")) {
+				int indexOfComment = RTB_Script->Lines[LineIndex]->IndexOf("//");
+				indexOfComment = indexOfComment + FirstCharIndexFromLine;
+				ScanMode = true;
+				RTB_Script->Select(indexOfComment, RTB_Script->Lines[LineIndex]->Length - RTB_Script->Lines[LineIndex]->IndexOf("//"));
+				RTB_Script->SelectionColor = Color::LightGreen;
+			}
+		}
+		RTB_Script->Select(currentPlace, 0);
+	}
+
+	private:System::Void highlight_AllRTB_Script() {
+		String^ word; int startIndex = 0;
+
+		for (int i = 0; i < autoCompleteMainList->Count; i++)
+		{
+			word = autoCompleteMainList[i]->GetCmd()->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
+			if (word->Contains("(")) {   /// remove () if exist like ads.ReadStr()
+				word = word->Substring(0, word->IndexOf("("));
+			}
+			if (word->Contains(",")) {   /// remove , if exist like ads.ReadStr()
+				word = word->Substring(0, word->IndexOf(","));
+			}
+			if (RTB_Script->Text != nullptr) {
+				if (RTB_Script->Text->ToLower()->Contains(word))  /// search text in lower case
+				{
+					int index = -1;
+					int selectStart = RTB_Script->SelectionStart;
+
+					while ((index = RTB_Script->Text->ToLower()->IndexOf(word, (index + 1), StringComparison::Ordinal)) != -1)
+					{
+						RTB_Script->Select((index + startIndex), word->Length);
+						RTB_Script->SelectionColor = autoCompleteMainList[i]->GetcoloR();
+						RTB_Script->Select(selectStart, 0);
+						RTB_Script->SelectionColor = Color::Black;
+					}
+				}
+			}
+		}
+
+	}
+
+			//private:System::Void highlight_Line() {
+			//	String^ word; int startIndex = 0;
+
+			//	for (int i = 0; i < autoCompleteMainList->Count; i++)
+			//	{
+			//		word = autoCompleteMainList[i]->GetCmd()->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
+			//		if (word->Contains("(")) {   /// remove () if exist like ads.ReadStr()
+			//			word = word->Substring(0, word->IndexOf("("));
+			//		}
+			//		if (word->Contains(",")) {   /// remove , if exist like ads.ReadStr()
+			//			word = word->Substring(0, word->IndexOf(","));
+			//		}
+			//		int LineIndex = GetRTB_lineNum();
+			//		if (LineIndex == 0)
+			//			return;
+			//		String^ text = RTB_Script->Lines[LineIndex];
+
+
+			//		if (text != nullptr) {
+			//			if (text->ToLower()->Contains(word))  /// search text in lower case
+			//			{
+			//				int index = -1;
+			//				int selectStart = RTB_Script->SelectionStart;
+			//				//index = selectStart - word->Length;
+			//				index = RTB_Script->SelectionStart - autoCompleteMainList[i]->GetCmd()->Length;
+			//				if (index < 0)
+			//					return;
+			//				while ((RTB_Script->Text->ToLower()->IndexOf(word, index, word->Length)) != -1)
+			//				{
+			//					RTB_Script->Select((index + startIndex), word->Length);
+			//					RTB_Script->SelectionColor = autoCompleteMainList[i]->GetcoloR();
+			//					RTB_Script->Select(selectStart, 0);
+			//					index = word->Length;
+			//					RTB_Script->SelectionColor = Color::Black;
+			//				}
+			//				/*int selectStart = RTB_Script->SelectionStart;
+			//				int index = selectStart - autoCompleteMainList[i]->GetCmd()->Length ;  /// index in the line
+			//				int index_orginial = RTB_Script->Text->ToLower()->IndexOf(word, (index + 1));
+			//				while ((index = RTB_Script->Lines[LineIndex]->ToLower()->IndexOf(word, (index + 1))) != -1)
+			//				{
+			//					RTB_Script->Select((index_orginial + startIndex), word->Length);
+			//					RTB_Script->SelectionColor = autoCompleteMainList[i]->GetcoloR();
+			//					RTB_Script->Select(selectStart, 0);
+			//					RTB_Script->SelectionColor = Color::Black;
+			//					index += 1;
+			//				}*/
+			//			}
+			//		}
+			//	}
+
+			//}
+#pragma endregion
+
+					////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	private: System::Void RTB_Script_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+		currentPostion = RTB_Script->SelectionStart;
+		if (e->KeyCode == Keys::Oem2) {
+			if (RTB_Script->Lines[GetRTB_lineNum()]->Contains("//")) {
+				int OldcursorPosition = RTB_Script->SelectionStart;
+				int sss = RTB_Script->Lines[GetRTB_lineNum()]->IndexOf("//");
+				int ff = RTB_Script->Lines[GetRTB_lineNum()]->Length;
+				RTB_Script->Select(OldcursorPosition - 2, 2);
+				RTB_Script->SelectionColor = Color::LightGreen;
+				RTB_Script->Select(OldcursorPosition, 0);
+			}
+		}
+		if (e->KeyCode == Keys::Enter) {
+			RTB_Script->SelectionColor = Color::Black; // to rest color again
+		}
+		if ((e->KeyCode == Keys::Oemcomma) || (e->KeyCode == Keys::Space)) {
+			int OldcursorPosition = RTB_Script->SelectionStart;
+			int Line_index = GetRTB_lineNum();
+			if (!RTB_Script->Lines[GetRTB_lineNum()]->Contains("//")) {
+				RTB_Script->Select(OldcursorPosition - 1, 1);
+				RTB_Script->SelectionColor = Color::Black; // to rest color again
+				RTB_Script->Select(OldcursorPosition, 0);
+			}
+			else {
+				if (GetRTB_lineNumByPostion(RTB_Script->Text->IndexOf("//", OldcursorPosition)) == Line_index) {
+					if (GetRTB_lineNumByPostion(RTB_Script->Text->IndexOf("//", OldcursorPosition)) > OldcursorPosition) {
+						RTB_Script->Select(OldcursorPosition - 1, 1);
+						RTB_Script->SelectionColor = Color::Black; // to rest color again
+						RTB_Script->Select(OldcursorPosition, 0);
+					}
+				}
+			}
+
+
+		}
+
+	}
 	private: System::Void RTB_Script_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::F12) {
 			//Functions_AutoCompleteLoad();
 			if (ScriptargumentClass::Scriptargument_->GetLineNumber() == 0) {
 				IniLoadData();  /// get all lable in the Script
-				ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line 
+				ScriptargumentClass::Scriptargument_->setMaxLine(RTB_Script->Lines->Length);  // update max line 
+				Interaction::MsgBox(RTB_Script->Lines->Length, MsgBoxStyle::OkOnly, "");
 			}
+
 
 		}
 	}
 
-	private: System::Void DGV1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-		if (e->KeyCode == Keys::F12) {
-			DGV1->ClearSelection();
-			if (ScriptargumentClass::Scriptargument_->GetLineNumber() == 0) {
-				IniLoadData();  /// get all lable in the Script
-				ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line 
-			}
-			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
-				DGV1->ClearSelection();
-				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
-				if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
-					if (Need_wait) {
-						PB_wait->Visible = true;
-						PB_wait->Top = this->Height / 2;
-						PB_wait->Left = this->Width / 2;
-					}
-					readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
-				}
-				else {
-					PB_wait->Visible = true;
-					PB_wait->Top = this->Height / 2;
-					PB_wait->Left = this->Width / 2;
-					readLine("", DGV1->Rows->Count);
-				}
+			 //private: System::Void DGV1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+			 //	if (e->KeyCode == Keys::F12) {
+			 //		DGV1->ClearSelection();
+			 //		if (ScriptargumentClass::Scriptargument_->GetLineNumber() == 0) {
+			 //			IniLoadData();  /// get all lable in the Script
+			 //			ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line 
+			 //		}
+			 //		if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
+			 //			DGV1->ClearSelection();
+			 //			DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
+			 //			if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
+			 //				if (Need_wait) {
+			 //					PB_wait->Visible = true;
+			 //					PB_wait->Top = this->Height / 2;
+			 //					PB_wait->Left = this->Width / 2;
+			 //				}
+			 //				readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count);
+			 //			}
+			 //			else {
+			 //				PB_wait->Visible = true;
+			 //				PB_wait->Top = this->Height / 2;
+			 //				PB_wait->Left = this->Width / 2;
+			 //				readLine("", DGV1->Rows->Count);
+			 //			}
 
-			}
-			else
-			{
-				DGV1->ClearSelection();
-				DGV1->Rows[0]->Selected = true;
-				ScriptargumentClass::Scriptargument_->setLineNumber(0);
-				PB_wait->Visible = false;
-			}
-			if (reten_) { reten_ = false; }
-			if (CB_AutoUpdate->Checked)
-				FileVariableTreeView();
-			PB_wait->Visible = false;
-			DGV1->FirstDisplayedScrollingRowIndex = DGV1->SelectedRows[0]->Index;
-		}
-		if (e->KeyCode == Keys::F11) {
-			if (Run)
-				Run = false;
-			else
-				Run = true;
+			 //		}
+			 //		else
+			 //		{
+			 //			DGV1->ClearSelection();
+			 //			DGV1->Rows[0]->Selected = true;
+			 //			ScriptargumentClass::Scriptargument_->setLineNumber(0);
+			 //			PB_wait->Visible = false;
+			 //		}
+			 //		if (reten_) { reten_ = false; }
+			 //		if (CB_AutoUpdate->Checked)
+			 //			FileVariableTreeView();
+			 //		PB_wait->Visible = false;
+			 //		DGV1->FirstDisplayedScrollingRowIndex = DGV1->SelectedRows[0]->Index;
+			 //	}
+			 //	if (e->KeyCode == Keys::F11) {
+			 //		if (Run)
+			 //			Run = false;
+			 //		else
+			 //			Run = true;
 
-			while (Run)
-			{
-				Application::DoEvents();
-				DGV1->ClearSelection();
-				if (ScriptargumentClass::Scriptargument_->GetLineNumber() == 0) {
-					IniLoadData();  /// get all lable in the Script
-					ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line 
-				}
-				if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
-					DGV1->ClearSelection();
-					DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
-					if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
-						if (Need_wait) {
-							PB_wait->Visible = true;
-						}
-						if (!readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count)) {
-							Run = false;
-						}
-						else
-						{
-							//Script::Debug::Wait();  // problem in compile under x32 platform
-							waitPauseProcess();
-						}
-					}
-					else
-						if (!readLine("", DGV1->Rows->Count)) {
-							Run = false;
-						}
-						else
-						{
-							//Script::Debug::Wait();
-							waitPauseProcess();
+			 //		while (Run)
+			 //		{
+			 //			Application::DoEvents();
+			 //			DGV1->ClearSelection();
+			 //			if (ScriptargumentClass::Scriptargument_->GetLineNumber() == 0) {
+			 //				IniLoadData();  /// get all lable in the Script
+			 //				ScriptargumentClass::Scriptargument_->setMaxLine(DGV1->RowCount - 1);  // update max line 
+			 //			}
+			 //			if (ScriptargumentClass::Scriptargument_->GetLineNumber() < DGV1->RowCount - 1) {
+			 //				DGV1->ClearSelection();
+			 //				DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Selected = true;
+			 //				if (DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value != nullptr) {
+			 //					if (Need_wait) {
+			 //						PB_wait->Visible = true;
+			 //					}
+			 //					if (!readLine(DGV1->Rows[ScriptargumentClass::Scriptargument_->GetLineNumber()]->Cells[1]->Value->ToString(), DGV1->Rows->Count)) {
+			 //						Run = false;
+			 //					}
+			 //					else
+			 //					{
+			 //						//Script::Debug::Wait();  // problem in compile under x32 platform
+			 //						waitPauseProcess();
+			 //					}
+			 //				}
+			 //				else
+			 //					if (!readLine("", DGV1->Rows->Count)) {
+			 //						Run = false;
+			 //					}
+			 //					else
+			 //					{
+			 //						//Script::Debug::Wait();
+			 //						waitPauseProcess();
 
-						}
-				}
-				else
-				{
-					DGV1->ClearSelection();
-					DGV1->Rows[0]->Selected = true;
-					ScriptargumentClass::Scriptargument_->setLineNumber(0);
-					Run = false;
-				}
-				PB_wait->Visible = false;
-				if (CB_AutoUpdate->Checked)
-					FileVariableTreeView();
-				if (reten_) {   /// it mean it hit ret command
-					DGV1->Rows[0]->Selected = true;
-					ScriptargumentClass::Scriptargument_->setLineNumber(0);
-					reten_ = false;
-					Run = false;
-				}
-				PB_wait->Visible = false;
-				DGV1->FirstDisplayedScrollingRowIndex = DGV1->SelectedRows[0]->Index;
+			 //					}
+			 //			}
+			 //			else
+			 //			{
+			 //				DGV1->ClearSelection();
+			 //				DGV1->Rows[0]->Selected = true;
+			 //				ScriptargumentClass::Scriptargument_->setLineNumber(0);
+			 //				Run = false;
+			 //			}
+			 //			PB_wait->Visible = false;
+			 //			if (CB_AutoUpdate->Checked)
+			 //				FileVariableTreeView();
+			 //			if (reten_) {   /// it mean it hit ret command
+			 //				DGV1->Rows[0]->Selected = true;
+			 //				ScriptargumentClass::Scriptargument_->setLineNumber(0);
+			 //				reten_ = false;
+			 //				Run = false;
+			 //			}
+			 //			PB_wait->Visible = false;
+			 //			DGV1->FirstDisplayedScrollingRowIndex = DGV1->SelectedRows[0]->Index;
 
-				Application::DoEvents();
-			}
+			 //			Application::DoEvents();
+			 //		}
 
-		}
-	}
+			 //	}
+			 //}
+
+
 
 
 	};
