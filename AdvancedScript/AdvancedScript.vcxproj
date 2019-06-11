@@ -127,8 +127,7 @@ copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
     </Link>
     <PreBuildEvent>
       <Command>copy  "$(ProjectDir)\AdvSconfig.txt" "$(OutDir)"
-copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"
-</Command>
+copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -162,8 +161,7 @@ copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
     </Link>
     <PreBuildEvent>
       <Command>copy  "$(ProjectDir)\AdvSconfig.txt" "$(OutDir)"
-copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"
-</Command>
+copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

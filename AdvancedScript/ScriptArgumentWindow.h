@@ -13,9 +13,10 @@ namespace ScriptWindowArg {
 	ref class Scriptargument
 	{
 	private:
-		int lineNumber = 0;
+		int CurrentlineIndex = 0;
 		int MaxLine = 0;
-		Color OldColor=Color::Black;
+		Color OldColor ;
+		int OldLineIndex = 0;
 	public:
 		int isCommandsExist(String^ input_) {
 			array <String^>^ CommandsArray_ = {
@@ -54,34 +55,40 @@ namespace ScriptWindowArg {
 		};
 	public:
 		int CommandsNeedwait(String^ input_) {   /// this command need time to finish so we will make wait clock gif so user no thing it is not responding
-			array <String^>^ CommandsArray_ = {			
+			array <String^>^ CommandsArray_ = {
 				"BPxx",
 				"findallmemx"
 			};
 			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
 		};
-	public:
-		void setLineNumber(int LineNum) {
-			lineNumber = LineNum;
-		};
+	public:	void setCurrentlineIndex(int LineIndx) {
+		CurrentlineIndex = LineIndx;
+	}
+	public: void SetOldlineIndex_Color(int OldLineIndex_, Color color_) {
+		OldColor = color_;
+		OldLineIndex = OldLineIndex_;
+	}
 	public: void setOldColor(Color color_) {
 		OldColor = color_;
 	}
-	public: Color getColor() {
+	public: Color GetOldColor() {
 		return OldColor;
 	}
-	public:
-		void setMaxLine(int MaxLine_) {
-			MaxLine = MaxLine_;
-		}
-	public:
-		int GetMaxLine() {
-			return MaxLine;
-		}
-	public:
-		int GetLineNumber() {
-			return lineNumber;
-		};
+	public:	void setMaxLine(int MaxLine_) {
+		MaxLine = MaxLine_;
+	}
+	public:	int GetMaxLine() {
+		return MaxLine;
+	}
+	public:	int GetCurrentlineIndex() {
+		return CurrentlineIndex;
+	}
+	public:	void SetOldlineIndex(int OldLineIndex_) {
+		OldLineIndex = OldLineIndex_;
+	}
+	public:	int GetOldlineIndex() {
+		return OldLineIndex;
+	}
 	};
 
 	ref class ScriptargumentClass
@@ -129,19 +136,24 @@ namespace ScriptWindowArg {
 	bool readLine(String^ Line_, int MaxLine) {
 		bool ret_ = false;
 		if (Line_->Trim()->EndsWith(":")) {
-			ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+			ScriptargumentClass::Scriptargument_->setCurrentlineIndex(ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() + 1);
 			return true;
 		}
 		if (Line_->Trim() == "") {
-			ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+			ScriptargumentClass::Scriptargument_->setCurrentlineIndex(ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() + 1);
 			return true;
 		}
 		if (Line_->Trim()->ToLower() == "ret") {
+			///reset Script
+			//ScriptargumentClass::Scriptargument_->SetOldlineIndex(0);
+			//ScriptargumentClass::Scriptargument_->setCurrentlineIndex(0);
 			reten_ = true;
 			return true;
 		}
+		if (Line_->Contains("//"))
+			Line_ = Line_->Substring(0, Line_->IndexOf("//"));
 		if (Line_->Trim()->IndexOf(" ") > 0) {  /// >0 it mean it has command at the begining			
-			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));			
+			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));
 			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
 			if (CmdExist >= 0) {
 				//char* argv = new char[50];
@@ -231,7 +243,7 @@ namespace ScriptWindowArg {
 				case ScriptWindowArg::ifx:
 				{
 					String^ Line2Jmp_;
-					ret_ = ifCond(Line_, Line2Jmp_, ScriptargumentClass::Scriptargument_->GetLineNumber());
+					ret_ = ifCond(Line_, Line2Jmp_, ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
 					if (!ret_) {
 						break;
 					}
@@ -242,7 +254,7 @@ namespace ScriptWindowArg {
 					}
 					else
 					{
-						ScriptargumentClass::Scriptargument_->setLineNumber(Line2Jmp);
+						ScriptargumentClass::Scriptargument_->setCurrentlineIndex(Line2Jmp);
 						return true;
 					}
 					break;
@@ -260,7 +272,7 @@ namespace ScriptWindowArg {
 					}
 					else
 					{
-						ScriptargumentClass::Scriptargument_->setLineNumber(Line2Jmp);
+						ScriptargumentClass::Scriptargument_->setCurrentlineIndex(Line2Jmp);
 						return true;
 					}
 				}
@@ -269,7 +281,7 @@ namespace ScriptWindowArg {
 					break;
 				}
 				if (ret_) {
-					ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+					ScriptargumentClass::Scriptargument_->setCurrentlineIndex(ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() + 1);
 					return ret_;
 				}
 				else
@@ -283,7 +295,7 @@ namespace ScriptWindowArg {
 				ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
 				//Script::Debug::Wait();
 				if (ret_) {
-					ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+					ScriptargumentClass::Scriptargument_->setCurrentlineIndex(ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() + 1);
 					return ret_;
 				}
 				else
@@ -300,7 +312,7 @@ namespace ScriptWindowArg {
 			ret_ = DbgCmdExecDirect(Str2ConstChar(Line_));
 			//Script::Debug::Wait();
 			if (ret_) {
-				ScriptargumentClass::Scriptargument_->setLineNumber(ScriptargumentClass::Scriptargument_->GetLineNumber() + 1);
+				ScriptargumentClass::Scriptargument_->setCurrentlineIndex(ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() + 1);
 				return ret_;
 			}
 			else
@@ -316,19 +328,23 @@ namespace ScriptWindowArg {
 	}
 
 	void waitPauseProcess() {
+		if (!DbgIsDebugging())
+			return;
 		while (!_plugin_waituntilpaused()) {
 			Application::DoEvents();
 		}
 
 	}
 
-	
+
 	bool Need_wait(String^ cmd_) {
-		cmd_ = cmd_->Substring(0, cmd_->IndexOf(" "));  /// get command
-		int Need_wait = ScriptargumentClass::Scriptargument_->CommandsNeedwait(cmd_->ToLower()->Trim());
-		if (Need_wait >= 0) {
-			return true;
-		}
+		if (cmd_->Trim()->Contains(" ")) {
+			cmd_ = cmd_->Substring(0, cmd_->IndexOf(" "));  /// get command
+			int Need_wait = ScriptargumentClass::Scriptargument_->CommandsNeedwait(cmd_->ToLower()->Trim());
+			if (Need_wait >= 0) {
+				return true;
+			}
+		}		
 		return false;
 	}
 

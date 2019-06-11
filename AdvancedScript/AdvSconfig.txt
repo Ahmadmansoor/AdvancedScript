@@ -1,4 +1,5 @@
 Varx ; variable type(int-str-array),variable name add [] for array, value optional(str,array);Teal;
+Var ; define x64dbg variable type is just int;Teal;
 Getx ; $varname, value;Teal;
 Setx ; $variable name;Teal;
 Movx ; P1, P2(will analyzed);Teal;
@@ -40,7 +41,7 @@ inputbox ; variable, message, title;Teal;
 commentsetx ; address,String comment;Teal;
 GetdesCallJmp ; variable, address of call;Teal;
 run; ;Teal;
-ego;passing all first-chance exceptions to the debuggee.;Teal;
+erun;passing all first-chance exceptions to the debuggee.;Teal;
 pause; ;Teal;
 StepInto; ;Teal;
 StepOver; ;Teal;

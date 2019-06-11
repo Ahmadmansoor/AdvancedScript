@@ -697,7 +697,7 @@ bool dumpmem(String^ addr, String^ size, String^ para) {
 bool WriteStr_(duint address, String^ text, bool replace) {
 	String^ intValue;
 	const char* text_ = Str2ConstChar(text);
-	if (CheckHexIsValid(duint2Hex(address), intValue)>0) {
+	if (CheckHexIsValid(duint2Hex(address), intValue) > 0) {
 		if (!replace) {
 			return Script::Memory::Write(address, text_, strlen(text_), &address);
 		}
@@ -800,26 +800,26 @@ bool gotox_(String^ input, String^% lineNumber) {
 	{
 	case 1: {
 		/// first we check if its decimal it should hold d at the end 
-		if ((arguments[0]->EndsWith("d")) && (Information::IsNumeric((arguments[0]->Substring(0, arguments[0]->Length - 1))))) {
-			lineNumber = arguments[0]->Substring(0, arguments[0]->Length - 1);
+		//if ((arguments[0]->EndsWith("d")) && (Information::IsNumeric((arguments[0]->Substring(0, arguments[0]->Length - 1))))) {
+		//	lineNumber = arguments[0]->Substring(0, arguments[0]->Length - 1);
+		//	return true;
+		//}
+		//else  /// if its not decimal then we should analyze the string if it's hex value 
+		//{
+			//lineNumber = StrAnalyze(arguments[0], VarType::int_);
+			//if (!Information::IsNumeric(lineNumber)) {   /// in case the value not numric that mean it could be a Lable				
+		LableLine^ LLine = GetLineByLable(arguments[0]);
+		if (LLine->Lable != "") {
+			lineNumber = int2Str(LLine->LableLineNumber);
 			return true;
 		}
-		else  /// if its not decimal then we should analyze the string if it's hex value 
+		else
 		{
-			lineNumber = StrAnalyze(arguments[0], VarType::int_);
-			if (!Information::IsNumeric(lineNumber)) {   /// in case the value not numric that mean it could be a Lable				
-				LableLine^ LLine = GetLineByLable(arguments[0]);
-				if (LLine->Lable != "") {
-					lineNumber = int2Str(LLine->LableLineNumber);
-					return true;
-				}
-				else
-				{
-					_plugin_logputs(Str2ConstChar(Environment::NewLine + lineNumber + " : true line is incorect"));
-					return false;
-				}
-			}
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + lineNumber + " : true line is incorect"));
+			return false;
 		}
+		//}
+	//}
 		break;
 	}
 	default:
@@ -843,24 +843,26 @@ bool ifCond(String^ input, String^% lineNumber, int currentLine) {  // if condti
 		String^ trueline; String^ falseline;
 		if (arguments[2]->Trim() != "0") {   /// we add option if 0 then go next line
 			/// first we check if its decimal it should hold d at the end 
-			if ((arguments[2]->EndsWith("d")) && (Information::IsNumeric((arguments[2]->Substring(0, arguments[2]->Length - 1))))) {
-				trueline = arguments[2]->Substring(0, arguments[2]->Length - 1);
+			// after I add richTextBox I remove jmp to line number
+
+			//if ((arguments[2]->EndsWith("d")) && (Information::IsNumeric((arguments[2]->Substring(0, arguments[2]->Length - 1))))) {
+			//	trueline = arguments[2]->Substring(0, arguments[2]->Length - 1);
+			//}
+			//else  /// if its not decimal then we should analyze the string if it's hex value 
+			//{
+				//trueline = StrAnalyze(arguments[2], VarType::int_);
+				//if (!Information::IsNumeric(trueline)) {   /// in case the value not numric that mean it could be a Lable				
+			LableLine^ LLine = GetLineByLable(arguments[2]);
+			if (LLine->Lable != "") {
+				trueline = int2Str(LLine->LableLineNumber);
 			}
-			else  /// if its not decimal then we should analyze the string if it's hex value 
+			else
 			{
-				trueline = StrAnalyze(arguments[2], VarType::int_);
-				if (!Information::IsNumeric(trueline)) {   /// in case the value not numric that mean it could be a Lable				
-					LableLine^ LLine = GetLineByLable(arguments[2]);
-					if (LLine->Lable != "") {
-						trueline = int2Str(LLine->LableLineNumber);
-					}
-					else
-					{
-						_plugin_logputs(Str2ConstChar(Environment::NewLine + trueline + " : true line is incorect"));
-						return false;
-					}
-				}
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + trueline + " : true line is incorect"));
+				return false;
 			}
+			//}
+		//}
 		}
 		else
 		{
@@ -868,24 +870,24 @@ bool ifCond(String^ input, String^% lineNumber, int currentLine) {  // if condti
 		}
 		if (arguments[3]->Trim() != "0") {   /// we add option if 0 then go next line
 		/// first we check if its decimal it should hold d at the end 
-			if ((arguments[3]->EndsWith("d")) && (Information::IsNumeric((arguments[3]->Substring(0, arguments[3]->Length - 1))))) {
-				falseline = arguments[3]->Substring(0, arguments[3]->Length - 1);
+			//if ((arguments[3]->EndsWith("d")) && (Information::IsNumeric((arguments[3]->Substring(0, arguments[3]->Length - 1))))) {
+			//	falseline = arguments[3]->Substring(0, arguments[3]->Length - 1);
+			//}
+			//else  /// if its not decimal then we should analyze the string if it's hex value 
+			//{
+				//falseline = StrAnalyze(arguments[3], VarType::int_);
+				//if (!Information::IsNumeric(falseline)) {   /// in case the value not numric that mean it could be a Lable				
+			LableLine^ LLine = GetLineByLable(arguments[3]);
+			if (LLine->Lable != "") {
+				falseline = int2Str(LLine->LableLineNumber);
 			}
-			else  /// if its not decimal then we should analyze the string if it's hex value 
+			else
 			{
-				falseline = StrAnalyze(arguments[3], VarType::int_);
-				if (!Information::IsNumeric(falseline)) {   /// in case the value not numric that mean it could be a Lable				
-					LableLine^ LLine = GetLineByLable(arguments[3]);
-					if (LLine->Lable != "") {
-						falseline = int2Str(LLine->LableLineNumber);
-					}
-					else
-					{
-						_plugin_logputs(Str2ConstChar(Environment::NewLine + falseline + " : true line is incorect"));
-						return false;
-					}
-				}
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + falseline + " : true line is incorect"));
+				return false;
 			}
+			//}
+		//}
 		}
 		else
 		{
@@ -942,12 +944,12 @@ String^ condtion_(String^ input, String^ typo) {
 			left_ = StrAnalyze(left_, VarType::str);
 			right_ = StrAnalyze(right_, VarType::str);
 			if ((left_->StartsWith("NULL/")) || (right_->StartsWith("NULL/"))) {
-				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides" + "left_="+ left_ + " - right_:"+ right_));
+				_plugin_logprint(Str2ConstChar(Environment::NewLine + "can't resolve sides" + "left_=" + left_ + " - right_:" + right_));
 				MsgBoxResult MsgRet = Interaction::MsgBox("can't resolve sides" + Environment::NewLine + "left_=" + left_ + " - right_:" + right_ + Environment::NewLine + "Yes to ret true" + Environment::NewLine + "No to ret false" + Environment::NewLine + "Cancel to Stop", MsgBoxStyle::YesNoCancel, "Error");
 				switch (MsgRet)
-				{				
-				case Microsoft::VisualBasic::MsgBoxResult::Cancel:				
-					return "NULL/";										
+				{
+				case Microsoft::VisualBasic::MsgBoxResult::Cancel:
+					return "NULL/";
 				case Microsoft::VisualBasic::MsgBoxResult::Yes:
 					return "1";
 				case Microsoft::VisualBasic::MsgBoxResult::No:
@@ -956,7 +958,7 @@ String^ condtion_(String^ input, String^ typo) {
 					break;
 				}
 
-				
+
 			}
 			if (left_->StartsWith(right_)) {
 				return "1";  // true

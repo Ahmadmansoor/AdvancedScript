@@ -13,6 +13,7 @@ namespace AdvancedScript {
 	using namespace System::Drawing;
 	using namespace ScriptWindowArg;
 	using namespace AutocompleteMenuNS;
+	using namespace ScriptWindowArg;
 	/// <summary>
 	/// Summary for MainForm
 	/// </summary>
@@ -91,6 +92,12 @@ namespace AdvancedScript {
 	private: System::Windows::Forms::TabPage^  tabPage_Log;
 	private: System::Windows::Forms::TextBox^  TB_CommandHelp;
 	private: System::Windows::Forms::ToolStripMenuItem^  refrshToolStripMenuItem;
+	private: System::Windows::Forms::Button^  Bu_OpenScript;
+	private: System::Windows::Forms::TextBox^  TB_ScriptFileName;
+
+	private: System::Windows::Forms::Label^  Label_ScriptLineIndex;
+	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
+
 
 
 			 ////////////////
@@ -264,6 +271,7 @@ namespace AdvancedScript {
 			this->saveScriptFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->saveAsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->startHereToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->refrshToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->TrViewScript = (gcnew System::Windows::Forms::TreeView());
 			this->CMT_TreeView = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->createCategoryToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -287,7 +295,10 @@ namespace AdvancedScript {
 			this->tabPage_Log = (gcnew System::Windows::Forms::TabPage());
 			this->autocomplete_List = (gcnew AutocompleteMenuNS::AutocompleteMenu());
 			this->RTB_Script = (gcnew System::Windows::Forms::RichTextBox());
-			this->refrshToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->TB_ScriptFileName = (gcnew System::Windows::Forms::TextBox());
+			this->Bu_OpenScript = (gcnew System::Windows::Forms::Button());
+			this->Label_ScriptLineIndex = (gcnew System::Windows::Forms::Label());
+			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->CMT1->SuspendLayout();
 			this->CMT_TreeView->SuspendLayout();
 			this->groupBox1->SuspendLayout();
@@ -304,7 +315,7 @@ namespace AdvancedScript {
 					this->startHereToolStripMenuItem, this->refrshToolStripMenuItem
 			});
 			this->CMT1->Name = L"CMT1";
-			this->CMT1->Size = System::Drawing::Size(153, 92);
+			this->CMT1->Size = System::Drawing::Size(153, 70);
 			// 
 			// fileToolStripMenuItem
 			// 
@@ -344,6 +355,13 @@ namespace AdvancedScript {
 			this->startHereToolStripMenuItem->Text = L"Run from Here";
 			this->startHereToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::startHereToolStripMenuItem_Click);
 			// 
+			// refrshToolStripMenuItem
+			// 
+			this->refrshToolStripMenuItem->Name = L"refrshToolStripMenuItem";
+			this->refrshToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->refrshToolStripMenuItem->Text = L"Refrsh";
+			this->refrshToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::refrshToolStripMenuItem_Click);
+			// 
 			// TrViewScript
 			// 
 			this->TrViewScript->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
@@ -351,7 +369,7 @@ namespace AdvancedScript {
 			this->TrViewScript->ContextMenuStrip = this->CMT_TreeView;
 			this->TrViewScript->Location = System::Drawing::Point(11, 19);
 			this->TrViewScript->Name = L"TrViewScript";
-			this->TrViewScript->Size = System::Drawing::Size(244, 168);
+			this->TrViewScript->Size = System::Drawing::Size(244, 185);
 			this->TrViewScript->TabIndex = 0;
 			this->TrViewScript->NodeMouseDoubleClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &MainForm::TrViewScript_NodeMouseDoubleClick);
 			// 
@@ -404,7 +422,7 @@ namespace AdvancedScript {
 			// CB_AutoUpdate
 			// 
 			this->CB_AutoUpdate->AutoSize = true;
-			this->CB_AutoUpdate->Location = System::Drawing::Point(92, 199);
+			this->CB_AutoUpdate->Location = System::Drawing::Point(171, 212);
 			this->CB_AutoUpdate->Name = L"CB_AutoUpdate";
 			this->CB_AutoUpdate->Size = System::Drawing::Size(83, 17);
 			this->CB_AutoUpdate->TabIndex = 2;
@@ -413,7 +431,8 @@ namespace AdvancedScript {
 			// 
 			// Bu_VarListRefresh
 			// 
-			this->Bu_VarListRefresh->Location = System::Drawing::Point(10, 193);
+			this->Bu_VarListRefresh->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			this->Bu_VarListRefresh->Location = System::Drawing::Point(11, 572);
 			this->Bu_VarListRefresh->Name = L"Bu_VarListRefresh";
 			this->Bu_VarListRefresh->Size = System::Drawing::Size(81, 26);
 			this->Bu_VarListRefresh->TabIndex = 1;
@@ -423,7 +442,8 @@ namespace AdvancedScript {
 			// 
 			// Bu_ClearVariable
 			// 
-			this->Bu_ClearVariable->Location = System::Drawing::Point(174, 193);
+			this->Bu_ClearVariable->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			this->Bu_ClearVariable->Location = System::Drawing::Point(174, 572);
 			this->Bu_ClearVariable->Name = L"Bu_ClearVariable";
 			this->Bu_ClearVariable->Size = System::Drawing::Size(81, 26);
 			this->Bu_ClearVariable->TabIndex = 3;
@@ -437,9 +457,9 @@ namespace AdvancedScript {
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->TrViewVariable->ContextMenuStrip = this->CMT_VariableList;
-			this->TrViewVariable->Location = System::Drawing::Point(11, 225);
+			this->TrViewVariable->Location = System::Drawing::Point(11, 211);
 			this->TrViewVariable->Name = L"TrViewVariable";
-			this->TrViewVariable->Size = System::Drawing::Size(244, 373);
+			this->TrViewVariable->Size = System::Drawing::Size(244, 355);
 			this->TrViewVariable->TabIndex = 4;
 			// 
 			// CMT_VariableList
@@ -577,9 +597,9 @@ namespace AdvancedScript {
 			this->RTB_Script->ContextMenuStrip = this->CMT1;
 			this->RTB_Script->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->RTB_Script->Location = System::Drawing::Point(277, 22);
+			this->RTB_Script->Location = System::Drawing::Point(277, 34);
 			this->RTB_Script->Name = L"RTB_Script";
-			this->RTB_Script->Size = System::Drawing::Size(807, 414);
+			this->RTB_Script->Size = System::Drawing::Size(807, 402);
 			this->RTB_Script->TabIndex = 0;
 			this->RTB_Script->TabStop = false;
 			this->RTB_Script->Text = L"";
@@ -589,12 +609,38 @@ namespace AdvancedScript {
 			this->RTB_Script->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::RTB_Script_KeyUp);
 			this->RTB_Script->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &MainForm::RTB_Script_MouseDown);
 			// 
-			// refrshToolStripMenuItem
+			// TB_ScriptFileName
 			// 
-			this->refrshToolStripMenuItem->Name = L"refrshToolStripMenuItem";
-			this->refrshToolStripMenuItem->Size = System::Drawing::Size(152, 22);
-			this->refrshToolStripMenuItem->Text = L"Refrsh";
-			this->refrshToolStripMenuItem->Click += gcnew System::EventHandler(this, &MainForm::refrshToolStripMenuItem_Click);
+			this->autocomplete_List->SetAutocompleteMenu(this->TB_ScriptFileName, nullptr);
+			this->TB_ScriptFileName->Location = System::Drawing::Point(364, 8);
+			this->TB_ScriptFileName->Name = L"TB_ScriptFileName";
+			this->TB_ScriptFileName->Size = System::Drawing::Size(468, 20);
+			this->TB_ScriptFileName->TabIndex = 7;
+			// 
+			// Bu_OpenScript
+			// 
+			this->Bu_OpenScript->Location = System::Drawing::Point(277, 4);
+			this->Bu_OpenScript->Name = L"Bu_OpenScript";
+			this->Bu_OpenScript->Size = System::Drawing::Size(81, 26);
+			this->Bu_OpenScript->TabIndex = 5;
+			this->Bu_OpenScript->Text = L"OpenScript";
+			this->Bu_OpenScript->UseVisualStyleBackColor = true;
+			this->Bu_OpenScript->Click += gcnew System::EventHandler(this, &MainForm::Bu_OpenScript_Click);
+			// 
+			// Label_ScriptLineIndex
+			// 
+			this->Label_ScriptLineIndex->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->Label_ScriptLineIndex->AutoSize = true;
+			this->Label_ScriptLineIndex->Location = System::Drawing::Point(842, 11);
+			this->Label_ScriptLineIndex->Name = L"Label_ScriptLineIndex";
+			this->Label_ScriptLineIndex->Size = System::Drawing::Size(241, 13);
+			this->Label_ScriptLineIndex->TabIndex = 8;
+			this->Label_ScriptLineIndex->Text = L"..............................................................................";
+			// 
+			// openFileDialog1
+			// 
+			this->openFileDialog1->FileName = L"openFileDialog1";
+			this->openFileDialog1->Filter = L"text Files|*.txt|All files|*.*";
 			// 
 			// MainForm
 			// 
@@ -602,10 +648,13 @@ namespace AdvancedScript {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::SlateGray;
 			this->ClientSize = System::Drawing::Size(1091, 616);
+			this->Controls->Add(this->TB_ScriptFileName);
+			this->Controls->Add(this->Bu_OpenScript);
 			this->Controls->Add(this->PB_wait);
 			this->Controls->Add(this->RTB_Script);
 			this->Controls->Add(this->tabControl1);
 			this->Controls->Add(this->groupBox1);
+			this->Controls->Add(this->Label_ScriptLineIndex);
 			this->KeyPreview = true;
 			this->Name = L"MainForm";
 			this->Text = L"MainForm";
@@ -622,6 +671,7 @@ namespace AdvancedScript {
 			this->tabPage_CommandHelp->ResumeLayout(false);
 			this->tabPage_CommandHelp->PerformLayout();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -629,7 +679,8 @@ namespace AdvancedScript {
 
 
 	private: System::Void startHereToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-		ScriptargumentClass::Scriptargument_->setLineNumber(GetRTB_lineNum());
+		ScriptargumentClass::Scriptargument_->setCurrentlineIndex(GetRTB_lineNum());
+		SetNextLineColor_StepOn(ScriptargumentClass::Scriptargument_->GetOldlineIndex(), ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
 	}
 
 
@@ -676,6 +727,7 @@ namespace AdvancedScript {
 		}
 		FillTrView();  // fill tree on load 
 		Fill_FunctionsAutoComplete_AtLoad();  /// load AutoComplete main List 
+		ScriptargumentClass::Scriptargument_->setOldColor(RTB_Script->BackColor);
 		//TB_OldValue = RTB_Script->Lines;
 	}
 
@@ -700,12 +752,14 @@ namespace AdvancedScript {
 
 		try {
 			RTB_Script->LoadFile(filepath, RichTextBoxStreamType::RichText);
+			IniLoadData();
 		}
 		catch (ArgumentException^ ex) {
 			RTB_Script->LoadFile(filepath, RichTextBoxStreamType::PlainText);
+			IniLoadData();
+			highlight_AllRTB_Script();
 		}
-		IniLoadData();
-		//TB_OldValue = RTB_Script->Lines;
+		//IniLoadData();		
 	}
 
 	private: System::Void SaveScriptFile(String^ filepath) {  /// Save Script file from DataGridView to Disk		
@@ -720,9 +774,22 @@ namespace AdvancedScript {
 		if (TrViewScript->SelectedNode->Level != 0) {
 			LoadScriptFile(Application::StartupPath + "\\Script\\" + TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text);
 			ScriptargumentClass::Scriptargument_->setMaxLine(RTB_Script->Lines->Length);  // update max line just in case update script through run
+			ScriptargumentClass::Scriptargument_->SetOldlineIndex(0);
+			ScriptargumentClass::Scriptargument_->setCurrentlineIndex(0);
 			ScriptFileName = TrViewScript->SelectedNode->Parent->Text + "\\" + TrViewScript->SelectedNode->Text;
+			ScriptFileName = Application::StartupPath + "\\Script\\" + ScriptFileName;  /// I add the path to solve save external files
+			TB_ScriptFileName->Text = ScriptFileName;
 		}
 		//highlight_AllRTB_Script();
+	}
+	private: System::Void Bu_OpenScript_Click(System::Object^  sender, System::EventArgs^  e) {
+		openFileDialog1->ShowDialog();
+		ScriptFileName = openFileDialog1->FileName;
+		LoadScriptFile(ScriptFileName);
+		ScriptargumentClass::Scriptargument_->setMaxLine(RTB_Script->Lines->Length);  // update max line just in case update script through run
+		ScriptargumentClass::Scriptargument_->SetOldlineIndex(0);
+		ScriptargumentClass::Scriptargument_->setCurrentlineIndex(0);
+		TB_ScriptFileName->Text = ScriptFileName;
 	}
 
 	private: System::Void deletToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -734,6 +801,7 @@ namespace AdvancedScript {
 				TrViewScript->SelectedNode->Remove();
 				RTB_Script->Clear();
 				ScriptFileName = "";
+				TB_ScriptFileName->Text = "";
 			}
 			else
 			{
@@ -741,6 +809,7 @@ namespace AdvancedScript {
 				TrViewScript->SelectedNode->Remove();
 				RTB_Script->Clear();
 				ScriptFileName = "";
+				TB_ScriptFileName->Text = "";
 			}
 		}
 		else {
@@ -837,19 +906,21 @@ namespace AdvancedScript {
 		}
 
 	}
+
 	private: System::Void newScriptToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		RTB_Script->Clear();
 		VarListClear();
 		TrViewVariable->Nodes->Clear();
 		ScriptFileName = "";
+		TB_ScriptFileName->Text = "";
 
 	}
 
 
 	private: System::Void saveScriptFileToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		if (ScriptFileName != "") {
-			SaveScriptFile(Application::StartupPath + "\\Script\\" + ScriptFileName);
-			//RTB_Script->SaveFile(Application::StartupPath + "\\Script\\" + ScriptFileName);
+			//SaveScriptFile(Application::StartupPath + "\\Script\\" + ScriptFileName);			
+			SaveScriptFile(ScriptFileName);
 		}
 		else
 		{
@@ -880,8 +951,11 @@ namespace AdvancedScript {
 		}
 
 		if (!IO::File::Exists((Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt"))) {
-			SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
-			ScriptFileName = Category_ + "\\" + Filename + ".txt";
+			ScriptFileName = Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt";
+			SaveScriptFile(ScriptFileName);
+			//SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+			//ScriptFileName = Category_ + "\\" + Filename + ".txt";			
+			TB_ScriptFileName->Text = ScriptFileName;
 			if (TrViewScript->SelectedNode->Level == 0)
 				TrViewScript->SelectedNode->Nodes->Add(Filename + ".txt");
 			else
@@ -890,8 +964,11 @@ namespace AdvancedScript {
 		else
 		{
 			if (Interaction::MsgBox("this File is Exist,Over Write it ??!!", MsgBoxStyle::OkCancel, "Error") == MsgBoxResult::Ok) {
-				SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
-				ScriptFileName = Category_ + "\\" + Filename + ".txt";
+				ScriptFileName = Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt";
+				SaveScriptFile(ScriptFileName);
+				//SaveScriptFile(Application::StartupPath + "\\Script\\" + Category_ + "\\" + Filename + ".txt");
+				//ScriptFileName = Category_ + "\\" + Filename + ".txt";				
+				TB_ScriptFileName->Text = ScriptFileName;
 				if (TrViewScript->SelectedNode->Level == 0)
 					TrViewScript->SelectedNode->Nodes->Add(Filename + ".txt");
 				else
@@ -914,7 +991,8 @@ namespace AdvancedScript {
 			/// send save Script
 			if (e->KeyCode == Keys::S) {
 				if (ScriptFileName != "") {
-					SaveScriptFile(Application::StartupPath + "\\Script\\" + ScriptFileName);
+					//SaveScriptFile(Application::StartupPath + "\\Script\\" + ScriptFileName);
+					SaveScriptFile(ScriptFileName);
 				}
 				else
 				{
@@ -922,9 +1000,14 @@ namespace AdvancedScript {
 				}
 			}
 			if (e->KeyCode == Keys::J) {
+				autocomplete_List->AutoPopup = true;
 				Fill_VariableAutoComplete();
 				autocomplete_List->Show(RTB_Script, true);
 			}
+		}
+		if (e->KeyCode == Keys::F5) {
+			IniLoadData();
+			highlight_AllRTB_Script();
 		}
 	}
 
@@ -1004,6 +1087,7 @@ namespace AdvancedScript {
 	private: System::Void IniLoadData() {   /// we use it to get all lable in the script to use it for Goto
 											//Done
 		LableLineClass::LableLines->Clear();
+
 		Variables_List->Clear();
 		for (int i = 0; i < RTB_Script->Lines->Length; i++)
 		{
@@ -1013,30 +1097,54 @@ namespace AdvancedScript {
 					LableLine^ LaL = gcnew LableLine(i, LableHold);
 					LableLineClass::LableLines->Add(LaL);
 				}
-				if (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("varx")) {  // find variables					
-					if (RTB_Script->Lines[i]->Trim()->Contains(",")) {
+				if ((RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("varx")) || (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("var"))) {  // find variables					
+					if (!RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("var")) {
+						if (RTB_Script->Lines[i]->Trim()->Contains(",")) {
+							String^ cmd = RTB_Script->Lines[i]->Trim();
+							if ((!cmd->Contains(",")) || (cmd->Trim()->IndexOf(",") + 1 >= cmd->Trim()->Length))  ///// in case we write varx int and not continue 
+								return;
+							Generic::List<String^>^ arguments;
+							GetArg(cmd, arguments);
+							if (arguments->Count < 2)
+								return;
+							if (arguments[0]->ToLower() == "array") {
+								if (arguments[1]->Contains("[")) {  // check if it has [ for the array
+									arguments[1] = arguments[1]->Substring(0, arguments[1]->IndexOf("["));
+								}
+							}
+							if (arguments[1]->Contains("//")) {
+								arguments[1] = arguments[1]->Substring(0, arguments[1]->IndexOf("//"))->Trim();  /// trim to remove extra spaces
+							}
+							//// check for comments 
+							String^ Comments = " ";
+							if (RTB_Script->Lines[i]->Trim()->Contains("//")) {
+								Comments = RTB_Script->Lines[i]->Trim()->Substring(RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2, RTB_Script->Lines[i]->Trim()->Length - (RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2));
+							}
+							Variables^ LaL = gcnew Variables(i, arguments[1], Comments);  // for variable case Varx varType,VarName,VarValue
+							Variables_List->Add(LaL);
+							LaL = gcnew Variables(i, "$" + arguments[1], Comments);
+							Variables_List->Add(LaL);
+						}
+					}
+					else
+					{
 						String^ cmd = RTB_Script->Lines[i]->Trim();
-						if ((!cmd->Contains(",")) || (cmd->Trim()->IndexOf(",") + 1 >= cmd->Trim()->Length))  ///// in case we write varx int and not continue 
-							return;
 						Generic::List<String^>^ arguments;
 						GetArg(cmd, arguments);
-						if (arguments->Count < 2)
+						if (arguments->Count < 1)
 							return;
-						if (arguments[0]->ToLower() == "array") {
-							if (arguments[1]->Contains("[")) {  // check if it has [ for the array
-								arguments[1] = arguments[1]->Substring(0, arguments[1]->IndexOf("["));
-							}
+						if (arguments[0]->Contains("//")) {
+							arguments[0] = arguments[0]->Substring(0, arguments[0]->IndexOf("//"))->Trim();  /// trim to remove extra spaces
 						}
 						//// check for comments 
 						String^ Comments = " ";
 						if (RTB_Script->Lines[i]->Trim()->Contains("//")) {
 							Comments = RTB_Script->Lines[i]->Trim()->Substring(RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2, RTB_Script->Lines[i]->Trim()->Length - (RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2));
 						}
-						Variables^ LaL = gcnew Variables(i, arguments[1], Comments);  // for variable case Varx varType,VarName,VarValue
-						Variables_List->Add(LaL);
-						LaL = gcnew Variables(i, "$" + arguments[1], Comments);
-						Variables_List->Add(LaL);
+						Variables^ LaL = gcnew Variables(i, arguments[0], Comments);  // for variable case Varx varType,VarName,VarValue
+						Variables_List->Add(LaL);						
 					}
+
 				}
 			}
 		}
@@ -1059,28 +1167,30 @@ namespace AdvancedScript {
 		for (int i = 0; i < list->Length; i++)
 		{
 			temp = list[i];
-			if ((temp->Contains(";")) && (temp->EndsWith(";"))) {
-				cmd = temp->Substring(0, temp->IndexOf(";"));
-				temp = temp->Substring(temp->IndexOf(";") + 1, temp->Length - (temp->IndexOf(";") + 1));
-				if (temp->EndsWith(";")) {
-					describ = temp->Substring(0, temp->IndexOf(";"));
+			if (temp != "") {
+				if ((temp->Contains(";")) && (temp->EndsWith(";"))) {
+					cmd = temp->Substring(0, temp->IndexOf(";"));
+					temp = temp->Substring(temp->IndexOf(";") + 1, temp->Length - (temp->IndexOf(";") + 1));
 					if (temp->EndsWith(";")) {
-						temp = temp->Substring(temp->IndexOf(";") + 1, temp->Length - (temp->IndexOf(";") + 1));
-						color_ = Color::FromName(temp->Substring(0, temp->IndexOf(";")));
+						describ = temp->Substring(0, temp->IndexOf(";"));
+						if (temp->EndsWith(";")) {
+							temp = temp->Substring(temp->IndexOf(";") + 1, temp->Length - (temp->IndexOf(";") + 1));
+							color_ = Color::FromName(temp->Substring(0, temp->IndexOf(";")));
+						}
+						else
+						{
+							color_ = Color::Black;
+						}
 					}
 					else
-					{
-						color_ = Color::Black;
-					}
-				}
-				else
-					describ = " ";
+						describ = " ";
 
-				AutoCompleteMainList^ mainList = gcnew AutoCompleteMainList(cmd, describ, color_);
-				autoCompleteMainList->Add(mainList);  /// we will save this for later use as base of the AutoComplete List
-				autoCompleteFlexibleList->Add(mainList);
-				// fill menu with items 
-				autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { cmd, describ}, cmd, true, true));
+					AutoCompleteMainList^ mainList = gcnew AutoCompleteMainList(cmd, describ, color_);
+					autoCompleteMainList->Add(mainList);  /// we will save this for later use as base of the AutoComplete List
+					autoCompleteFlexibleList->Add(mainList);
+					// fill menu with items 
+					autocomplete_List->AddItem(gcnew MulticolumnAutocompleteItem(gcnew array<String^> { cmd, describ}, cmd, true, true));
+				}
 			}
 		}
 	}
@@ -1097,8 +1207,7 @@ namespace AdvancedScript {
 		int index_ = HelpLoad_List_indexbyCmd(temp);
 		if (index_ != -1)// get the word form the selected autocomplete menu 
 			TB_CommandHelp->Text = HelpLoad_List[index_]->Getinfo_();
-
-		//Fill_MainAutoComplete();  /// we add it here because when we press Ctrl+J AutoComplete menu will be filled with variables so we have tr refill it with main menu again 
+		highlight_Line_ByLineIndex(GetRTB_lineNum());
 		//highlight_FromSelectedAutoComplete(autocompleteItem->Text);
 	}
 	private: System::Void Fill_MainAutoComplete()
@@ -1300,6 +1409,11 @@ namespace AdvancedScript {
 		}
 		String^ text = RTB_Script->Lines[LineIndex];  /// get string of the line
 		if (text != nullptr) {
+			/// rest line color just in case old set
+			ScanMode = true;
+			RTB_Script->Select(FirstCharIndexFromLine, text->Length);
+			RTB_Script->SelectionColor = Color::Black;
+
 			for (int i = 0; i < autoCompleteFlexibleList->Count; i++)
 			{
 				word = autoCompleteFlexibleList[i]->GetCmd()->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
@@ -1324,12 +1438,12 @@ namespace AdvancedScript {
 						//RTB_Script->Select((index + startIndex), word->Length);
 						bool noneed = false;
 						if (index - 1 >= 0) {
-							if ((Char::IsLetter(text[index - 1])) || (text[index - 1] == (Char)"$")) {
+							if ((Char::IsLetter(text[index - 1])) || (text->Substring(index - 1, 1) == "$") || (text->Substring(index - 1, 1) == ".")) {
 								noneed = true;
 							}
 						}
 						if (index + word->Length + 1 <= text->Length) {
-							Char^ xx = text[index + word->Length];
+							//Char^ xx = text[index + word->Length];
 							if (Char::IsLetter(text[index + word->Length])) {
 								noneed = true;
 							}
@@ -1339,15 +1453,21 @@ namespace AdvancedScript {
 							RTB_Script->Select((FirstCharIndexFromLine + index), word->Length);
 							RTB_Script->SelectionColor = autoCompleteFlexibleList[i]->GetcoloR();
 							ScanMode = true;
-							RTB_Script->Select(FirstCharIndexFromLine + index + word->Length, text->Length - (index + word->Length));
-							RTB_Script->SelectionColor = Color::Black;
+							if (index + word->Length + 1 < text->Length) {
+								RTB_Script->Select(FirstCharIndexFromLine + index + 1 + word->Length, 0);
+								RTB_Script->SelectionColor = Color::Black;
+							}
+							//else {
+								//RTB_Script->Select(FirstCharIndexFromLine + index + word->Length, text->Length - (index + word->Length));
+								//RTB_Script->SelectionColor = Color::Black;
+							//}
 						}
-						else
-						{							
+						/*else
+						{
 							ScanMode = true;
-							RTB_Script->Select(FirstCharIndexFromLine + index , text->Length - (index));
+							RTB_Script->Select(FirstCharIndexFromLine + index, 0);
 							RTB_Script->SelectionColor = Color::Black;
-						}
+						}*/
 						index += word->Length;
 					}
 				}
@@ -1364,90 +1484,17 @@ namespace AdvancedScript {
 	}
 
 	private:System::Void highlight_AllRTB_Script() {
-		String^ word; int startIndex = 0;
-
-		for (int i = 0; i < autoCompleteMainList->Count; i++)
+		for (int i = 0; i < RTB_Script->Lines->Length; i++)
 		{
-			word = autoCompleteMainList[i]->GetCmd()->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
-			if (word->Contains("(")) {   /// remove () if exist like ads.ReadStr()
-				word = word->Substring(0, word->IndexOf("("));
-			}
-			if (word->Contains(",")) {   /// remove , if exist like ads.ReadStr()
-				word = word->Substring(0, word->IndexOf(","));
-			}
-			if (RTB_Script->Text != nullptr) {
-				if (RTB_Script->Text->ToLower()->Contains(word))  /// search text in lower case
-				{
-					int index = -1;
-					int selectStart = RTB_Script->SelectionStart;
-
-					while ((index = RTB_Script->Text->ToLower()->IndexOf(word, (index + 1), StringComparison::Ordinal)) != -1)
-					{
-						RTB_Script->Select((index + startIndex), word->Length);
-						RTB_Script->SelectionColor = autoCompleteMainList[i]->GetcoloR();
-						RTB_Script->Select(selectStart, 0);
-						RTB_Script->SelectionColor = Color::Black;
-					}
-				}
-			}
+			highlight_Line_ByLineIndex(i);
 		}
 
 	}
 
-			//private:System::Void highlight_Line() {
-			//	String^ word; int startIndex = 0;
 
-			//	for (int i = 0; i < autoCompleteMainList->Count; i++)
-			//	{
-			//		word = autoCompleteMainList[i]->GetCmd()->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
-			//		if (word->Contains("(")) {   /// remove () if exist like ads.ReadStr()
-			//			word = word->Substring(0, word->IndexOf("("));
-			//		}
-			//		if (word->Contains(",")) {   /// remove , if exist like ads.ReadStr()
-			//			word = word->Substring(0, word->IndexOf(","));
-			//		}
-			//		int LineIndex = GetRTB_lineNum();
-			//		if (LineIndex == 0)
-			//			return;
-			//		String^ text = RTB_Script->Lines[LineIndex];
-
-
-			//		if (text != nullptr) {
-			//			if (text->ToLower()->Contains(word))  /// search text in lower case
-			//			{
-			//				int index = -1;
-			//				int selectStart = RTB_Script->SelectionStart;
-			//				//index = selectStart - word->Length;
-			//				index = RTB_Script->SelectionStart - autoCompleteMainList[i]->GetCmd()->Length;
-			//				if (index < 0)
-			//					return;
-			//				while ((RTB_Script->Text->ToLower()->IndexOf(word, index, word->Length)) != -1)
-			//				{
-			//					RTB_Script->Select((index + startIndex), word->Length);
-			//					RTB_Script->SelectionColor = autoCompleteMainList[i]->GetcoloR();
-			//					RTB_Script->Select(selectStart, 0);
-			//					index = word->Length;
-			//					RTB_Script->SelectionColor = Color::Black;
-			//				}
-			//				/*int selectStart = RTB_Script->SelectionStart;
-			//				int index = selectStart - autoCompleteMainList[i]->GetCmd()->Length ;  /// index in the line
-			//				int index_orginial = RTB_Script->Text->ToLower()->IndexOf(word, (index + 1));
-			//				while ((index = RTB_Script->Lines[LineIndex]->ToLower()->IndexOf(word, (index + 1))) != -1)
-			//				{
-			//					RTB_Script->Select((index_orginial + startIndex), word->Length);
-			//					RTB_Script->SelectionColor = autoCompleteMainList[i]->GetcoloR();
-			//					RTB_Script->Select(selectStart, 0);
-			//					RTB_Script->SelectionColor = Color::Black;
-			//					index += 1;
-			//				}*/
-			//			}
-			//		}
-			//	}
-
-			//}
 #pragma endregion
 
-					////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private: System::Void RTB_Script_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		currentPostion = RTB_Script->SelectionStart;
 		if (e->KeyCode == Keys::Oem2) {
@@ -1485,16 +1532,140 @@ namespace AdvancedScript {
 		}
 
 	}
+
+	private: Color PreviousLineColor = SystemColors::Control;
+	private: System::Void SetNextLineColor_StepOn(int oldLine, int CurrentLine) {
+		if (CurrentLine == ScriptargumentClass::Scriptargument_->GetMaxLine())
+		{
+			ScanMode = true;  /// RTB_Script->Select will fire RTB_Script->Edit so we disable
+			RTB_Script->Select(RTB_Script->GetFirstCharIndexFromLine(oldLine), RTB_Script->Lines[oldLine]->Length);
+			RTB_Script->SelectionBackColor = ScriptargumentClass::Scriptargument_->GetOldColor();
+			ScanMode = true;  /// RTB_Script->Select will fire RTB_Script->Edit so we disable
+			ScriptargumentClass::Scriptargument_->setCurrentlineIndex(0);
+			RTB_Script->Select(RTB_Script->GetFirstCharIndexFromLine(0), RTB_Script->Lines[0]->Length);
+			RTB_Script->SelectionBackColor = Color::Yellow;
+			RTB_Script->Select(RTB_Script->GetFirstCharIndexFromLine(0), 0);
+			ScriptargumentClass::Scriptargument_->SetOldlineIndex(0);
+			return;
+		}
+		if ((CurrentLine == 0) && (oldLine == 0)) {
+			ScanMode = true;  /// RTB_Script->Select will fire RTB_Script->Edit so we disable
+			RTB_Script->Select(RTB_Script->GetFirstCharIndexFromLine(CurrentLine), RTB_Script->Lines[CurrentLine]->Length);
+			RTB_Script->SelectionBackColor = Color::Yellow;
+			RTB_Script->Select(RTB_Script->GetFirstCharIndexFromLine(CurrentLine), 0);
+			ScriptargumentClass::Scriptargument_->SetOldlineIndex(CurrentLine);
+			return;
+		}
+		//if ((oldLine < CurrentLine) && ((CurrentLine != ScriptargumentClass::Scriptargument_->GetMaxLine())))
+		if ((oldLine < CurrentLine) || (oldLine > CurrentLine))
+		{
+			ScanMode = true;  /// RTB_Script->Select will fire RTB_Script->Edit so we disable
+			RTB_Script->Select(RTB_Script->GetFirstCharIndexFromLine(oldLine), RTB_Script->Lines[oldLine]->Length);
+			RTB_Script->SelectionBackColor = ScriptargumentClass::Scriptargument_->GetOldColor();
+
+			ScanMode = true;  /// RTB_Script->Select will fire RTB_Script->Edit so we disable
+			RTB_Script->Select(RTB_Script->GetFirstCharIndexFromLine(CurrentLine), RTB_Script->Lines[CurrentLine]->Length);
+			RTB_Script->SelectionBackColor = Color::Yellow;
+			RTB_Script->Select(RTB_Script->GetFirstCharIndexFromLine(CurrentLine), 0);
+			ScriptargumentClass::Scriptargument_->SetOldlineIndex(CurrentLine);
+			return;
+		}
+	}
 	private: System::Void RTB_Script_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		if (e->KeyCode == Keys::F12) {
-			//Functions_AutoCompleteLoad();
-			if (ScriptargumentClass::Scriptargument_->GetLineNumber() == 0) {
+			autocomplete_List->AutoPopup = false;
+			if (ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() == 0) {
 				IniLoadData();  /// get all lable in the Script
-				ScriptargumentClass::Scriptargument_->setMaxLine(RTB_Script->Lines->Length);  // update max line 
-				Interaction::MsgBox(RTB_Script->Lines->Length, MsgBoxStyle::OkOnly, "");
+				ScriptargumentClass::Scriptargument_->setMaxLine(RTB_Script->Lines->Length);  // update max line				
+				ScriptargumentClass::Scriptargument_->SetOldlineIndex_Color(0, RTB_Script->BackColor);  /// save old line index and it's color
 			}
+			if (ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() < RTB_Script->Lines->Length) {
+				SetNextLineColor_StepOn(ScriptargumentClass::Scriptargument_->GetOldlineIndex(), ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
+				if (RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()]->Trim() != "") {
+					if (Need_wait(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()])) {
+						PB_wait->Visible = true;
+						PB_wait->Top = this->Height / 2;
+						PB_wait->Left = this->Width / 2;
+					}
+					readLine(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()], ScriptargumentClass::Scriptargument_->GetMaxLine());
+				}
+				else {
+					readLine("", ScriptargumentClass::Scriptargument_->GetMaxLine());
+				}
 
+			}
+			else
+			{
+				SetNextLineColor_StepOn(ScriptargumentClass::Scriptargument_->GetOldlineIndex(), ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
+				PB_wait->Visible = false;
+			}
+			if (reten_) { reten_ = false; }
+			if (CB_AutoUpdate->Checked)
+				FileVariableTreeView();
+			PB_wait->Visible = false;
+		}
+		///////////////////////
+		if (e->KeyCode == Keys::F11) {
+			autocomplete_List->AutoPopup = false;
+			if (Run)
+				Run = false;
+			else
+				Run = true;
 
+			while (Run)
+			{
+				//Application::DoEvents();
+				if (ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() == 0) {
+					IniLoadData();  /// get all lable in the Script
+					ScriptargumentClass::Scriptargument_->setMaxLine(RTB_Script->Lines->Length);  // update max line				
+					ScriptargumentClass::Scriptargument_->SetOldlineIndex_Color(0, RTB_Script->BackColor);  /// save old line index and it's color
+				}
+				if (ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() < RTB_Script->Lines->Length) {
+					SetNextLineColor_StepOn(ScriptargumentClass::Scriptargument_->GetOldlineIndex(), ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
+					if (RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()] != "") {
+						if (Need_wait(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()])) {
+							PB_wait->Visible = true;
+							PB_wait->Top = this->Height / 2;
+							PB_wait->Left = this->Width / 2;
+						}
+						if (!readLine(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()], ScriptargumentClass::Scriptargument_->GetMaxLine())) {
+							Run = false;
+						}
+						else
+						{
+							//Script::Debug::Wait();  // problem in compile under x32 platform
+							waitPauseProcess();
+						}
+					}
+					else {
+						if (!readLine("", ScriptargumentClass::Scriptargument_->GetMaxLine())) {
+							Run = false;
+						}
+						else
+						{
+							//Script::Debug::Wait();
+							waitPauseProcess();
+
+						}
+					}
+				}
+				else {
+					SetNextLineColor_StepOn(ScriptargumentClass::Scriptargument_->GetOldlineIndex(), ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
+					PB_wait->Visible = false;
+					Run = false;
+				}
+				PB_wait->Visible = false;
+				if (CB_AutoUpdate->Checked)
+					FileVariableTreeView();
+				if (reten_) {   /// it mean it hit ret command					
+					SetNextLineColor_StepOn(ScriptargumentClass::Scriptargument_->GetOldlineIndex(), ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
+					PB_wait->Visible = false;
+					reten_ = false;
+					Run = false;
+				}
+				PB_wait->Visible = false;
+				Application::DoEvents();
+			}
 		}
 	}
 
@@ -1522,7 +1693,6 @@ namespace AdvancedScript {
 			 //				PB_wait->Left = this->Width / 2;
 			 //				readLine("", DGV1->Rows->Count);
 			 //			}
-
 			 //		}
 			 //		else
 			 //		{
@@ -1537,12 +1707,12 @@ namespace AdvancedScript {
 			 //		PB_wait->Visible = false;
 			 //		DGV1->FirstDisplayedScrollingRowIndex = DGV1->SelectedRows[0]->Index;
 			 //	}
+
 			 //	if (e->KeyCode == Keys::F11) {
 			 //		if (Run)
 			 //			Run = false;
 			 //		else
 			 //			Run = true;
-
 			 //		while (Run)
 			 //		{
 			 //			Application::DoEvents();
@@ -1575,7 +1745,6 @@ namespace AdvancedScript {
 			 //					{
 			 //						//Script::Debug::Wait();
 			 //						waitPauseProcess();
-
 			 //					}
 			 //			}
 			 //			else
@@ -1596,15 +1765,10 @@ namespace AdvancedScript {
 			 //			}
 			 //			PB_wait->Visible = false;
 			 //			DGV1->FirstDisplayedScrollingRowIndex = DGV1->SelectedRows[0]->Index;
-
 			 //			Application::DoEvents();
 			 //		}
-
 			 //	}
 			 //}
-
-
-
 
 	};
 }
