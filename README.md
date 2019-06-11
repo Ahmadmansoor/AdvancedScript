@@ -699,9 +699,9 @@ Sample Scripts :
 	Search using Regex class
 	
 	https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex?view=netframework-4.8
-	
-	
-
+```
+```
+![regexSearch](https://user-images.githubusercontent.com/7176580/59274330-316b0f80-8c6b-11e9-80c3-3b067f1cd288.png)
 ```
 ```
 ////////////////////////////////////////////////////////////////////////////
