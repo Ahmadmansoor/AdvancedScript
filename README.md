@@ -2,6 +2,8 @@
 
 just a try to add more feature's to x64dbg script system
 
+![New GUI 4.0](https://user-images.githubusercontent.com/7176580/59259568-1c7e8400-8c4b-11e9-8c3e-3bbf2b626479.gif)
+
 ![ScriptWindow 3 1](https://user-images.githubusercontent.com/7176580/57080514-b9243c80-6d03-11e9-99bf-3615c81cf88b.png)
 
 ![ScriptWindow 3 0](https://user-images.githubusercontent.com/7176580/54919824-30073200-4f1b-11e9-9221-7e94496583d7.png)
@@ -17,6 +19,26 @@ just a try to add more feature's to x64dbg script system
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 4.0:
+	1- add RegexSearch form.
+	2- New GUI after replace DataGridView with RichTextBox to easy deal and fast coding.
+	3- edit CustomBuildStep to Auto copy files (AdvSconfig.txt , HelpAdvancedScript.txt).
+	4- add AutocompleteMenu.dll .
+	5- add copy AutocompleteMenu.dll to x64dbg root .
+	6- add AdvSconfig.txt for AutoComplete list for define Commands and variables.
+	7- update AutocompleteMenu.dll.
+	8- add comments_ to Variables class to add it next to the description of the variables when call them by Ctrl+j
+	9- call list var's by Ctrl+j
+	10- add ReFill_FunctionsAutoComplete_AtLoad.	 
+	11- highlight_system done for good look and analyze.
+	12- add autoCompleteFlexibleList to handle commands defined in AdvSconfig.txt.
+	13- add open Script from out side.
+	14- refresh by menu and F5 to refresh highlight_system.
+	15- add var of x64dbg system.
+	
+	note : by AdvSconfig.txt u can define the commands in AdvancedSecript .
+
+
 - version 3.1 :
  	1- fix CheckHexIsValid ( fix length ).
 	2- add menu to (copy - follow - delete) variables .
@@ -397,7 +419,7 @@ WriteStr  duint address, String^ text, bool replace
 (if) this Function as any if, its good for short the work of cmp jne .
 (goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
 
- if condtion ( > < = != ?) , type (int, str/strb,stre,strc ) , line number if true , line number if false
+ if condtion ( > < = != ?) , type (int, str/strb,stre,strc ) , line Lable if true , line Lable if false
  
  - note : if you set line number to 0 that mean step to next line.
  - note : in new version we can use ads lib like some commands which return true or false 
@@ -410,7 +432,7 @@ WriteStr  duint address, String^ text, bool replace
 	strc : if string contain
 	
 	sample :
-		if mainStr?"string_",strb,5d,7d /// check if mainStr begin with (string_)
+		if mainStr?"string_",strb,Lable1,Lable2 /// check if mainStr begin with (string_)
 		
  - in parameter 2 :we define the type of variable we need to compare. we can compare int with int or string to string
  		int	
@@ -421,14 +443,14 @@ WriteStr  duint address, String^ text, bool replace
 		
  - Line number : there are 3 way to set it 
  
- 		1- number + d : it mean the number is int not hex value Like 10d = line number 10
-		2- number : it mean the number hex value Like 10 = line number 16
+ 		XXX 1-not supported any more >> number + d : it mean the number is int not hex value Like 10d = line number 10
+		XXX 2-not supported any more >> number : it mean the number hex value Like 10 = line number 16
 		3- string lable : it mean there are lable in the script it will jmp to 
 		4- set one of them to 0 mean jmp to next line
 		sample :
 		1	varx int,x,0
 		2	varx int,y,10
-		3	if $x>$y,int,0,5d     /// if x>y then it will go to line 4 otherwise go to line 5
+		3	if $x>$y,int,0,Lable1     /// if x>y then it will go to line 4 otherwise go to line 5
 		4	........
 		5	........
 		
@@ -438,7 +460,7 @@ note : we can mix this tow commands and we get a loop good for IAT read write fi
 ```
 	-0	varx int,x,10
 	 1	varx int,y,5
-	 2	if $x=$y,int,GotHere,4d   compare between 2 int if they equal it will jmp to 
+	 2	if $x=$y,int,GotHere,Lable1   compare between 2 int if they equal it will jmp to 
 	 					lable (GotHere) else jmp to line number 4
  	 3	getx $x
  	 4	goto GotHere		go to line 8 ( lable GotHere)
@@ -450,22 +472,22 @@ note : we can mix this tow commands and we get a loop good for IAT read write fi
 	 .
 	 .
 	 .
-	 20	goto 10			go to line 16
-	 21 	goto 10d		go to line 10
+	 20 not supported any more >>	goto 10			go to line 16
+	 21 not supported any more >>	goto 10d		go to line 10
 	 
 	 -Loop:
 	 	varx int,x,0
-		if $x<10,int,2d,Finish
-		setx $x,$x+1
+		if $x<10,int,0,Finish
+		setx $x,$x+1		
 		getx $x
-		goto 1d
+		goto Lable1
 		Finish:
 
 	-varx str,Rstr
 	 again:
 	 run
  	 ReadStr $Rstr,{rdx}
-	 if $Rstr?"ImmIMPGetIMEA",strc,5d,2d
+	 if $Rstr?"ImmIMPGetIMEA",strc,Lable1,Lable2
 	 ret
 
 ```
