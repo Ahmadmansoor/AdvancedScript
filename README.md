@@ -693,6 +693,16 @@ Sample Scripts :
 		goto 16d
 
 ```
+////////////////////////////////////////////////////////////////////////////
+```
+## RegExSearch:
+	Search using Regex class
+	
+	https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex?view=netframework-4.8
+	
+	
+
+```
 ```
 ////////////////////////////////////////////////////////////////////////////
 ## Log Section:
