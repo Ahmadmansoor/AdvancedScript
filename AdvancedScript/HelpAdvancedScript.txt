@@ -528,7 +528,7 @@ WriteStr  duint address, String^ text, bool replace
 	- writeStr {rdx},"This is test" ,1
 //////////
 if
-if mainStr  > < = != ?  string , type (int, str/strb,stre,strc ) , line number if true , line number if false
+if mainStr  > < = != ?  string , type (int, str/strb,stre,strc ) , line Lable if true , line Lable if false
 (if) this Function as any if, its good for short the work of cmp jne .
 (goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
  if condtion ( > < = != ?) , type (int, str/strb,stre,strc ) , line number if true , line number if false
@@ -547,7 +547,7 @@ if mainStr  > < = != ?  string , type (int, str/strb,stre,strc ) , line number i
 	strc : if string contain
 	
 	sample :
-		if mainStr?"string_",strb,5d,7d /// check if mainStr begin with (string_)
+		if mainStr?"string_",strb,Lable1,Lable2 /// check if mainStr begin with (string_)
 		
  - in parameter 2 :we define the type of variable we need to compare. we can compare int with int or string to string
  		int	
@@ -558,14 +558,12 @@ if mainStr  > < = != ?  string , type (int, str/strb,stre,strc ) , line number i
 		
  - Line number : there are 3 way to set it 
  
- 		1- number + d : it mean the number is int not hex value Like 10d = line number 10
-		2- number : it mean the number hex value Like 10 = line number 16
-		3- string lable : it mean there are lable in the script it will jmp to 
-		4- set one of them to 0 mean jmp to next line
+		1- string lable : it mean there are lable in the script it will jmp to 
+		2- set one of them to 0 mean jmp to next line
 		sample :
 		1	varx int,x,0
 		2	varx int,y,10
-		3	if $x>$y,int,0,5d     /// if x>y then it will go to line 4 otherwise go to line 5
+		3	if $x>$y,int,0,Lable1     /// if x>y then it will go to line 4 otherwise go to line 5
 		4	........
 		5	........
 note : we can mix this tow commands and we get a loop good for IAT read write fix Loop
@@ -574,8 +572,9 @@ note : we can mix this tow commands and we get a loop good for IAT read write fi
 ```
 	-0	varx int,x,10
 	 1	varx int,y,5
-	 2	if $x=$y,int,GotHere,4d   compare between 2 int if they equal it will jmp to 
-	 					lable (GotHere) else jmp to line number 4
+	 2	if $x=$y,int,GotHere,Lable1   compare between 2 int if they equal it will jmp to 
+	 					lable (GotHere) else jmp to line Lable1
+		Lable1:
  	 3	getx $x
  	 4	goto GotHere		go to line 8 ( lable GotHere)
  	 5	getx $y
@@ -586,12 +585,11 @@ note : we can mix this tow commands and we get a loop good for IAT read write fi
 	 .
 	 .
 	 .
-	 20	goto 10			go to line 16
-	 21 	goto 10d		go to line 10
+	 20	goto Lable1			go to Lable1	 
 	 
 	 -Loop:
 	 	varx int,x,0
-		if $x<10,int,2d,Finish
+		if $x<10,int,0,Finish
 		setx $x,$x+1
 		getx $x
 		goto 1d
@@ -601,15 +599,13 @@ note : we can mix this tow commands and we get a loop good for IAT read write fi
 	 again:
 	 run
  	 ReadStr $Rstr,{rdx}
-	 if $Rstr?"ImmIMPGetIMEA",strc,5d,2d
+	 if $Rstr?"ImmIMPGetIMEA",strc,Lable1,Lable2
 	 ret
 //////////
 goto
 goto line number /lable line
 
-(goto) it is as any goto it will jmp to line, it use the same Line number formulas of (if) command
-goto 6  			jmp to line number 0x6
-goto 6d  		jmp to line number 6
+(goto) it is as any goto it will jmp to line Lable , it use the same formulas of (if) command
 goto again	jmp to line have lable again
 //////////
 GetAPIName

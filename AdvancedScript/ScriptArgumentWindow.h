@@ -1,7 +1,9 @@
 #pragma once
-#include "HelperFunctions.h"
+//#include "HelperFunctions.h"
 #include "Register_UnRegister_Commands.h"
-#include "ScriptFun.h"
+//#include "ScriptFun.h"
+
+
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
@@ -12,6 +14,8 @@ namespace ScriptWindowArg {
 
 	ref class Scriptargument
 	{
+	/*public:
+		Boolean ispaused = false;*/
 	private:
 		int CurrentlineIndex = 0;
 		int MaxLine = 0;
@@ -57,7 +61,7 @@ namespace ScriptWindowArg {
 		int CommandsNeedwait(String^ input_) {   /// this command need time to finish so we will make wait clock gif so user no thing it is not responding
 			array <String^>^ CommandsArray_ = {
 				"BPxx",
-				"findallmemx"
+				"findallmemx"				
 			};
 			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
 		};
@@ -152,6 +156,9 @@ namespace ScriptWindowArg {
 		}
 		if (Line_->Contains("//"))
 			Line_ = Line_->Substring(0, Line_->IndexOf("//"));
+
+		//IspausedClass::IspausedClass_->ispaused = false;  /// rest is pause till the debugger back to pause
+
 		if (Line_->Trim()->IndexOf(" ") > 0) {  /// >0 it mean it has command at the begining			
 			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));
 			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
@@ -254,6 +261,7 @@ namespace ScriptWindowArg {
 					}
 					else
 					{
+						
 						ScriptargumentClass::Scriptargument_->setCurrentlineIndex(Line2Jmp);
 						return true;
 					}
@@ -329,11 +337,13 @@ namespace ScriptWindowArg {
 
 	void waitPauseProcess() {
 		if (!DbgIsDebugging())
-			return;
-		while (!_plugin_waituntilpaused()) {
+			return;		
+		do
+		{
+			//Threading::Thread::Sleep(100);
 			Application::DoEvents();
-		}
-
+		} while (!IspausedClass::IspausedClass_->ispaused);		
+		
 	}
 
 

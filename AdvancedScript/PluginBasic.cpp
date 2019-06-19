@@ -3,6 +3,7 @@
 #include "HelperFunctions.h"
 #include "LogTemplate.h"
 #include "LogWindow.h"
+
 #define plugin_name "AdvancedScript"
 #define plugin_version 1
 
@@ -17,7 +18,6 @@ extern bool LogTraceOn;
 extern const char* TraceFile_;
 extern const char* TemplateData_;
 extern bool log2LogWindowAtBP;
-
 extern bool cx;
 
 PROCESS_INFORMATION* fdProcessInfo_x;
@@ -41,7 +41,8 @@ PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 
 PLUG_EXPORT void CBPAUSEDEBUG(CBTYPE cbType, PLUG_CB_PAUSEDEBUG* info)
 {
-	
+	//ScriptWindowArg::ScriptargumentClass::Scriptargument_->ispaused = true;
+	IspausedClass::IspausedClass_->ispaused = true;
 }
 
 PLUG_EXPORT void CBSTOPDEBUG(CBTYPE cbType, PLUG_CB_STOPDEBUG* info)
@@ -58,6 +59,7 @@ PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
 	if (LogOff_) { /// we will disEnable Log  because it's not BP
 		GuiDisableLog();
 	}
+	IspausedClass::IspausedClass_->ispaused = false;
 }
 
 PLUG_EXPORT void CBSTEPPED(CBTYPE cbType, PLUG_CB_STEPPED* info)

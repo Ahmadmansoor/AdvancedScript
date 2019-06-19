@@ -61,6 +61,18 @@ static bool GetAPIName(int argc, char* argv[]);
 ///////////////////////
 System::Void LoadTemplateFiles_();
 
+ref class ispausedClass
+{
+public:
+	bool ispaused = false;
+};
+ref class IspausedClass
+{
+public:
+	static ispausedClass^ IspausedClass_ = gcnew ispausedClass;
+};
+
+
 
 
 

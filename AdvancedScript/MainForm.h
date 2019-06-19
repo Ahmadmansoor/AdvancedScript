@@ -508,6 +508,8 @@ namespace AdvancedScript {
 			this->PB_wait->TabIndex = 5;
 			this->PB_wait->TabStop = false;
 			this->PB_wait->Visible = false;
+			this->PB_wait->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MainForm::PB_wait_MouseDoubleClick);
+			this->PB_wait->MouseHover += gcnew System::EventHandler(this, &MainForm::PB_wait_MouseHover);
 			// 
 			// tabControl1
 			// 
@@ -751,15 +753,16 @@ namespace AdvancedScript {
 		RTB_Script->Text = RTB_Script->Text->Trim();   /// trim unneeded spaces at the end of the file	*/
 
 		try {
+			ScanMode = true;
 			RTB_Script->LoadFile(filepath, RichTextBoxStreamType::RichText);
 			IniLoadData();
 		}
 		catch (ArgumentException^ ex) {
+			ScanMode = true;
 			RTB_Script->LoadFile(filepath, RichTextBoxStreamType::PlainText);
 			IniLoadData();
 			highlight_AllRTB_Script();
 		}
-		//IniLoadData();		
 	}
 
 	private: System::Void SaveScriptFile(String^ filepath) {  /// Save Script file from DataGridView to Disk		
@@ -1098,7 +1101,9 @@ namespace AdvancedScript {
 					LableLineClass::LableLines->Add(LaL);
 				}
 				if ((RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("varx")) || (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("var"))) {  // find variables					
-					if (!RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->StartsWith("var")) {
+					if (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->Length < 4)
+						return;
+					if (RTB_Script->Lines[i]->Trim()->ToLower()->Trim()->Substring(3, 1) != " ") {  //StartsWith("var")
 						if (RTB_Script->Lines[i]->Trim()->Contains(",")) {
 							String^ cmd = RTB_Script->Lines[i]->Trim();
 							if ((!cmd->Contains(",")) || (cmd->Trim()->IndexOf(",") + 1 >= cmd->Trim()->Length))  ///// in case we write varx int and not continue 
@@ -1142,7 +1147,7 @@ namespace AdvancedScript {
 							Comments = RTB_Script->Lines[i]->Trim()->Substring(RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2, RTB_Script->Lines[i]->Trim()->Length - (RTB_Script->Lines[i]->Trim()->IndexOf("//") + 2));
 						}
 						Variables^ LaL = gcnew Variables(i, arguments[0], Comments);  // for variable case Varx varType,VarName,VarValue
-						Variables_List->Add(LaL);						
+						Variables_List->Add(LaL);
 					}
 
 				}
@@ -1582,12 +1587,12 @@ namespace AdvancedScript {
 			if (ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() < RTB_Script->Lines->Length) {
 				SetNextLineColor_StepOn(ScriptargumentClass::Scriptargument_->GetOldlineIndex(), ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
 				if (RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()]->Trim() != "") {
-					if (Need_wait(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()])) {
-						PB_wait->Visible = true;
-						PB_wait->Top = this->Height / 2;
-						PB_wait->Left = this->Width / 2;
-					}
 					readLine(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()], ScriptargumentClass::Scriptargument_->GetMaxLine());
+					PB_wait->Visible = true;
+					PB_wait->Top = this->Height / 2;
+					PB_wait->Left = this->Width / 2;
+					waitPauseProcess();
+					PB_wait->Visible = false;
 				}
 				else {
 					readLine("", ScriptargumentClass::Scriptargument_->GetMaxLine());
@@ -1623,18 +1628,23 @@ namespace AdvancedScript {
 				if (ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() < RTB_Script->Lines->Length) {
 					SetNextLineColor_StepOn(ScriptargumentClass::Scriptargument_->GetOldlineIndex(), ScriptargumentClass::Scriptargument_->GetCurrentlineIndex());
 					if (RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()] != "") {
-						if (Need_wait(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()])) {
+						/*if (Need_wait(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()])) {
 							PB_wait->Visible = true;
 							PB_wait->Top = this->Height / 2;
 							PB_wait->Left = this->Width / 2;
-						}
+							waitPauseProcess();
+						}*/
 						if (!readLine(RTB_Script->Lines[ScriptargumentClass::Scriptargument_->GetCurrentlineIndex()], ScriptargumentClass::Scriptargument_->GetMaxLine())) {
 							Run = false;
 						}
 						else
 						{
 							//Script::Debug::Wait();  // problem in compile under x32 platform
+							PB_wait->Visible = true;
+							PB_wait->Top = this->Height / 2;
+							PB_wait->Left = this->Width / 2;
 							waitPauseProcess();
+							PB_wait->Visible = false;
 						}
 					}
 					else {
@@ -1643,8 +1653,11 @@ namespace AdvancedScript {
 						}
 						else
 						{
-							//Script::Debug::Wait();
+							PB_wait->Visible = true;
+							PB_wait->Top = this->Height / 2;
+							PB_wait->Left = this->Width / 2;
 							waitPauseProcess();
+							PB_wait->Visible = false;
 
 						}
 					}
@@ -1770,5 +1783,13 @@ namespace AdvancedScript {
 			 //	}
 			 //}
 
-	};
+	private: System::Void PB_wait_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		IspausedClass::IspausedClass_->ispaused = true;
+		Run = false;
+	}
+	private: System::Void PB_wait_MouseHover(System::Object^  sender, System::EventArgs^  e) {
+		ToolTip^ SetToolTip_= gcnew ToolTip;
+		SetToolTip_->SetToolTip(PB_wait, "Double Click to stop the Script");		
+	}
+};
 }

@@ -91,34 +91,30 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 {
 	_plugin_logputs(Str2ConstChar(Environment::NewLine + "[AdvancedScript " + CharArr2Str(ads_version) + "] || Coded By AhmadMansoor /exetools "));
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
-
 	registerCommand("Scriptw", cbMainForm, false);
 	registerCommand("RegExSearch", cbRegExSearchForm, true);
 	registerCommand("test_", test, false);
 
 	/////////Logx....
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "///////////////////" + "Logging Script Commands"));
 	registerCommand("LogxJustAtBP", cbLogxJustAtBP, true);
-
 	registerCommand("LogxTemplateManager", LogxTemplateManager, false);
-
 	registerCommand("logxwindow", logx_window, false);
-
 	registerCommand("logx", logx, false);
-
 	registerCommand("logxTrace", logxTrace, false);
+
 	/////////Logx....//////////
 	registerCommand("StrCompx", StrCompx, false);
 
 	/////////Script Commands....//////////
+	_plugin_logputs(Str2ConstChar(Environment::NewLine+"///////////////////" + "main Script Commands"));
 	registerCommand("Varx", Varx, false);
-
 	registerCommand("Getx", GetVarx, false);
 	registerCommand("Printx", GetVarx, false);
-
-
 	registerCommand("Setx", SetVarx, false);
 
 	/// Script instruments equivalent in x64dbg 
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "///////////////////" + " Script instruments equivalent in x64dbg "));
 	registerCommand("Movx", Movx, true);
 	registerCommand("addx", addx, true);
 	registerCommand("subx", subx, true);
@@ -154,19 +150,25 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("bphdx", bphdx, true);
 	registerCommand("bpmx", bpmx, true);
 	registerCommand("asmx", asmx, true);
-
+	registerCommand("commentsetx", commentset, true);
+	/////////////////// extra Commands
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "///////////////////" + "extra Commands"));
 	registerCommand("GetAPIName", GetAPIName, true);
 	registerCommand("ResizeArray", ResizeArray, false);
 	registerCommand("GetArraySize", GetArraySize, false);
 	registerCommand("Write2File", Write2File, false);
-	registerCommand("inputbox", InputBox, false);
-
-	registerCommand("commentsetx", commentset, true);
+	registerCommand("inputbox", InputBox, false);	
 	registerCommand("GetdesCallJmp", GetdesCallJmp, true);
-	_plugin_logputs(Str2ConstChar(Environment::NewLine));
+
+	///////////////////
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "Done Loading......."+ Environment::NewLine));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
+
+	DbgScriptSetIp(3);
+	
+	return true;
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
 	switch (arguments->Count)
@@ -1696,6 +1698,63 @@ static bool GetArraySize(int argc, char* argv[]) {   // GetArraySize( Array var 
 }
 
 static bool Write2File(int argc, char* argv[]) {  // write2File(path,over_append(true),data
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments);
+	switch ((arguments->Count))
+	{
+	case 3: {
+		String^ pathfile;
+		if (arguments[0]->StartsWith("$")) {  /// that mesn its variable
+			String^ path_ = StrAnalyze(arguments[0], VarType::str);
+			if (!path_->Contains("NULL/")) {
+				if (!path_->EndsWith(".txt")) {
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + "not ended with .txt"));
+					return false;
+				}
+				if (!IO::Directory::Exists(IO::Path::GetDirectoryName(path_))) {
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
+					return false;
+				}
+			}
+			else
+			{
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
+				return false;
+			}
+			pathfile = StrAnalyze(arguments[0], VarType::str);
+		}
+		else
+		{
+			if (!arguments[0]->EndsWith(".txt")) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "not ended with .txt"));
+				return false;
+			}
+			if (arguments[0]->Contains("\\")) {  /// check it if it's path file				
+				if (!IO::Directory::Exists(IO::Path::GetDirectoryName(arguments[0]))) {
+					_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
+					return false;
+				}
+			}
+			else
+			{
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
+				return false;
+			}
+			pathfile = arguments[0];
+		}
+
+
+		return Write2File_(pathfile, Str2bool(arguments[1]), arguments[2]);
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return true;
+
+}
+
+static bool ReadFile(int argc, char* argv[]) {  // ReadFile(array var , path )
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments);
 	switch ((arguments->Count))

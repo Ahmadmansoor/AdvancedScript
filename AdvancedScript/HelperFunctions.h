@@ -55,6 +55,8 @@ String^ str2Hex(String^ input, VarType inputType_,bool addx0);
 System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brackets=false);
 
 ///////////////////////////////////////////////////////////////////Helper Functions
-ref class MyException : public System::Exception {};
+//ref class MyException : public System::Exception {};
 
 static char* ads_version = "4.0";
+
+
