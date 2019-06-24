@@ -179,6 +179,9 @@ copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="adsLib.h" />
     <ClInclude Include="AdvancedScript.h" />
+    <ClInclude Include="GoToByBase.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="HelperFunctions.h" />
     <ClInclude Include="LogTemplate.h">
       <FileType>CppForm</FileType>
@@ -229,6 +232,7 @@ copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
     <ClCompile Include="adsLib.cpp" />
     <ClCompile Include="AdvancedScript.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="GoToByBase.cpp" />
     <ClCompile Include="HelperFunctions.cpp" />
     <ClCompile Include="LogTemplate.cpp" />
     <ClCompile Include="LogWindow.cpp" />
@@ -262,6 +266,9 @@ copy  "$(ProjectDir)\HelpAdvancedScript.txt" "$(OutDir)"</Command>
     <Library Include="pluginsdk\XEDParse\XEDParse_x64.lib" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GoToByBase.resx">
+      <DependentUpon>GoToByBase.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LogTemplate.resx">
       <DependentUpon>LogTemplate.h</DependentUpon>
     </EmbeddedResource>

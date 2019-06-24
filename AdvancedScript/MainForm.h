@@ -786,13 +786,14 @@ namespace AdvancedScript {
 		//highlight_AllRTB_Script();
 	}
 	private: System::Void Bu_OpenScript_Click(System::Object^  sender, System::EventArgs^  e) {
-		openFileDialog1->ShowDialog();
+		if (openFileDialog1->ShowDialog() == ::DialogResult::OK) {		
 		ScriptFileName = openFileDialog1->FileName;
 		LoadScriptFile(ScriptFileName);
 		ScriptargumentClass::Scriptargument_->setMaxLine(RTB_Script->Lines->Length);  // update max line just in case update script through run
 		ScriptargumentClass::Scriptargument_->SetOldlineIndex(0);
 		ScriptargumentClass::Scriptargument_->setCurrentlineIndex(0);
 		TB_ScriptFileName->Text = ScriptFileName;
+		}
 	}
 
 	private: System::Void deletToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {

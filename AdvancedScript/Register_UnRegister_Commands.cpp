@@ -6,6 +6,7 @@
 #include "ScriptFun.h"
 #include "MainForm.h"
 #include "RegexSearch.h"
+#include "GoToByBase.h"
 
 using namespace System;
 using namespace System::ComponentModel;
@@ -93,6 +94,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	_plugin_logputs(Str2ConstChar(Environment::NewLine));
 	registerCommand("Scriptw", cbMainForm, false);
 	registerCommand("RegExSearch", cbRegExSearchForm, true);
+	registerCommand("GoToByBase", cbGoToByBaseForm, true);
 	registerCommand("test_", test, false);
 
 	/////////Logx....
@@ -107,7 +109,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("StrCompx", StrCompx, false);
 
 	/////////Script Commands....//////////
-	_plugin_logputs(Str2ConstChar(Environment::NewLine+"///////////////////" + "main Script Commands"));
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "///////////////////" + "main Script Commands"));
 	registerCommand("Varx", Varx, false);
 	registerCommand("Getx", GetVarx, false);
 	registerCommand("Printx", GetVarx, false);
@@ -157,17 +159,17 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("ResizeArray", ResizeArray, false);
 	registerCommand("GetArraySize", GetArraySize, false);
 	registerCommand("Write2File", Write2File, false);
-	registerCommand("inputbox", InputBox, false);	
+	registerCommand("inputbox", InputBox, false);
 	registerCommand("GetdesCallJmp", GetdesCallJmp, true);
 
 	///////////////////
-	_plugin_logputs(Str2ConstChar(Environment::NewLine + "Done Loading......."+ Environment::NewLine));
+	_plugin_logputs(Str2ConstChar(Environment::NewLine + "Done Loading......." + Environment::NewLine));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
 
 	DbgScriptSetIp(3);
-	
+
 	return true;
 	Generic::List<String^>^ arguments;
 	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
@@ -262,7 +264,7 @@ static void ShowDialog_Script()
 			IO::File::Copy(Application::StartupPath + "\\plugins\\AutocompleteMenu.dll", Application::StartupPath + "\\AutocompleteMenu.dll", true);
 			AutocompleteMenu_ModuleLoaded = true;
 		}
-			
+
 	}
 
 	AdvancedScript::MainForm ScriptWindow;
@@ -328,6 +330,36 @@ static bool cbRegExSearchForm(int argc, char* argv[])
 
 	return true;
 }
+
+
+static void ShowDialog_GoToByBase()
+{
+	//AdvancedScript::RegexSearch RegexWindow;
+	AdvancedScript::GoToByBase goToByBase;
+	if (!goToByBase.Visible)
+		goToByBase.ShowDialog();
+
+
+}
+
+static bool cbGoToByBaseForm(int argc, char* argv[])
+{
+	_plugin_logputs("[GoToByBase Window] Loading.......!");
+	///////////////////////////////////////////////////////////////////////////////////////
+	// this will keep form activate and x64dbg unable to do it's work by excuted commands 
+	//ScriptS::IATFixer IATFixer;
+	//IATFixer.ShowDialog();
+	///////////////////////////////////////////////////////////////////////////////////////
+
+	// we used this (New Thread) to Create our Form in new Thread so we able to comunicated with x64dbg
+	// and be able to send command let go to address or do some  other commands 
+	System::Threading::Thread^ thread_ = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(&ShowDialog_GoToByBase));
+	thread_->SetApartmentState(Threading::ApartmentState::STA);
+	thread_->Start();
+
+	return true;
+}
+
 
 //cbLogxJustAtBP arg1,arg2 
 //arg1=true/false-on/off-1/0 Enable to log at BP at x64dbg log window
