@@ -20,7 +20,7 @@ just a try to add more feature's to x64dbg script system
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
-- version 4.0:
+- version 4.3:
 	1- Fix AutoRun and stepon
 	2- Fix color variable name.
 	3- Add ReadFile , Write2Mem , ReadMem
