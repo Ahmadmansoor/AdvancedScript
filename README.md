@@ -16,6 +16,9 @@ just a try to add more feature's to x64dbg script system
 [![Themida API Comment Script Good for Static Analyzing](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/SKustnN7qEY)
 
 
+[![GoToByBase Command](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=gQxlbC8RnRg)
+
+
 ## use Scriptw command for showing the Script window and F12 for steping and F11 for Auto run.
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
@@ -734,6 +737,20 @@ Sample Scripts :
 ```
 ```
 ![regexSearch](https://user-images.githubusercontent.com/7176580/59274330-316b0f80-8c6b-11e9-80c3-3b067f1cd288.png)
+```
+```
+## GoToByBase:
+
+	let suppose we have got some address from other PC's for the same target and we need to find this address 
+	on this PC what we will do, it 's easy just use this tools :)
+```
+```
+![GotoByBase](https://user-images.githubusercontent.com/7176580/60185836-aded1900-983b-11e9-8ee7-551b4b68b6cf.png)
+	
+	youtube:
+	
+[![GoToByBase Command](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=gQxlbC8RnRg)
+
 ```
 ```
 ////////////////////////////////////////////////////////////////////////////
