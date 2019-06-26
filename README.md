@@ -4,9 +4,10 @@ just a try to add more feature's to x64dbg script system
 
 ![New GUI 4.0](https://user-images.githubusercontent.com/7176580/59259568-1c7e8400-8c4b-11e9-8c3e-3bbf2b626479.gif)
 
-![ScriptWindow 3 1](https://user-images.githubusercontent.com/7176580/57080514-b9243c80-6d03-11e9-99bf-3615c81cf88b.png)
+![AdvancedScript_4 3](https://user-images.githubusercontent.com/7176580/60171779-5ee3bb80-981c-11e9-809d-7601dc9bcfbb.png)
 
-![ScriptWindow 3 0](https://user-images.githubusercontent.com/7176580/54919824-30073200-4f1b-11e9-9221-7e94496583d7.png)
+
+## youtube Tut's:
 
 [![AdvancedScript How to](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/hku8Is8-Z34)
 
@@ -19,6 +20,13 @@ just a try to add more feature's to x64dbg script system
 ////////////////////////////////////////////////////////////////////////////
 ## History Section:
 ```
+- version 4.0:
+	1- Fix AutoRun and stepon
+	2- Fix color variable name.
+	3-
+	
+	
+	
 - version 4.0:
 	1- add RegexSearch form.
 	2- New GUI after replace DataGridView with RichTextBox to easy deal and fast coding.
@@ -601,13 +609,37 @@ GetdesCallJmp   variable, address of call
 this Function get the address of (Call xxxxx  or Jmp xxxx )and store it in a variable.
 GetdesCallJmp   variable, address of call
 
-- P1 parameter 1 :variable which gold the value .
+- P1 parameter 1 :variable which hold the value .
 - P2 parameter 2 :address of Call or jmp 
 ```
 	-varx int,x,0	
 	 GetdesCallJmp $x,{rip}		
 
 ```
+### 19- ReadMem: 
+ReadMem   variable(array/Str), address,length
+
+this Function Read n byte under address and assigned to variable.
+variable should be String or array
+
+- P1 parameter 1 :variable which gold the value .
+- P2 parameter 2 :address of memory to read.
+- P2 parameter 2 :length of memory to read.
+```
+	-Varx str,x
+	 Varx int,N,0
+ 	 ReadMem $x,{rax},5
+	 $N={rax} +1
+ 	 $N=ads.exebase 	
+```
+### 19- ReadFile: 
+ReadFile path,Array Variable
+
+read text file and append it to array variable .
+ReadFile path,Array Variable
+ - in parameter 1 :set the path of the file it can be done by variable other wise use "" surrounded path.
+ - in parameter 2 :array variable
+ 
 ////////////////////////////////////////////////////////////////////////////
 ## ads library: 
 ads.____		/// ____ mean command
