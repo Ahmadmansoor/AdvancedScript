@@ -40,6 +40,10 @@ static bool findallmemx(int argc, char* argv[]);
 static bool memdump(int argc, char* argv[]);
 static bool WriteStr(int argc, char* argv[]);
 static bool ReadStr(int argc, char* argv[]);
+static bool ReadMem(int argc, char* argv[]);
+static bool Write2Mem(int argc, char* argv[]);
+static bool ReadFile(int argc, char* argv[]);
+static bool Write2File(int argc, char* argv[]);
 // BP 
 static bool BPxx(int argc, char* argv[]);
 static bool bpcx(int argc, char* argv[]);
@@ -50,17 +54,21 @@ static bool bphcx(int argc, char* argv[]);
 static bool bphex(int argc, char* argv[]);
 static bool bphdx(int argc, char* argv[]);
 static bool bpmx(int argc, char* argv[]);
+
+// new commands
 static bool asmx(int argc, char* argv[]);
 static bool ResizeArray(int argc, char* argv[]);
 static bool GetArraySize(int argc, char* argv[]);
-static bool Write2File(int argc, char* argv[]);
 static bool InputBox(int argc, char* argv[]);
 static bool commentset(int argc, char* argv[]);
 static bool GetdesCallJmp(int argc, char* argv[]);
 static bool GetAPIName(int argc, char* argv[]);
-//static bool ifCond(String^ input, String^% lineNumber);
+
+
 ///////////////////////
 System::Void LoadTemplateFiles_();
+
+static bool SetxByString(char* cmd);
 
 ref class ispausedClass
 {

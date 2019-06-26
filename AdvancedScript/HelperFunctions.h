@@ -57,6 +57,6 @@ System::Void GetArg(String^ input, Generic::List<String^>^% arguments, bool brac
 ///////////////////////////////////////////////////////////////////Helper Functions
 //ref class MyException : public System::Exception {};
 
-static char* ads_version = "4.0";
+static char* ads_version = "4.3";
 
 

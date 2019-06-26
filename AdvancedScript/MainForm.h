@@ -1181,7 +1181,9 @@ namespace AdvancedScript {
 						describ = temp->Substring(0, temp->IndexOf(";"));
 						if (temp->EndsWith(";")) {
 							temp = temp->Substring(temp->IndexOf(";") + 1, temp->Length - (temp->IndexOf(";") + 1));
-							color_ = Color::FromName(temp->Substring(0, temp->IndexOf(";")));
+							if (temp->Trim() != "") {
+								color_ = Color::FromName(temp->Substring(0, temp->IndexOf(";")));
+							}
 						}
 						else
 						{
@@ -1419,7 +1421,9 @@ namespace AdvancedScript {
 			ScanMode = true;
 			RTB_Script->Select(FirstCharIndexFromLine, text->Length);
 			RTB_Script->SelectionColor = Color::Black;
-
+			if (RTB_Script->SelectionBackColor == Color::Yellow) {
+				RTB_Script->SelectionBackColor = Color::FromArgb(255, 255, 255, 255);
+			}
 			for (int i = 0; i < autoCompleteFlexibleList->Count; i++)
 			{
 				word = autoCompleteFlexibleList[i]->GetCmd()->Trim()->ToLower();  /// trim spaces and make lower in case we have lower case words
@@ -1491,7 +1495,7 @@ namespace AdvancedScript {
 
 	private:System::Void highlight_AllRTB_Script() {
 		for (int i = 0; i < RTB_Script->Lines->Length; i++)
-		{
+		{			
 			highlight_Line_ByLineIndex(i);
 		}
 

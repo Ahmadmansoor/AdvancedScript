@@ -624,6 +624,7 @@ GetAPIName  varname ,  addrress
 //////////
 ResizeArray
 resizeArr array,added amount (+ or -)
+
 this Function used to Resize Array variable it's good if we don't know how much we want to reverse.
 so we can add more elements or sub some elements . 
 resizeArr array,added amount
@@ -648,6 +649,7 @@ GetArraySize  varArrName, varname
 //////////
 Write2File
 write2File path,over_append(false/true),data (Can be array )
+
 note: you can write array directly to file by write the array name see sample
 this Function used to write data to file and can write array to file too .
 write2File path,over_append(false/true),data
@@ -667,6 +669,18 @@ write2File path,over_append(false/true),data
 	  setx $x[0],test
 	  setx $x[1],again
   	  Write2File "D:\t.txt",0,$x   	this will write all x aary to t.txt file
+
+```
+//////////
+ReadFile
+ReadFile path,Array Variable
+
+read text file and append it to array variable .
+ReadFile path,Array Variable
+ - in parameter 1 :set the path of the file it can be done by variable other wise use "" surrounded path.
+ - in parameter 2 :array variable
+ ```
+	
 
 ```
 //////////
@@ -705,8 +719,27 @@ ReadStr  variable , duint address
 
 ```
 //////////
+ReadMem
+ReadMem   variable(array/Str), address,length
+
+this Function Read n byte under address and assigned to variable.
+variable should be String or array
+
+- P1 parameter 1 :variable which gold the value .
+- P2 parameter 2 :address of memory to read.
+- P2 parameter 2 :length of memory to read.
+```
+	-Varx str,x
+	 Varx int,N,0
+ 	 ReadMem $x,{rax},5
+	 $N={rax} +1
+ 	 $N=ads.exebase 	
+```
+//////////
 commentset
 commentset  address,String comment
+
+Read comment under address
 //////////
 GetdesCallJmp
 GetdesCallJmp   variable, address of call

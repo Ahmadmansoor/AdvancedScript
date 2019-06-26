@@ -14,12 +14,12 @@ namespace ScriptWindowArg {
 
 	ref class Scriptargument
 	{
-	/*public:
-		Boolean ispaused = false;*/
+		/*public:
+			Boolean ispaused = false;*/
 	private:
 		int CurrentlineIndex = 0;
 		int MaxLine = 0;
-		Color OldColor ;
+		Color OldColor;
 		int OldLineIndex = 0;
 	public:
 		int isCommandsExist(String^ input_) {
@@ -61,7 +61,7 @@ namespace ScriptWindowArg {
 		int CommandsNeedwait(String^ input_) {   /// this command need time to finish so we will make wait clock gif so user no thing it is not responding
 			array <String^>^ CommandsArray_ = {
 				"BPxx",
-				"findallmemx"				
+				"findallmemx"
 			};
 			return Array::IndexOf(CommandsArray_, input_->ToLower()); // if -1 then not found 
 		};
@@ -139,6 +139,10 @@ namespace ScriptWindowArg {
 
 	bool readLine(String^ Line_, int MaxLine) {
 		bool ret_ = false;
+		/// remove description if exist 
+		if (Line_->Contains("//"))
+			Line_ = Line_->Substring(0, Line_->IndexOf("//"));
+
 		if (Line_->Trim()->EndsWith(":")) {
 			ScriptargumentClass::Scriptargument_->setCurrentlineIndex(ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() + 1);
 			return true;
@@ -154,8 +158,17 @@ namespace ScriptWindowArg {
 			reten_ = true;
 			return true;
 		}
-		if (Line_->Contains("//"))
-			Line_ = Line_->Substring(0, Line_->IndexOf("//"));
+		/// case of assign variable directly without use Setx Function
+		if ((Line_->Trim()->StartsWith("$")) && (Line_->Trim()->Contains("="))) {
+			String^ getVar = Line_->Trim()->Substring(0, Line_->Trim()->IndexOf("="));
+			int indexofVar = 0; 	String^ retvartype = ""; int arrayLength;
+			if (Varexist(getVar, retvartype, indexofVar, arrayLength)) {
+				String^ cmd1 = "Setx " + Line_->Trim();
+				cmd1 = cmd1->Replace("=", ",");
+				return SetxByString(Str2CharPTR(cmd1));
+			}
+		}
+		
 
 		//IspausedClass::IspausedClass_->ispaused = false;  /// rest is pause till the debugger back to pause
 
@@ -163,9 +176,6 @@ namespace ScriptWindowArg {
 			String^ cmd_ = Line_->Substring(0, Line_->IndexOf(" "));
 			int CmdExist = ScriptargumentClass::Scriptargument_->isCommandsExist(cmd_->Trim());
 			if (CmdExist >= 0) {
-				//char* argv = new char[50];
-				//strcpy(argv, Str2CharPTR(Line_));
-
 				switch (CmdExist)
 				{
 					/*case ScriptWindowArg::scriptw:
@@ -261,7 +271,7 @@ namespace ScriptWindowArg {
 					}
 					else
 					{
-						
+
 						ScriptargumentClass::Scriptargument_->setCurrentlineIndex(Line2Jmp);
 						return true;
 					}
@@ -337,13 +347,13 @@ namespace ScriptWindowArg {
 
 	void waitPauseProcess() {
 		if (!DbgIsDebugging())
-			return;		
+			return;
 		do
 		{
 			//Threading::Thread::Sleep(100);
 			Application::DoEvents();
-		} while (!IspausedClass::IspausedClass_->ispaused);		
-		
+		} while (!IspausedClass::IspausedClass_->ispaused);
+
 	}
 
 
@@ -354,7 +364,7 @@ namespace ScriptWindowArg {
 			if (Need_wait >= 0) {
 				return true;
 			}
-		}		
+		}
 		return false;
 	}
 

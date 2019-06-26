@@ -141,6 +141,9 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	////
 	registerCommand("writeStr", WriteStr, true);
 	registerCommand("ReadStr", ReadStr, true);
+	registerCommand("ReadMem", ReadMem, true);
+	registerCommand("Write2Mem", Write2Mem, true);
+	
 
 	registerCommand("BPxx", BPxx, true);
 	registerCommand("bpcx", bpcx, true);
@@ -159,6 +162,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("ResizeArray", ResizeArray, false);
 	registerCommand("GetArraySize", GetArraySize, false);
 	registerCommand("Write2File", Write2File, false);
+	registerCommand("ReadFile", ReadFile, false);	
 	registerCommand("inputbox", InputBox, false);
 	registerCommand("GetdesCallJmp", GetdesCallJmp, true);
 
@@ -654,6 +658,43 @@ static bool SetVarx(int argc, char* argv[]) {			//Setx_(String^ varname, int ind
 		return false;
 	}
 }
+
+/////////////////////////////////////////////////////////////
+static bool SetxByString(char* cmd) {			// Copy of SetVarx with String arrgument
+	Generic::List<String^>^ arguments;
+	String^ cmd_ = CharArr2Str(cmd);
+	GetArg(cmd_, arguments); // this function use by refrence so the list will fill direct	
+	String^ arrayIndex;
+	switch ((arguments->Count))
+	{
+	case 2: {
+		if ((arguments[0]->Contains("[")) && (arguments[0]->Contains("]"))) { // this is array var
+																			  //arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("]") - 1));
+			arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("[") + 1));
+			arrayIndex = arrayIndex->Substring(0, arrayIndex->LastIndexOf("]"));
+			//arrayIndex = argumentValue(arguments[1], OldValue_);
+			arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
+			if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex))) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng index of array"));
+				return false;
+			}
+			else
+			{  /// we checkd that array index is int, need to check the value of the array
+				return SetVarx_(arguments[0]->Substring(0, arguments[0]->IndexOf("["))->Trim(), (int)Str2duint(arrayIndex->Trim()), arguments[1]);
+			}
+
+		}
+		else  /// var is str or int
+		{
+			return SetVarx_(arguments[0], 0, arguments[1]);
+		}
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+}
+////////////////////////////////////////////////////////////
 
 static bool GetVarx(int argc, char* argv[]) { //GetVarx_(String^ varname,int index)
 	Generic::List<String^>^ arguments;
@@ -1195,6 +1236,97 @@ static bool ReadStr(int argc, char* argv[]) { //ReadStr(variable,duint address)
 	return false;
 }
 
+static bool ReadMem(int argc, char* argv[]) { //ReadMem(variable(str/array),duint address,int length)
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 3: {
+		String^ addr = StrAnalyze(arguments[1], VarType::str, true);
+		String^ intValue;
+		if (CheckHexIsValid(addr, intValue) == 0) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng address"));
+			return false;
+		}
+		String^ len = StrAnalyze(arguments[2], VarType::int_, true);
+		if (Information::IsNumeric(len)) {
+			String^ Data;
+			duint tempAddr = Str2duint(intValue);
+			for (int i = 0; i < Convert::ToInt32(len); i++)
+			{
+				unsigned char x = Script::Memory::ReadByte(tempAddr);
+				String^ t = Conversion::Hex(x);
+				Data = Data + t;
+				//tempAddr = Str2duint(intValue) + i + 1;
+				tempAddr = tempAddr + 1;
+			}
+			String^ cmd = "Setx " + arguments[0] + "," + Data;
+			//const char* x = Str2ConstChar(cmd);
+			return SetxByString(Str2CharPTR(cmd));
+		}
+		else {
+			_plugin_logputs(Str2ConstChar("length is incorrect: " + len));
+			return  false;
+		}
+		break;
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return false;
+}
+
+static bool Write2Mem(int argc, char* argv[]) { //Write2Mem(duint address,variable(str/array))
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+
+	switch ((arguments->Count))
+	{
+	case 2: {
+		String^ addr = StrAnalyze(arguments[0], VarType::str, true);
+		String^ AddrIntValue;
+		if (CheckHexIsValid(addr, AddrIntValue) == 0) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng address"));
+			return false;
+		}
+
+		String^ Data=StrAnalyze(arguments[1],VarType::str,false);
+		Data = reMoveSpaces(Data);
+		duint tempAddr = Str2duint(AddrIntValue);
+		if (Data->Length <= 1) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Byte length is wrong"));
+			return false;
+		}
+		if ((Data->Length % 2 !=0)) {  // if length is odd
+			Data = Data->Substring(0, Data->Length - 1);
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Byte length has truncated by 1 "));			
+		}
+		for (int i = 0; i < Convert::ToInt32(Data->Length); i=i+2)
+		{
+			String^ Byte_ = Data->Substring(i, 2);
+			String^ Byte_IntValue;
+			if (CheckHexIsValid(Byte_, Byte_IntValue) == 0) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Byte is not hex value "));
+				return false;
+			}
+			unsigned char byte_ =Convert::ToByte(Byte_IntValue);
+			bool suc=Script::Memory::WriteByte(tempAddr, byte_);				
+			if (!suc) {
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't write to memory "));
+				return false;
+			}
+			tempAddr = tempAddr + 1;
+		}		
+		return true;		
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return false;
+}
 /// BP 
 
 static bool BPxx(int argc, char* argv[]) { /// BPxx (  BP Address ,BP Name , BP type)

@@ -395,9 +395,9 @@ int Str2int(String^ input) {   /// we need it just in case we need an int just
 
 }
 
-duint Str2duint(String^ input_) {
+duint Str2duint(String^ input_) {  // input_ should be int64 value  
 #ifdef _WIN64
-	duint result;
+	duint result;	
 	if (duint::TryParse(input_, result)) {
 		return result;
 	}
