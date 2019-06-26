@@ -143,7 +143,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("ReadStr", ReadStr, true);
 	registerCommand("ReadMem", ReadMem, true);
 	registerCommand("Write2Mem", Write2Mem, true);
-	
+
 
 	registerCommand("BPxx", BPxx, true);
 	registerCommand("bpcx", bpcx, true);
@@ -162,7 +162,7 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 	registerCommand("ResizeArray", ResizeArray, false);
 	registerCommand("GetArraySize", GetArraySize, false);
 	registerCommand("Write2File", Write2File, false);
-	registerCommand("ReadFile", ReadFile, false);	
+	registerCommand("ReadFile", ReadFile, false);
 	registerCommand("inputbox", InputBox, false);
 	registerCommand("GetdesCallJmp", GetdesCallJmp, true);
 
@@ -1292,18 +1292,18 @@ static bool Write2Mem(int argc, char* argv[]) { //Write2Mem(duint address,variab
 			return false;
 		}
 
-		String^ Data=StrAnalyze(arguments[1],VarType::str,false);
+		String^ Data = StrAnalyze(arguments[1], VarType::str, false);
 		Data = reMoveSpaces(Data);
 		duint tempAddr = Str2duint(AddrIntValue);
 		if (Data->Length <= 1) {
 			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Byte length is wrong"));
 			return false;
 		}
-		if ((Data->Length % 2 !=0)) {  // if length is odd
+		if ((Data->Length % 2 != 0)) {  // if length is odd
 			Data = Data->Substring(0, Data->Length - 1);
-			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Byte length has truncated by 1 "));			
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "Byte length has truncated by 1 "));
 		}
-		for (int i = 0; i < Convert::ToInt32(Data->Length); i=i+2)
+		for (int i = 0; i < Convert::ToInt32(Data->Length); i = i + 2)
 		{
 			String^ Byte_ = Data->Substring(i, 2);
 			String^ Byte_IntValue;
@@ -1311,15 +1311,15 @@ static bool Write2Mem(int argc, char* argv[]) { //Write2Mem(duint address,variab
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Byte is not hex value "));
 				return false;
 			}
-			unsigned char byte_ =Convert::ToByte(Byte_IntValue);
-			bool suc=Script::Memory::WriteByte(tempAddr, byte_);				
+			unsigned char byte_ = Convert::ToByte(Byte_IntValue);
+			bool suc = Script::Memory::WriteByte(tempAddr, byte_);
 			if (!suc) {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "Couldn't write to memory "));
 				return false;
 			}
 			tempAddr = tempAddr + 1;
-		}		
-		return true;		
+		}
+		return true;
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
@@ -1923,16 +1923,16 @@ static bool ReadFile(int argc, char* argv[]) {  // ReadFile(array var , path )
 	GetArg(charPTR2String(argv[0]), arguments);
 	switch ((arguments->Count))
 	{
-	case 3: {
+	case 2: {
 		String^ pathfile;
-		if (arguments[0]->StartsWith("$")) {  /// that mesn its variable
-			String^ path_ = StrAnalyze(arguments[0], VarType::str);
+		if (arguments[1]->StartsWith("$")) {  /// that mesn its variable
+			String^ path_ = StrAnalyze(arguments[1], VarType::str);
 			if (!path_->Contains("NULL/")) {
 				if (!path_->EndsWith(".txt")) {
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + "not ended with .txt"));
 					return false;
 				}
-				if (!IO::Directory::Exists(IO::Path::GetDirectoryName(path_))) {
+				if (!IO::File::Exists(path_)) {
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
 					return false;
 				}
@@ -1942,16 +1942,16 @@ static bool ReadFile(int argc, char* argv[]) {  // ReadFile(array var , path )
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
 				return false;
 			}
-			pathfile = StrAnalyze(arguments[0], VarType::str);
+			pathfile = StrAnalyze(arguments[1], VarType::str);
 		}
 		else
 		{
-			if (!arguments[0]->EndsWith(".txt")) {
+			if (!arguments[1]->EndsWith(".txt")) {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "not ended with .txt"));
 				return false;
 			}
-			if (arguments[0]->Contains("\\")) {  /// check it if it's path file				
-				if (!IO::Directory::Exists(IO::Path::GetDirectoryName(arguments[0]))) {
+			if (arguments[1]->Contains("\\")) {  /// check it if it's path file				
+				if (!IO::File::Exists(arguments[1])) {
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
 					return false;
 				}
@@ -1961,11 +1961,28 @@ static bool ReadFile(int argc, char* argv[]) {  // ReadFile(array var , path )
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng path"));
 				return false;
 			}
-			pathfile = arguments[0];
+			pathfile = arguments[1];
 		}
 
-
-		return Write2File_(pathfile, Str2bool(arguments[1]), arguments[2]);
+		int indexofVar = 0; 	String^ retvartype = "";	int arrayLength;
+		if ((Varexist(arguments[0]->Trim(), retvartype, indexofVar, arrayLength)) && (arguments[0]->Trim()->StartsWith("$"))) {
+			if (retvartype == "array") {
+				array<String^>^ Lines = IO::File::ReadAllLines(pathfile);
+				for (int i = 0; i < Lines->Length; i++)
+				{					
+					int arrLeng = ScriptFunList::VarList[indexofVar]->arrayLength;
+					ScriptFunList::VarList[indexofVar]->varvalue[arrLeng - 1]=Lines[i];
+					if (i !=Lines->Length-1)
+					ScriptFunList::VarList[indexofVar]->ResizeArr(1);
+				}
+			}
+			else
+			{
+				_plugin_logputs(Str2ConstChar(Environment::NewLine + "variable not array"));
+				return false;
+			}
+		}
+		return true;
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
