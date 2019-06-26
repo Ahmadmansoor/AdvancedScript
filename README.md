@@ -55,7 +55,7 @@ just a try to add more feature's to x64dbg script system
 - version 3.0 :
 	1- add help file and command help on the form.
 	2- add ads lib like ("GetAPIName","GetArraySize","ReadStr","GetdesCallJmp","isInArray","isAddrBelongSection").
-	3- Write2File_ can write array directly.
+	3- Write2File can write array directly.
 	4- add commentset  command.
 	5- replace Script::Debug::Wait();  with waitPauseProcess();
 	6- at ret command .
