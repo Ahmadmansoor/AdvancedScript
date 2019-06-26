@@ -2,9 +2,9 @@
 
 just a try to add more feature's to x64dbg script system
 
-![New GUI 4.0](https://user-images.githubusercontent.com/7176580/59259568-1c7e8400-8c4b-11e9-8c3e-3bbf2b626479.gif)
+![AdvancedScript_4 3](https://user-images.githubusercontent.com/7176580/60172418-ad458a00-981d-11e9-8a0d-ea28366ef9cb.png)
 
-![AdvancedScript_4 3](https://user-images.githubusercontent.com/7176580/60171779-5ee3bb80-981c-11e9-809d-7601dc9bcfbb.png)
+![New GUI 4.0](https://user-images.githubusercontent.com/7176580/59259568-1c7e8400-8c4b-11e9-8c3e-3bbf2b626479.gif)
 
 
 ## youtube Tut's:
