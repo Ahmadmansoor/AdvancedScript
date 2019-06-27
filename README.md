@@ -4,6 +4,8 @@ just a try to add more feature's to x64dbg script system
 
 ![AdvancedScript_4 3](https://user-images.githubusercontent.com/7176580/60179703-4b8e1b80-982f-11e9-9a09-e9a1a99e4797.png)
 
+![NewGUI 4.3](https://user-images.githubusercontent.com/7176580/60272953-27e9d480-9906-11e9-89fb-e183ee69b56d.gif)
+
 ![New GUI 4.0](https://user-images.githubusercontent.com/7176580/59259568-1c7e8400-8c4b-11e9-8c3e-3bbf2b626479.gif)
 
 
