@@ -165,6 +165,7 @@ namespace ScriptWindowArg {
 			if (Varexist(getVar, retvartype, indexofVar, arrayLength)) {
 				String^ cmd1 = "Setx " + Line_->Trim();
 				cmd1 = cmd1->Replace("=", ",");
+				ScriptargumentClass::Scriptargument_->setCurrentlineIndex(ScriptargumentClass::Scriptargument_->GetCurrentlineIndex() + 1);
 				return SetxByString(Str2CharPTR(cmd1));
 			}
 		}

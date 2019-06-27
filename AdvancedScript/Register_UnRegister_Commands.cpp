@@ -1257,6 +1257,8 @@ static bool ReadMem(int argc, char* argv[]) { //ReadMem(variable(str/array),duin
 			{
 				unsigned char x = Script::Memory::ReadByte(tempAddr);
 				String^ t = Conversion::Hex(x);
+				if (t->Length < 2)
+					t = "0" + t;
 				Data = Data + t;
 				//tempAddr = Str2duint(intValue) + i + 1;
 				tempAddr = tempAddr + 1;
@@ -1969,11 +1971,11 @@ static bool ReadFile(int argc, char* argv[]) {  // ReadFile(array var , path )
 			if (retvartype == "array") {
 				array<String^>^ Lines = IO::File::ReadAllLines(pathfile);
 				for (int i = 0; i < Lines->Length; i++)
-				{					
+				{
 					int arrLeng = ScriptFunList::VarList[indexofVar]->arrayLength;
-					ScriptFunList::VarList[indexofVar]->varvalue[arrLeng - 1]=Lines[i];
-					if (i !=Lines->Length-1)
-					ScriptFunList::VarList[indexofVar]->ResizeArr(1);
+					ScriptFunList::VarList[indexofVar]->varvalue[arrLeng - 1] = Lines[i];
+					if (i != Lines->Length - 1)
+						ScriptFunList::VarList[indexofVar]->ResizeArr(1);
 				}
 			}
 			else
