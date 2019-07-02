@@ -203,6 +203,8 @@ Varx P1, P2 , P3(optional just for array and str)
 ```
 ### 2- Setx : 
 Setx  varname, value
+or 
+varname = value
 set value to the virables in AdvancedScript vriable system or x64dbg system.
 you can make add sub or multi or divide and you can nested arguments as you like.
 
@@ -229,10 +231,18 @@ Setx P1, P2
            
          - varx int, x, 0x45fa            int x= 0x45FA\17914 :has been added
            varx str, z, 0xaa              str z= 0xaa :has been added
-           setx $x, $z + 0x33 - 25        x= 0xB8\184
+           setx $x, $z + 0x33 - 25  or  ($x= $z + 0x33 - 25)   		 x= 0xB8\184
            varx array, y[6], 0x10         array y[0]= 0x10 :has been added
            setx $x, $x + $y[0]            x= 0xC8\200
-	 
+    
+    ##note : in new version no need to use setx command u can write directly like this :
+	   $FixAddr={eax} >>>which is >>> setx $FixAddr,{eax}
+	   or
+	 	$z[5]=$x$z[0]             z[5]=test10
+           	$z[5]=$x $z[0]            z[5]=test 10
+           	$z[5]=$x+$z[0]            z[5]=test+10
+           	$x=$z[0]                  x=0x10           	
+        
 ```
 ### 3- Getx / Printx : 
 Getx   variable name
@@ -268,6 +278,24 @@ it's collection of edit functions from x64dbg system, but it accept variables in
 - cmpx : both parameter will analyzed  /// replaced with (if) commands on the new Script window,
 						but can be used at x64dbg Script Screen.
  ```
+ -note:
+    you have to know that there are 2 commands:-
+	mov : which is normal command from x64dbg system ,it will not handle any variable from this plugin.
+		and
+	movx : which is parallel command of mov but in this (first parameter will not analyzed, just the second one.) 
+	like this movx rax,$x , 
+	it mean its same mov just the second parameter can analyzed that all.
+	so in this command (movx rax,$x) we didn't put like this {rax} , 
+	because movx is modified command of mov , so movx at the end will executed mov command 
+	after analyzed the second parameter.
+	so with example will be like this :
+	movx eax ,{eax}
+	this will be proceed like this : plugin will analyzed second parameter which is {eax} =1 ( as example)
+	then command will be like this : mov eax,1 then it will executed .
+	this apply to all (parallel commands of x64dbg ).
+	in other hand you will note that movx is opposite of setx command , 
+	because setx get value after analyzed then it assigned to the variable of AdvancedScript System.
+	 
  -note :
 	in new Update BPxx for one parameter can set on array of address directly , but for some resone x64dbg will take 
 	time to respond ( I don't know why ) so u can go to refrence and set BP on all finded items.
