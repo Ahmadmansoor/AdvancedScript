@@ -8,6 +8,10 @@ just a try to add more feature's to x64dbg script system
 
 ![New GUI 4.0](https://user-images.githubusercontent.com/7176580/59259568-1c7e8400-8c4b-11e9-8c3e-3bbf2b626479.gif)
 
+How to use it :
+How to set Soft BP or patch memory or modify code for vmp tagets under Debugger:
+
+![vmpCRC](https://user-images.githubusercontent.com/7176580/61180382-7695af00-a626-11e9-9938-22ffac3bb03a.gif)
 
 ## youtube Tut's:
 
