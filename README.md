@@ -674,9 +674,16 @@ ReadFile path,Array Variable
 
 read text file and append it to array variable .
 ReadFile path,Array Variable
- - in parameter 1 :set the path of the file it can be done by variable other wise use "" surrounded path.
- - in parameter 2 :array variable
- 
+ - in parameter 1 :array variable name without [] 
+ - in parameter 2 :set the path of the file it can be done by variable other wise use "" surrounded path.
+ sample :
+ ```
+ 	-varx int,vA,0
+	 varx str,vE,"D:\abc.txt"
+	 varx array,vB[1],0
+	 $vA=1234
+	 ReadFile $vB,$vE	 
+ ```
 ////////////////////////////////////////////////////////////////////////////
 ## ads library: 
 ads.____		/// ____ mean command
