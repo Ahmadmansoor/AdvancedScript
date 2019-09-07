@@ -13,6 +13,15 @@ How to set Soft BP or patch memory or modify code for vmp tagets under Debugger:
 
 ![vmpCRC](https://user-images.githubusercontent.com/7176580/61180382-7695af00-a626-11e9-9938-22ffac3bb03a.gif)
 
+# Donate
+If you like to Support me pls donate here:
+
+[[Donate!]](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JSGK2RG6YD36N&source=url)
+
+or use:
+
+![QR Code Donate](https://user-images.githubusercontent.com/7176580/64474267-16ce0700-d184-11e9-8a0d-a198a0e1253e.png)
+
 ## youtube Tut's:
 
 [![AdvancedScript How to](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/hku8Is8-Z34)
