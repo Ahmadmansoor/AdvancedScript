@@ -71,7 +71,7 @@ PLUG_EXPORT void CBSTEPPED(CBTYPE cbType, PLUG_CB_STEPPED* info)
 	////////////////////
 	//here we will check if Tracer is Enable so we'll log to the file 
 	if (LogTraceOn) {
-		String^ templateRet = StringFormatInline_Str(CharArr2Str((char*)TemplateData_));
+		String^ templateRet = StringFormatInline_Str(CharArr2Str((char*)TemplateData_)) + Environment::NewLine;
 		if (!IO::File::Exists(charPTR2String((char*)TraceFile_))) {
 			IO::FileStream^ x = IO::File::Create(charPTR2String((char*)TraceFile_));
 			x->Close();

@@ -8,7 +8,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 	bool found = false;
 	int ConstIndex = -1;
 	String^ ConstCommand;
-	
+
 	if (input->StartsWith(" ")) {
 		_plugin_logprint(Str2ConstChar(Environment::NewLine + "space exist After ads."));
 		return "NULL/ ";
@@ -107,10 +107,15 @@ String^ Get_adsValue(String^ input, int% EndB) {
 		EndB = ConstCommand->Length;
 		char* path_ = new char[MAX_STRING_SIZE];
 		if (Script::Module::GetMainModulePath(path_))
-			return CharArr2Str(path_);
+		{
+			String^ _path= CharArr2Str(path_);
+			if (_path->Contains("\\"))
+				_path = _path->Substring(0, _path->LastIndexOf("\\"));
+			return _path;
+		}
 		else
 			_plugin_logprint(Str2ConstChar(Environment::NewLine + "couldn't get the path"));
-			return "NULL/ ";
+		return "NULL/ ";
 		break;
 	}
 	case exename: {
@@ -120,7 +125,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 			return CharArr2Str(exename);
 		else
 			_plugin_logprint(Str2ConstChar(Environment::NewLine + "couldn't get the name"));
-			return "NULL/ ";
+		return "NULL/ ";
 		break;
 	}
 	case SectionBegin:  // ( address)
@@ -235,7 +240,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 				return "NULL/ ";
 			}
 
-			
+
 		}
 		break;
 	}
@@ -258,7 +263,8 @@ String^ Get_adsValue(String^ input, int% EndB) {
 					_plugin_logputs(Str2ConstChar(Environment::NewLine + findrest + ": 0x" + duint2Hex(ScriptFunList::VarList[indexofVar]->arrayLength) + "/" + int2Str(ScriptFunList::VarList[indexofVar]->arrayLength)));
 					return duint2Hex(ScriptFunList::VarList[indexofVar]->arrayLength);
 				}
-			}else
+			}
+			else
 			{
 				_plugin_logprint(Str2ConstChar(Environment::NewLine + "this is not array "));
 				return "NULL/ ";
@@ -324,7 +330,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 			findrest = findrest->Trim();
 
 			String^ addr = StrAnalyze(findrest, VarType::str, true);  /// resolve
-			
+
 			String^ addr_;
 			BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
 			DbgDisasmFastAt(Hex2duint(addr), basicinfo);
@@ -362,7 +368,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 				return "NULL/ ";
 			}
 			String^ argu1 = findrest->Substring(0, findrest->IndexOf(","));
-			String^ argu2 = findrest->Substring(findrest->IndexOf(",")+1 , findrest->Length - (findrest->IndexOf(",") +1 ));
+			String^ argu2 = findrest->Substring(findrest->IndexOf(",") + 1, findrest->Length - (findrest->IndexOf(",") + 1));
 			argu1 = StrAnalyze(argu1, VarType::str, false);  /// resolve
 			int indexofVar = 0; 	String^ retvartype = "";		int arrayLength;
 			if ((Varexist(argu2->Trim(), retvartype, indexofVar, arrayLength)) && (argu2->StartsWith("$"))) {
@@ -380,7 +386,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 			{
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "This is not array "));
 				return "NULL/ ";
-			}			
+			}
 		}
 		break;
 	}
@@ -414,7 +420,7 @@ String^ Get_adsValue(String^ input, int% EndB) {
 			SctionBegin = Script::Memory::GetBase(Hex2duint(argu2));
 			SctionEnd = Script::Memory::GetSize(Hex2duint(argu2)) + Script::Memory::GetBase(Hex2duint(argu2));
 			if ((Hex2duint(argu1) >= SctionBegin) && (Hex2duint(argu1) <= SctionEnd))
-				return "1";			
+				return "1";
 			else
 				return "0";
 

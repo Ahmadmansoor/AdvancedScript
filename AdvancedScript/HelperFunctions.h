@@ -19,7 +19,7 @@ duint Hex2duint(String^ input_);
 String^ str2Asci(String^ input);
 String^ ReplaceAtIndex(String^  OriginalString, String^ oldValue, String^ newValue);
 String^ AddZero2Addr(String^ input);
-
+String^ ConstChar2String(const char* input);
 
 bool IsAllSpaces(String^ input_);
 

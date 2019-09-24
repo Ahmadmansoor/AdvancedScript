@@ -141,6 +141,10 @@ char* Str2CharPTR(System::String^ string_) {
 
 }
 
+String^ ConstChar2String(const char* input) {
+	std::string toString = input;
+	return gcnew String(toString.c_str());
+}
 //bool OnlyHexInString(String^ test) {  // it will remove 0x if it's at the beganing of the string
 //	try
 //	{

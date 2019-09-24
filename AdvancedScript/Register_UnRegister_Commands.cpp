@@ -171,52 +171,60 @@ void RegisterCommands(PLUG_INITSTRUCT* initStruct)
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool test(int argc, char* argv[]) {
+	BPMAP* BPMAP_ = new BPMAP;
 
-	DbgScriptSetIp(3);
+	ListOf(DBGPATCHINFO*) patchlist;
+	Script::Argument::GetList(patchlist);
 
-	return true;
-	Generic::List<String^>^ arguments;
-	GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
-	switch (arguments->Count)
-	{
-	case 1: {
-		//duint x=Script::Memory::GetSize(Hex2duint(arguments[0]));
-		//char* text_ = new char[MAX_STRING_SIZE];
-		////DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
-		//_plugin_logprint(text_);
-		/*String^ AsmcommandStr = StringFormatInline_Str(arguments[0]);
-		DbgCmdExecDirect(Str2ConstChar("cmt " + AsmcommandStr));*/
-		String^ intvalue;  /// first if it is hex value
-		if (CheckHexIsValid(arguments[0], intvalue) > 0) {  /// it mean it is address ( hex value)
+	int x = DbgGetBpList(BPXTYPE::bp_normal, BPMAP_);
+	duint addr_ = BPMAP_->bp[1].addr;
+	int xxx;
+	xxx = 5;
+	//DbgScriptSetIp(3);
 
-			duint base = Script::Memory::GetBase(Str2int(intvalue));
-			duint size_ = Script::Memory::GetSize(Str2int(intvalue));
-			BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
+	//return true;
+	//Generic::List<String^>^ arguments;
+	//GetArg(charPTR2String(argv[0]), arguments); // this function use by refrence so the list will fill direct	
+	//switch (arguments->Count)
+	//{
+	//case 1: {
+	//	//duint x=Script::Memory::GetSize(Hex2duint(arguments[0]));
+	//	//char* text_ = new char[MAX_STRING_SIZE];
+	//	////DbgGetStringAt(Script::Register::Get(Script::Register::RCX), text_);
+	//	//_plugin_logprint(text_);
+	//	/*String^ AsmcommandStr = StringFormatInline_Str(arguments[0]);
+	//	DbgCmdExecDirect(Str2ConstChar("cmt " + AsmcommandStr));*/
+	//	String^ intvalue;  /// first if it is hex value
+	//	if (CheckHexIsValid(arguments[0], intvalue) > 0) {  /// it mean it is address ( hex value)
 
-			Generic::List<search__^>^ Datax = gcnew Generic::List<search__^>;
-			duint temp = base;
-			while (temp < base + size_)
-			{
-				DbgDisasmFastAt(temp, basicinfo);
-				search__^ ser = gcnew search__(duint2Hex(temp), CharArr2Str(basicinfo->instruction));
-				Datax->Add(ser);
-				temp += basicinfo->size;
-			}
+	//		duint base = Script::Memory::GetBase(Str2int(intvalue));
+	//		duint size_ = Script::Memory::GetSize(Str2int(intvalue));
+	//		BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
+
+	//		Generic::List<search__^>^ Datax = gcnew Generic::List<search__^>;
+	//		duint temp = base;
+	//		while (temp < base + size_)
+	//		{
+	//			DbgDisasmFastAt(temp, basicinfo);
+	//			search__^ ser = gcnew search__(duint2Hex(temp), CharArr2Str(basicinfo->instruction));
+	//			Datax->Add(ser);
+	//			temp += basicinfo->size;
+	//		}
 
 
-		}
+	//	}
 
-		break;
-	}
-	case 2: {
-		BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
-		DbgDisasmFastAt(Hex2duint(arguments[0]), basicinfo);
-		break;
-	}
-	default:
-		_plugin_logputs("worng arguments");
-		return false;
-	}
+	//	break;
+	//}
+	//case 2: {
+	//	BASIC_INSTRUCTION_INFO* basicinfo = new (BASIC_INSTRUCTION_INFO);
+	//	DbgDisasmFastAt(Hex2duint(arguments[0]), basicinfo);
+	//	break;
+	//}
+	//default:
+	//	_plugin_logputs("worng arguments");
+	//	return false;
+	//}
 	//DbgScriptCmdExec("{jmp res}");
 
 
@@ -637,7 +645,8 @@ static bool SetVarx(int argc, char* argv[]) {			//Setx_(String^ varname, int ind
 			arrayIndex = arguments[0]->Substring(arguments[0]->IndexOf("[") + 1, arguments[0]->Length - (arguments[0]->IndexOf("[") + 1));
 			arrayIndex = arrayIndex->Substring(0, arrayIndex->LastIndexOf("]"));
 			//arrayIndex = argumentValue(arguments[1], OldValue_);
-			arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
+			//arrayIndex = GetArgValueByType(arrayIndex, VarType::int_);
+			arrayIndex = StrAnalyze(arrayIndex, VarType::int_);
 			if ((arrayIndex->StartsWith("NULL/")) || (!Information::IsNumeric(arrayIndex))) {
 				_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng index of array"));
 				return false;
@@ -2080,6 +2089,61 @@ static bool GetdesCallJmp(int argc, char* argv[]) {  // GetdesCallJmp   variable
 			return false;
 		}
 
+	}
+	default:
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
+		return false;
+	}
+	return false;
+}
+
+
+static bool VMP_Patch_BP_CRC_Killer(int argc, char* argv[]) {  // enable user to patch and put BP on vmp target for tracing
+	// vmpcrckiller  address,register name ( RAX ,EAX)
+
+	// vmp divide the target parts(in each section) and read each of this parts bytes and xor it with saved value.
+	// at the end reading of each parts it make check .
+	// CRC value is Holded in register which can recocnized by command (Not Reg)
+	// sample :
+	//Movzx esi,byte [RDX]		// here will Hook ( put BP and call the command to do the restore of the value )in silent mode
+	//....
+	//...
+	//xor esi,ecx
+	//test ..
+	//And esi,FF		FF could be another constant
+	//..
+	//Mov esi,DWORD[R8 + RSI*4]		<< here will used the result of xor command to get value of the vmp table values.
+	Generic::List<String^>^ arguments;
+	GetArg(charPTR2String(argv[0]), arguments);
+	switch ((arguments->Count))
+	{
+	case 2: {
+		//ListOf(DBGPATCHINFO*) patchlist;
+		//Script::Argument::GetList(patchlist);
+
+		String^ addr_ = StrAnalyze(arguments[0], VarType::int_, true);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + addr_));
+		String^ register_ = StrAnalyze(arguments[1], VarType::str, true);
+		_plugin_logputs(Str2ConstChar(Environment::NewLine + addr_));
+		if ((addr_->Contains("NULL")) || (register_->Contains("NULL"))) {
+			_plugin_logputs(Str2ConstChar(Environment::NewLine + "address or register is worng"));
+			return false;
+		}
+
+		BPMAP* BPMAP_ = new BPMAP;
+		int BPCount = DbgGetBpList(BPXTYPE::bp_normal, BPMAP_);
+		for (int i = 0; i < BPCount; i++)
+		{
+			duint addr = BPMAP_->bp[i].addr;
+			if (Str2duint(addr_) == addr) {
+				unsigned char oldByte = Script::Memory::ReadByte(addr);
+				String^ t = Conversion::Hex(oldByte);
+				DbgCmdExecDirect(Str2CharPTR(register_ + "=" + t));
+				return true;
+			}
+		}
+
+		return true;
 	}
 	default:
 		_plugin_logputs(Str2ConstChar(Environment::NewLine + "worng arguments"));
